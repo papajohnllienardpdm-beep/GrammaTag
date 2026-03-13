@@ -1495,7 +1495,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   loadingBar: {fileID: 1129022096}
-  nextScene: MainMenu
+  nextScene: LoginScene
   loadingSpeed: 1
 --- !u!4 &2109779132
 Transform:

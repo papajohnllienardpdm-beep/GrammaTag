@@ -8,7 +8,7 @@ public class LoadingManager : MonoBehaviour
 {
 
     public Slider loadingBar;
-    public string nextScene = "MainMenu";
+    public string nextScene = "LoginScene";
 
     public float loadingSpeed = 1f; // ikaw ang magdikta ng bilis
 
