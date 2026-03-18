@@ -28,14 +28,12 @@ public class LoginManager : MonoBehaviour
             return;
         }
 
-        int age = int.Parse(ageDropdown.options[ageDropdown.value].text);
+        PlayerPrefs.SetString("PlayerFirstName", firstNameInput.text);
+        PlayerPrefs.SetString("PlayerLastName", lastNameInput.text);
+        PlayerPrefs.SetInt("PlayerAge", int.Parse(ageDropdown.options[ageDropdown.value].text));
+        PlayerPrefs.SetString("PlayerSex", playerSex);
 
-        DatabaseManager.Instance.InsertUser(
-            firstNameInput.text,
-            lastNameInput.text,
-            age,
-            playerSex
-        );
+        PlayerPrefs.Save();
 
         SceneManager.LoadScene("MainMenu");
     }
