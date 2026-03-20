@@ -1642,7 +1642,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   loadingBar: {fileID: 1129022096}
   nextScene: LoginScene
-  loadingSpeed: 0.01
+  loadingSpeed: 0.5
 --- !u!4 &2109779132
 Transform:
   m_ObjectHideFlags: 0
