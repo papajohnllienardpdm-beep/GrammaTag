@@ -1,6 +1,7 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class MainMenuUIManager : MonoBehaviour
 {
@@ -9,9 +10,27 @@ public class MainMenuUIManager : MonoBehaviour
     public GameObject shopPanel;
     public GameObject settingsPanel;
 
+    public TextMeshProUGUI nameText;
+    public TextMeshProUGUI coinsText;
+    public TextMeshProUGUI heartsText;
+
     void Start()
     {
         ShowHome();
+        LoadPlayerData(); // 🔥 ADD THIS
+    }
+
+    void LoadPlayerData()
+    {
+        if (DatabaseManager.Instance == null)
+        {
+            Debug.LogError("DatabaseManager is NULL!");
+            return;
+        }
+
+        nameText.text = DatabaseManager.Instance.GetPlayerName();
+        coinsText.text = DatabaseManager.Instance.GetCoins().ToString();
+        heartsText.text = DatabaseManager.Instance.GetHearts().ToString();
     }
 
     public void ShowHome()
