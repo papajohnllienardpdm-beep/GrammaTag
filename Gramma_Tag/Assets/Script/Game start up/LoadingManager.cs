@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -19,7 +19,23 @@ public class LoadingManager : MonoBehaviour
 
     IEnumerator LoadScene()
     {
-        AsyncOperation operation = SceneManager.LoadSceneAsync(nextScene);
+        // 🔥 WAIT FOR DB READY
+        yield return new WaitForSeconds(0.5f);
+
+        string targetScene;
+
+        if (DatabaseManager.Instance != null && DatabaseManager.Instance.HasUser())
+        {
+            Debug.Log("Auto login → MainMenu");
+            targetScene = "MainMenu";
+        }
+        else
+        {
+            Debug.Log("No user → Login");
+            targetScene = "LoginScene";
+        }
+
+        AsyncOperation operation = SceneManager.LoadSceneAsync(targetScene);
         operation.allowSceneActivation = false;
 
         float progress = 0f;

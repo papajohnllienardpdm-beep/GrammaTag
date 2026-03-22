@@ -2,6 +2,8 @@
 using System.IO;
 using UnityEngine;
 using SQLite;
+using UnityEngine.Networking;
+using System.Collections;
 
 public class DatabaseManager : MonoBehaviour
 {
@@ -10,13 +12,13 @@ public class DatabaseManager : MonoBehaviour
     private SQLiteConnection db;
     private object dbLock = new object();
 
-    void Awake()
+    IEnumerator Start()
     {
         if (Instance == null)
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-            SetupDatabase();
+            yield return StartCoroutine(SetupDatabase());
         }
         else
         {
@@ -24,27 +26,41 @@ public class DatabaseManager : MonoBehaviour
         }
     }
 
-    void SetupDatabase()
+    IEnumerator SetupDatabase()
     {
         string dbName = "grammatag.db";
 
         string persistentPath = Path.Combine(Application.persistentDataPath, dbName);
         string streamingPath = Path.Combine(Application.streamingAssetsPath, dbName);
 
-        // 🔥 COPY DB FIRST TIME ONLY
         if (!File.Exists(persistentPath))
         {
-            Debug.Log("Copying database from StreamingAssets...");
+#if UNITY_ANDROID && !UNITY_EDITOR
+        using (var www = UnityEngine.Networking.UnityWebRequest.Get(streamingPath))
+        {
+            yield return www.SendWebRequest();
 
+            if (www.result != UnityEngine.Networking.UnityWebRequest.Result.Success)
+            {
+                Debug.LogError("DB load failed: " + www.error);
+            }
+            else
+            {
+                File.WriteAllBytes(persistentPath, www.downloadHandler.data);
+                Debug.Log("DB copied!");
+            }
+        }
+#else
             File.Copy(streamingPath, persistentPath);
+#endif
         }
 
-        // 🔥 OPEN DB
         db = new SQLiteConnection(persistentPath);
-
         db.CreateTable<LearnerProfile>();
 
         Debug.Log("DB Ready: " + persistentPath);
+
+        yield return null; // 🔥 IMPORTANT
     }
 
     void OnApplicationQuit()
@@ -150,6 +166,20 @@ public class DatabaseManager : MonoBehaviour
         {
             var user = db.Table<LearnerProfile>().FirstOrDefault();
             return user != null ? user.hearts : 5;
+        }
+    }
+
+    public bool HasUser()
+    {
+        if (db == null)
+        {
+            Debug.LogWarning("DB not ready yet");
+            return false;
+        }
+
+        lock (dbLock)
+        {
+            return db.Table<LearnerProfile>().FirstOrDefault() != null;
         }
     }
 }
