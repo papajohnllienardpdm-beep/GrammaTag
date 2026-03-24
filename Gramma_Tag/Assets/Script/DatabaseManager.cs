@@ -56,7 +56,7 @@ public class DatabaseManager : MonoBehaviour
         }
 
         db = new SQLiteConnection(persistentPath);
-        db.CreateTable<LearnerProfile>();
+        db.CreateTable<User>();
 
         Debug.Log("DB Ready: " + persistentPath);
 
@@ -85,69 +85,45 @@ public class DatabaseManager : MonoBehaviour
 
     public void InsertUser(string first, string last, int age, string gender)
     {
-        int retries = 3;
-
-        while (retries > 0)
+        lock (dbLock)
         {
-            try
+            var existingUser = db.Table<User>().FirstOrDefault();
+
+            if (existingUser == null)
             {
-                lock (dbLock)
+                User user = new User
                 {
-                    var existingUser = db.Table<LearnerProfile>().FirstOrDefault();
+                    FirstName = first,
+                    LastName = last,
+                    Age = age,
+                    Gender = gender,
+                    Coins = 0,
+                    Hearts = 5,
+                    lastHeartTime = DateTime.Now.ToString()
+                };
 
-                    if (existingUser == null)
-                    {
-                        LearnerProfile user = new LearnerProfile
-                        {
-                            firstName = first,
-                            lastName = last,
-                            age = age,
-                            gender = gender,
-                            coins = 0,
-                            hearts = 5,
-                            lastHeartTime = DateTime.Now.ToString()
-                        };
-
-                        db.Insert(user);
-                    }
-                    else
-                    {
-                        existingUser.firstName = first;
-                        existingUser.lastName = last;
-                        existingUser.age = age;
-                        existingUser.gender = gender;
-
-                        db.Update(existingUser);
-                    }
-                }
-
-                Debug.Log("User saved!");
-                return;
+                db.Insert(user);
             }
-            catch (SQLiteException e)
+            else
             {
-                if (e.Message.Contains("locked"))
-                {
-                    Debug.LogWarning("DB locked, retrying...");
-                    System.Threading.Thread.Sleep(100);
-                    retries--;
-                }
-                else
-                {
-                    throw;
-                }
+                existingUser.FirstName = first;
+                existingUser.LastName = last;
+                existingUser.Age = age;
+                existingUser.Gender = gender;
+
+                db.Update(existingUser);
             }
         }
 
-        Debug.LogError("Failed to write to DB after retries.");
+        Debug.Log("User saved!");
     }
 
     public string GetPlayerName()
     {
         lock (dbLock)
         {
-            var user = db.Table<LearnerProfile>().FirstOrDefault();
-            return user != null ? user.firstName : "Player";
+            var user = db.Table<User>().FirstOrDefault();
+            return user != null ? user.FirstName : "Player";
         }
     }
 
@@ -155,8 +131,8 @@ public class DatabaseManager : MonoBehaviour
     {
         lock (dbLock)
         {
-            var user = db.Table<LearnerProfile>().FirstOrDefault();
-            return user != null ? user.coins : 0;
+            var user = db.Table<User>().FirstOrDefault();
+            return user != null ? user.Coins : 0;
         }
     }
 
@@ -164,8 +140,8 @@ public class DatabaseManager : MonoBehaviour
     {
         lock (dbLock)
         {
-            var user = db.Table<LearnerProfile>().FirstOrDefault();
-            return user != null ? user.hearts : 5;
+            var user = db.Table<User>().FirstOrDefault();
+            return user != null ? user.Hearts : 5;
         }
     }
 
@@ -179,7 +155,7 @@ public class DatabaseManager : MonoBehaviour
 
         lock (dbLock)
         {
-            return db.Table<LearnerProfile>().FirstOrDefault() != null;
+            return db.Table<User>().FirstOrDefault() != null;
         }
     }
 }
