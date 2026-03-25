@@ -6,49 +6,92 @@ using UnityEngine.UI;
 
 public class LoadingManager : MonoBehaviour
 {
-
     public Slider loadingBar;
-    public string nextScene = "LoginScene";
+    public Toggle termsToggle;
+    public GameObject termsPanel;
 
-    public float loadingSpeed = 1f; // ikaw ang magdikta ng bilis
+    public float loadingSpeed = 0.5f;
+
+    private bool hasUser = false;
 
     void Start()
     {
+        // 🔥 CHECK KUNG MAY USER SA DATABASE
+        if (DatabaseManager.Instance != null && DatabaseManager.Instance.HasUser())
+        {
+            hasUser = true;
+            termsPanel.SetActive(false); // ❌ HIDE TERMS
+        }
+        else
+        {
+            hasUser = false;
+            termsPanel.SetActive(false); // start hidden, lalabas later
+        }
+
         StartCoroutine(LoadScene());
     }
 
     IEnumerator LoadScene()
     {
-        // 🔥 WAIT FOR DB READY
         yield return new WaitForSeconds(0.5f);
 
         string targetScene;
 
-        if (DatabaseManager.Instance != null && DatabaseManager.Instance.HasUser())
-        {
-            Debug.Log("Auto login → MainMenu");
+        if (hasUser)
             targetScene = "MainMenu";
-        }
         else
-        {
-            Debug.Log("No user → Login");
             targetScene = "LoginScene";
-        }
 
         AsyncOperation operation = SceneManager.LoadSceneAsync(targetScene);
         operation.allowSceneActivation = false;
 
         float progress = 0f;
+        bool stoppedAtHalf = false;
+        bool accepted = false;
 
-        while (!operation.isDone)
+        while (true)
         {
-            progress += Time.deltaTime * loadingSpeed;
+            // 🔥 PHASE 1
+            if (!stoppedAtHalf)
+            {
+                progress += Time.deltaTime * loadingSpeed;
+
+                // 👉 ONLY STOP kung WALANG USER
+                if (!hasUser && progress >= 0.5f)
+                {
+                    progress = 0.5f;
+                    stoppedAtHalf = true;
+
+                    termsPanel.SetActive(true); // SHOW TERMS
+                }
+            }
+            // 🔥 WAIT LANG KUNG WALANG USER
+            else if (!accepted)
+            {
+                if (termsToggle.isOn)
+                {
+                    accepted = true;
+                    // panel stays (ayon sa gusto mo)
+                }
+            }
+            else
+            {
+                progress += Time.deltaTime * loadingSpeed;
+            }
+
+            // 👉 KUNG MAY USER → DIRETSO LANG (NO STOP)
+            if (hasUser)
+            {
+                progress += Time.deltaTime * loadingSpeed;
+            }
+
             loadingBar.value = Mathf.Clamp01(progress);
 
-            if (loadingBar.value >= 1f)
+            if (operation.progress >= 0.9f && progress >= 1f)
             {
-                yield return new WaitForSeconds(0.5f);
+                yield return new WaitForSeconds(0.3f);
                 operation.allowSceneActivation = true;
+                yield break;
             }
 
             yield return null;
