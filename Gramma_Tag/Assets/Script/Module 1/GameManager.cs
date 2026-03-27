@@ -108,5 +108,7 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("ResultScene");
 
         Debug.Log("Quiz Finished!");
+
+        PlayerPrefs.SetString("LastScene", "Module1_GameScene");
     }
 }

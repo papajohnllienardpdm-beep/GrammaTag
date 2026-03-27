@@ -26,7 +26,8 @@ public class ResultManager : MonoBehaviour
 
     public void PlayAgain()
     {
-        SceneManager.LoadScene("Module1_GameScene");
+        string scene = PlayerPrefs.GetString("LastScene", "Module1_GameScene");
+        SceneManager.LoadScene(scene);
     }
 
     public void BackToMenu()
