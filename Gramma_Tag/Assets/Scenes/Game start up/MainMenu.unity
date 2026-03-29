@@ -6734,9 +6734,9 @@ RectTransform:
   - {fileID: 2077761840}
   m_Father: {fileID: 32284777}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 302.34088, y: -588.3899}
   m_SizeDelta: {x: 498, y: 129}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &246616424
@@ -9448,6 +9448,7 @@ GameObject:
   - component: {fileID: 351355804}
   - component: {fileID: 351355803}
   - component: {fileID: 351355802}
+  - component: {fileID: 351355805}
   m_Layer: 5
   m_Name: Heart3Item
   m_TagString: Untagged
@@ -9472,9 +9473,9 @@ RectTransform:
   - {fileID: 655901126}
   m_Father: {fileID: 488176040}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 237.39954, y: -417.3725}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 579.397, y: 155.301}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &351355802
@@ -9541,6 +9542,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 351355800}
   m_CullTransparentMesh: 1
+--- !u!114 &351355805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 351355800}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89b2ce0d50f78ba44882c3e6494cb8ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemName: Heart
+  amount: 5
+  price: 800
+  icon: {fileID: 21300000, guid: c83a88e514b01474c9881a4b98ef4397, type: 3}
 --- !u!1 &356275125
 GameObject:
   m_ObjectHideFlags: 0
@@ -12813,7 +12830,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -8.658997, y: -31.259}
-  m_SizeDelta: {x: 527.098, y: 664.884}
+  m_SizeDelta: {x: 527.098, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &488176041
 MonoBehaviour:
@@ -14073,7 +14090,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 539323886}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1721475733}
+        m_TargetAssemblyTypeName: ShopPopupManager, Assembly-CSharp
+        m_MethodName: Cancel
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &539323886
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15176,7 +15205,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0, b: 0, a: 0}
+  m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -16152,7 +16181,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 655901128}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 351355805}
+        m_TargetAssemblyTypeName: ShopItem, Assembly-CSharp
+        m_MethodName: OnClickBuy
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &655901128
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21134,7 +21175,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 905716760}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1742236387}
+        m_TargetAssemblyTypeName: ShopItem, Assembly-CSharp
+        m_MethodName: OnClickBuy
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &905716760
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22688,7 +22741,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.00012207031}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -0.000061035, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1008079974
@@ -26502,7 +26555,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1163374297}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2038134665}
+        m_TargetAssemblyTypeName: ShopItem, Assembly-CSharp
+        m_MethodName: OnClickBuy
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1163374297
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -29165,7 +29230,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1283005956}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1831201423}
+        m_TargetAssemblyTypeName: ShopItem, Assembly-CSharp
+        m_MethodName: OnClickBuy
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1283005956
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -32547,7 +32624,7 @@ RectTransform:
   m_Father: {fileID: 1537211999}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -32891,9 +32968,9 @@ RectTransform:
   - {fileID: 1428424138}
   m_Father: {fileID: 32284777}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 302.34088, y: -379.03394}
   m_SizeDelta: {x: 498, y: 129}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1482063636
@@ -33544,7 +33621,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -39.999817, y: 0.025878906}
+  m_AnchoredPosition: {x: -40.00006, y: 0.025878906}
   m_SizeDelta: {x: 2010.242, y: 915.228}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1511412528
@@ -38388,6 +38465,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1721475732}
+  - component: {fileID: 1721475733}
   m_Layer: 5
   m_Name: ShopContainer
   m_TagString: Untagged
@@ -38412,9 +38490,24 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 27}
+  m_AnchoredPosition: {x: 0, y: 68}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1721475733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1721475731}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 020ba52d2e0df0f4b85bf25af0111947, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  popup: {fileID: 1831999332}
+  itemIcon: {fileID: 1531609350}
+  confirmText: {fileID: 1612332777}
 --- !u!1 &1725276698
 GameObject:
   m_ObjectHideFlags: 0
@@ -38991,6 +39084,7 @@ GameObject:
   - component: {fileID: 1742236386}
   - component: {fileID: 1742236385}
   - component: {fileID: 1742236384}
+  - component: {fileID: 1742236387}
   m_Layer: 5
   m_Name: Heart2Item
   m_TagString: Untagged
@@ -39015,9 +39109,9 @@ RectTransform:
   - {fileID: 905716758}
   m_Father: {fileID: 488176040}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 237.39954, y: -247.51149}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 579.397, y: 155.301}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1742236384
@@ -39084,6 +39178,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1742236382}
   m_CullTransparentMesh: 1
+--- !u!114 &1742236387
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1742236382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89b2ce0d50f78ba44882c3e6494cb8ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemName: Heart
+  amount: 3
+  price: 500
+  icon: {fileID: 21300000, guid: c83a88e514b01474c9881a4b98ef4397, type: 3}
 --- !u!1 &1743654565
 GameObject:
   m_ObjectHideFlags: 0
@@ -40571,7 +40681,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -118, y: -207}
+  m_AnchoredPosition: {x: -140, y: -257}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1801145428
@@ -41590,7 +41700,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1823259521
 RectTransform:
   m_ObjectHideFlags: 0
@@ -41603,8 +41713,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1721475732}
   - {fileID: 1007991335}
+  - {fileID: 1721475732}
   - {fileID: 1831999333}
   m_Father: {fileID: 1287367914}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -41797,6 +41907,7 @@ GameObject:
   - component: {fileID: 1831201422}
   - component: {fileID: 1831201421}
   - component: {fileID: 1831201420}
+  - component: {fileID: 1831201423}
   m_Layer: 5
   m_Name: Heart1Item
   m_TagString: Untagged
@@ -41821,9 +41932,9 @@ RectTransform:
   - {fileID: 1283005954}
   m_Father: {fileID: 488176040}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 237.39954, y: -77.6505}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 579.397, y: 155.301}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1831201420
@@ -41890,6 +42001,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1831201418}
   m_CullTransparentMesh: 1
+--- !u!114 &1831201423
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1831201418}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89b2ce0d50f78ba44882c3e6494cb8ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemName: Heart
+  amount: 1
+  price: 200
+  icon: {fileID: 21300000, guid: c83a88e514b01474c9881a4b98ef4397, type: 3}
 --- !u!1 &1831999332
 GameObject:
   m_ObjectHideFlags: 0
@@ -41907,7 +42034,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1831999333
 RectTransform:
   m_ObjectHideFlags: 0
@@ -42989,7 +43116,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1875636747
 RectTransform:
   m_ObjectHideFlags: 0
@@ -44778,9 +44905,9 @@ RectTransform:
   - {fileID: 1656618095}
   m_Father: {fileID: 32284777}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 302.34088, y: -169.67798}
   m_SizeDelta: {x: 498, y: 129}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1955850624
@@ -45841,7 +45968,7 @@ RectTransform:
   m_Father: {fileID: 2035917711}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 60, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -46545,6 +46672,7 @@ GameObject:
   - component: {fileID: 2038134664}
   - component: {fileID: 2038134663}
   - component: {fileID: 2038134662}
+  - component: {fileID: 2038134665}
   m_Layer: 5
   m_Name: x2 coinItem
   m_TagString: Untagged
@@ -46569,9 +46697,9 @@ RectTransform:
   - {fileID: 1163374295}
   m_Father: {fileID: 488176040}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 237.39954, y: -587.23346}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 579.397, y: 155.301}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2038134662
@@ -46638,6 +46766,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2038134660}
   m_CullTransparentMesh: 1
+--- !u!114 &2038134665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2038134660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89b2ce0d50f78ba44882c3e6494cb8ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemName: Double Coin
+  amount: 1
+  price: 200
+  icon: {fileID: 21300000, guid: df3604acaa557f6448055c8452abec6b, type: 3}
 --- !u!1 &2039862174
 GameObject:
   m_ObjectHideFlags: 0
@@ -48792,7 +48936,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2139671058}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1721475733}
+        m_TargetAssemblyTypeName: ShopPopupManager, Assembly-CSharp
+        m_MethodName: ConfirmBuy
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2139671058
 MonoBehaviour:
   m_ObjectHideFlags: 0
