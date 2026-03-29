@@ -5,7 +5,8 @@ using UnityEngine;
 public class FullscreenToggle : MonoBehaviour
 {
     public RectTransform panel;
-    public GameObject navigationBar; // 👈 ADD THIS
+    public GameObject navigationBar;
+    public GameObject upperNavigationBarPanel; // 👈 ADD THIS
 
     private bool isFullscreen = false;
 
@@ -34,7 +35,8 @@ public class FullscreenToggle : MonoBehaviour
             panel.offsetMin = Vector2.zero;
             panel.offsetMax = Vector2.zero;
 
-            navigationBar.SetActive(false); // 🔥 HIDE
+            navigationBar.SetActive(false);
+            upperNavigationBarPanel.SetActive(false); // 🔥 HIDE DIN
         }
         else
         {
@@ -46,7 +48,8 @@ public class FullscreenToggle : MonoBehaviour
             panel.offsetMin = originalOffsetMin;
             panel.offsetMax = originalOffsetMax;
 
-            navigationBar.SetActive(true); // 🔥 SHOW
+            navigationBar.SetActive(true);
+            upperNavigationBarPanel.SetActive(true); // 🔥 SHOW ULIT
         }
 
         isFullscreen = !isFullscreen;
