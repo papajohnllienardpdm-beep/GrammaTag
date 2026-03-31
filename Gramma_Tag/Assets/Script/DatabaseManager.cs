@@ -158,4 +158,40 @@ public class DatabaseManager : MonoBehaviour
             return db.Table<User>().FirstOrDefault() != null;
         }
     }
+
+
+    public string GetUserGender()
+    {
+        if (db == null)
+        {
+            Debug.LogError("DB not ready!");
+            return "Girl";
+        }
+
+        lock (dbLock)
+        {
+            try
+            {
+                var user = db.Table<User>().FirstOrDefault();
+
+                if (user == null)
+                {
+                    Debug.LogWarning("No user found in DB!");
+                    return "Girl";
+                }
+
+                return user.Gender;
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError("GetUserGender ERROR: " + e.Message);
+                return "Girl";
+            }
+        }
+    }
+
+    public bool IsDatabaseReady()
+    {
+        return db != null;
+    }
 }

@@ -14,10 +14,12 @@ public class MainMenuUIManager : MonoBehaviour
     public TextMeshProUGUI coinsText;
     public TextMeshProUGUI heartsText;
 
-    void Start()
+    IEnumerator Start()
     {
+        yield return new WaitUntil(() => DatabaseManager.Instance != null);
+
         ShowHome();
-        LoadPlayerData(); // 🔥 ADD THIS
+        LoadPlayerData();
     }
 
     void LoadPlayerData()
