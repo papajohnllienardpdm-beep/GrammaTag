@@ -56,7 +56,7 @@ public class DatabaseManager : MonoBehaviour
         }
 
         db = new SQLiteConnection(persistentPath);
-        db.CreateTable<User>();
+        
 
         Debug.Log("DB Ready: " + persistentPath);
 
