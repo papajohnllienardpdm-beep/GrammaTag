@@ -9,30 +9,36 @@ public class VideoManager : MonoBehaviour
     public GameObject gamePanel;
 
     public VideoPlayer videoPlayer;
-
     public VideoClip[] videos;
 
-    public OrientationManager orientationManager; // 👈 add
+    public OrientationManager orientationManager;
 
     public void PlayVideo(int index)
     {
         if (index < 0 || index >= videos.Length) return;
 
-        // 👉 rotate to landscape
         orientationManager.SetLandscape();
 
         gamePanel.SetActive(false);
         videoPanel.SetActive(true);
 
         videoPlayer.clip = videos[index];
-        videoPlayer.Play();
+
+        // 🔥 PREPARE FIRST (NO LAG START)
+        videoPlayer.prepareCompleted += OnPrepared;
+        videoPlayer.Prepare();
+    }
+
+    void OnPrepared(VideoPlayer vp)
+    {
+        vp.prepareCompleted -= OnPrepared;
+        vp.Play();
     }
 
     public void CloseVideo()
     {
         videoPlayer.Stop();
 
-        // 👉 balik portrait
         orientationManager.SetPortrait();
 
         videoPanel.SetActive(false);
