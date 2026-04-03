@@ -1,18 +1,29 @@
-// QuestionData.cs � NOT a MonoBehaviour. Just a data class.
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
-public enum QuestionType { DragDrop, Matching }
+public enum QuestionType { DragDrop, Matching, MultipleChoice }
 
 [System.Serializable]
 public class QuestionData
 {
     public QuestionType questionType;
+
+    // COMMON
     public string sentenceText;
+    public string explanation;
+
+    // DRAG DROP
     public string[] wordChoices;
     public string correctWord;
+
+    // MATCHING
     public string matchInstruction;
     public List<MatchPair> matchPairs;
-    public string explanation;
+
+    // ✅ MODULE 4 (MCQ)
+    public string[] choices;
+    public string correctAnswer;
+    public Sprite image;
 }
 
 [System.Serializable]
