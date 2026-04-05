@@ -10,6 +10,7 @@ public class VideoControlss : MonoBehaviour
 {
     public VideoPlayer videoPlayer;
     public AudioSource audioSource;
+
     public Button playPauseButton;
     public Image playPauseIcon;
     public Sprite playSprite;
@@ -18,9 +19,11 @@ public class VideoControlss : MonoBehaviour
     public Slider slider;
     public TextMeshProUGUI timeText;
 
+    public FullscreenToggle fullscreenToggle;
+
     private bool isPrepared = false;
     private bool isPlaying = false;
-    private bool isDragging = false; // 🔥 IMPORTANT
+    private bool isDragging = false;
     private float updateTimer = 0f;
 
     void Start()
@@ -42,15 +45,13 @@ public class VideoControlss : MonoBehaviour
         timeText.text = "00:00 / " + FormatTime(videoPlayer.length);
 
         isPlaying = false;
-
-        UpdatePlayPauseIcon(); // para default naka ▶️
+        UpdatePlayPauseIcon();
     }
 
     void Update()
     {
         if (!isPrepared) return;
 
-        // 🔥 UPDATE UI ONLY IF NOT DRAGGING
         if (isPlaying && !isDragging)
         {
             updateTimer += Time.deltaTime;
@@ -62,7 +63,6 @@ public class VideoControlss : MonoBehaviour
                 if (videoPlayer.length > 0)
                 {
                     slider.value = (float)(videoPlayer.time / videoPlayer.length);
-
                     timeText.text = FormatTime(videoPlayer.time) + " / " + FormatTime(videoPlayer.length);
                 }
             }
@@ -72,6 +72,12 @@ public class VideoControlss : MonoBehaviour
     public void TogglePlayPause()
     {
         if (!isPrepared) return;
+
+        // 🔥 CHECK: kung naka portrait → mag fullscreen muna
+        if (Screen.orientation == ScreenOrientation.Portrait)
+        {
+            fullscreenToggle.EnterFullscreen();
+        }
 
         if (!isPlaying)
         {
@@ -84,23 +90,14 @@ public class VideoControlss : MonoBehaviour
             isPlaying = false;
         }
 
-        UpdatePlayPauseIcon(); // 🔥 ADD THIS
+        UpdatePlayPauseIcon();
     }
 
     void UpdatePlayPauseIcon()
     {
-        if (isPlaying)
-        {
-            playPauseIcon.sprite = pauseSprite; // ⏸️
-        }
-        else
-        {
-            playPauseIcon.sprite = playSprite; // ▶️
-        }
+        playPauseIcon.sprite = isPlaying ? pauseSprite : playSprite;
     }
 
-
-    // 👉 habang dinadrag
     public void OnSliderChanged()
     {
         if (!isPrepared) return;
@@ -111,7 +108,6 @@ public class VideoControlss : MonoBehaviour
         }
     }
 
-    // 👉 pag pinindot slider
     public void OnSliderDown()
     {
         if (!isPrepared) return;
@@ -123,7 +119,6 @@ public class VideoControlss : MonoBehaviour
         UpdatePlayPauseIcon();
     }
 
-    // 👉 pag binitawan slider
     public void OnSliderRelease()
     {
         if (!isPrepared) return;
