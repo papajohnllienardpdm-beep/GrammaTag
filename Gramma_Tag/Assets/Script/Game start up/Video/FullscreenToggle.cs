@@ -5,15 +5,26 @@ using UnityEngine;
 public class FullscreenToggle : MonoBehaviour
 {
     public RectTransform panel;
-    public GameObject navigationBar;
-    public GameObject upperNavigationBarPanel; // 👈 ADD THIS
+    public RectTransform videoPlayerUI;
 
-    private bool isFullscreen = false;
+    public GameObject navigationBar;
+    public GameObject upperNavigationBarPanel;
+
+    [Header("Video Size (Landscape)")]
+    public Vector2 videoAnchorMin;
+    public Vector2 videoAnchorMax;
+    public Vector2 videoOffsetMin;
+    public Vector2 videoOffsetMax;
 
     private Vector2 originalAnchorMin;
     private Vector2 originalAnchorMax;
     private Vector2 originalOffsetMin;
     private Vector2 originalOffsetMax;
+
+    private Vector2 videoOriginalAnchorMin;
+    private Vector2 videoOriginalAnchorMax;
+    private Vector2 videoOriginalOffsetMin;
+    private Vector2 videoOriginalOffsetMax;
 
     void Start()
     {
@@ -21,37 +32,46 @@ public class FullscreenToggle : MonoBehaviour
         originalAnchorMax = panel.anchorMax;
         originalOffsetMin = panel.offsetMin;
         originalOffsetMax = panel.offsetMax;
+
+        videoOriginalAnchorMin = videoPlayerUI.anchorMin;
+        videoOriginalAnchorMax = videoPlayerUI.anchorMax;
+        videoOriginalOffsetMin = videoPlayerUI.offsetMin;
+        videoOriginalOffsetMax = videoPlayerUI.offsetMax;
     }
 
-    public void Toggle()
+    public void EnterFullscreen()
     {
-        if (!isFullscreen)
-        {
-            // 👉 FULLSCREEN
-            Screen.orientation = ScreenOrientation.LandscapeLeft;
+        Screen.orientation = ScreenOrientation.LandscapeLeft;
 
-            panel.anchorMin = Vector2.zero;
-            panel.anchorMax = Vector2.one;
-            panel.offsetMin = Vector2.zero;
-            panel.offsetMax = Vector2.zero;
+        panel.anchorMin = Vector2.zero;
+        panel.anchorMax = Vector2.one;
+        panel.offsetMin = Vector2.zero;
+        panel.offsetMax = Vector2.zero;
 
-            navigationBar.SetActive(false);
-            upperNavigationBarPanel.SetActive(false); // 🔥 HIDE DIN
-        }
-        else
-        {
-            // 👉 BACK TO NORMAL
-            Screen.orientation = ScreenOrientation.Portrait;
+        videoPlayerUI.anchorMin = videoAnchorMin;
+        videoPlayerUI.anchorMax = videoAnchorMax;
+        videoPlayerUI.offsetMin = videoOffsetMin;
+        videoPlayerUI.offsetMax = videoOffsetMax;
 
-            panel.anchorMin = originalAnchorMin;
-            panel.anchorMax = originalAnchorMax;
-            panel.offsetMin = originalOffsetMin;
-            panel.offsetMax = originalOffsetMax;
+        navigationBar.SetActive(false);
+        upperNavigationBarPanel.SetActive(false);
+    }
 
-            navigationBar.SetActive(true);
-            upperNavigationBarPanel.SetActive(true); // 🔥 SHOW ULIT
-        }
+    public void ExitFullscreen()
+    {
+        Screen.orientation = ScreenOrientation.Portrait;
 
-        isFullscreen = !isFullscreen;
+        panel.anchorMin = originalAnchorMin;
+        panel.anchorMax = originalAnchorMax;
+        panel.offsetMin = originalOffsetMin;
+        panel.offsetMax = originalOffsetMax;
+
+        videoPlayerUI.anchorMin = videoOriginalAnchorMin;
+        videoPlayerUI.anchorMax = videoOriginalAnchorMax;
+        videoPlayerUI.offsetMin = videoOriginalOffsetMin;
+        videoPlayerUI.offsetMax = videoOriginalOffsetMax;
+
+        navigationBar.SetActive(true);
+        upperNavigationBarPanel.SetActive(true);
     }
 }
