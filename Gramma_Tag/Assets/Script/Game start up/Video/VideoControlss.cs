@@ -19,14 +19,12 @@ public class VideoControlss : MonoBehaviour
     public Slider slider;
     public TextMeshProUGUI timeText;
 
-    public FullscreenToggle fullscreenToggle; // 🔥 CONNECT MO SA INSPECTOR
+    public FullscreenToggle fullscreenToggle;
 
     private bool isPrepared = false;
     private bool isPlaying = false;
     private bool isDragging = false;
     private float updateTimer = 0f;
-
-    private bool hasEnteredFullscreen = false; // 🔥 IMPORTANT
 
     void Start()
     {
@@ -75,22 +73,17 @@ public class VideoControlss : MonoBehaviour
     {
         if (!isPrepared) return;
 
-        // 👉 FIRST CLICK: fullscreen + play
-        if (!isPlaying && !hasEnteredFullscreen)
+        // 🔥 CHECK: kung naka portrait → mag fullscreen muna
+        if (Screen.orientation == ScreenOrientation.Portrait)
         {
             fullscreenToggle.EnterFullscreen();
-
-            videoPlayer.Play();
-            isPlaying = true;
-            hasEnteredFullscreen = true;
         }
-        // 👉 RESUME
-        else if (!isPlaying && hasEnteredFullscreen)
+
+        if (!isPlaying)
         {
             videoPlayer.Play();
             isPlaying = true;
         }
-        // 👉 PAUSE
         else
         {
             videoPlayer.Pause();
