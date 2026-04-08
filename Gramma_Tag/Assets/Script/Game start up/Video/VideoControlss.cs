@@ -10,15 +10,12 @@ public class VideoControlss : MonoBehaviour
 {
     public VideoPlayer videoPlayer;
     public AudioSource audioSource;
-
     public Button playPauseButton;
     public Image playPauseIcon;
     public Sprite playSprite;
     public Sprite pauseSprite;
-
     public Slider slider;
     public TextMeshProUGUI timeText;
-
     public FullscreenToggle fullscreenToggle;
 
     private bool isPrepared = false;
@@ -30,20 +27,16 @@ public class VideoControlss : MonoBehaviour
     {
         videoPlayer.audioOutputMode = VideoAudioOutputMode.AudioSource;
         videoPlayer.SetTargetAudioSource(0, audioSource);
-
         videoPlayer.prepareCompleted += OnVideoPrepared;
         videoPlayer.Prepare();
-
         timeText.text = "00:00 / 00:00";
     }
 
     void OnVideoPrepared(VideoPlayer vp)
     {
         isPrepared = true;
-
         slider.value = 0;
         timeText.text = "00:00 / " + FormatTime(videoPlayer.length);
-
         isPlaying = false;
         UpdatePlayPauseIcon();
     }
@@ -115,7 +108,6 @@ public class VideoControlss : MonoBehaviour
         isDragging = true;
         videoPlayer.Pause();
         isPlaying = false;
-
         UpdatePlayPauseIcon();
     }
 
@@ -124,11 +116,9 @@ public class VideoControlss : MonoBehaviour
         if (!isPrepared) return;
 
         isDragging = false;
-
         videoPlayer.time = slider.value * videoPlayer.length;
         videoPlayer.Play();
         isPlaying = true;
-
         UpdatePlayPauseIcon();
     }
 
@@ -138,4 +128,5 @@ public class VideoControlss : MonoBehaviour
         int sec = Mathf.FloorToInt((float)time % 60);
         return min.ToString("00") + ":" + sec.ToString("00");
     }
+
 }
