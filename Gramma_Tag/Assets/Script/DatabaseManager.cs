@@ -56,7 +56,7 @@ public class DatabaseManager : MonoBehaviour
         }
 
         db = new SQLiteConnection(persistentPath);
-        
+
 
         Debug.Log("DB Ready: " + persistentPath);
 
@@ -194,4 +194,34 @@ public class DatabaseManager : MonoBehaviour
     {
         return db != null;
     }
+
+
+    public DateTime GetLastHeartTime()
+    {
+        lock (dbLock)
+        {
+            var user = db.Table<User>().FirstOrDefault();
+            if (user != null && !string.IsNullOrEmpty(user.lastHeartTime))
+            {
+                return DateTime.Parse(user.lastHeartTime);
+            }
+            return DateTime.Now;
+        }
+    }
+
+    public void UpdateHearts(int hearts, DateTime lastTime)
+    {
+        lock (dbLock)
+        {
+            var user = db.Table<User>().FirstOrDefault();
+
+            if (user != null)
+            {
+                user.Hearts = hearts;
+                user.lastHeartTime = lastTime.ToString();
+                db.Update(user);
+            }
+        }
+    }
+
 }
