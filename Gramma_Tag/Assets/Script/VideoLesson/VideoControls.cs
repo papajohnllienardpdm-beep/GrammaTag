@@ -10,13 +10,14 @@ public class VideoControls : MonoBehaviour
     public VideoPlayer videoPlayer;
     public Slider slider;
 
-    [Header("Time UI")]
     public TextMeshProUGUI timeText;
 
-    [Header("Play Button")]
-    public Image playButtonImage;   // 👈 button icon
-    public Sprite playIcon;         // ▶️
+    public Image playButtonImage;
+    public Sprite playIcon;
     public Sprite pauseIcon;
+
+    private float updateTimer = 0f;
+    private bool isDragging = false;
 
     void Start()
     {
@@ -25,25 +26,26 @@ public class VideoControls : MonoBehaviour
 
     void Update()
     {
-        if (videoPlayer.isPlaying && videoPlayer.length > 0)
+        if (!videoPlayer.isPlaying || videoPlayer.length <= 0 || isDragging) return;
+
+        updateTimer += Time.deltaTime;
+
+        if (updateTimer >= 0.2f) // 🔥 LIMIT UPDATE (ANTI-LAG)
         {
+            updateTimer = 0f;
+
             float currentTime = (float)videoPlayer.time;
             float totalTime = (float)videoPlayer.length;
 
-            // update slider
             slider.value = currentTime / totalTime;
-
-            // update text
             timeText.text = FormatTime(currentTime) + " / " + FormatTime(totalTime);
         }
     }
 
-    // 👉 FORMAT TIME (important)
     string FormatTime(float time)
     {
         int minutes = Mathf.FloorToInt(time / 60);
         int seconds = Mathf.FloorToInt(time % 60);
-
         return string.Format("{0:00}:{1:00}", minutes, seconds);
     }
 
@@ -65,22 +67,26 @@ public class VideoControls : MonoBehaviour
             playButtonImage.sprite = playIcon;
     }
 
-    public void Seek()
+    public void OnSliderDown()
     {
-        if (videoPlayer.length > 0)
-        {
-            videoPlayer.time = slider.value * videoPlayer.length;
-        }
+        isDragging = true;
+        videoPlayer.Pause();
     }
 
-    public void OnSliderDrag()
+    public void Seek()
     {
-        videoPlayer.Pause();
+        if (!isDragging || videoPlayer.length <= 0) return;
+
+        videoPlayer.time = slider.value * videoPlayer.length;
     }
 
     public void OnSliderRelease()
     {
-        Seek();
+        isDragging = false;
+
+        videoPlayer.time = slider.value * videoPlayer.length;
         videoPlayer.Play();
+
+        UpdateIcon();
     }
 }

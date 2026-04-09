@@ -5,31 +5,31 @@ using UnityEngine;
 public class ModuleNavigation : MonoBehaviour
 {
     [Header("Containers")]
-    public GameObject moduleContainer;     // list ng modules (buttons)
-    public GameObject contentPanel;        // EasyContentPanel
+    public GameObject moduleContainer;
+    public GameObject contentPanel;
 
     [Header("Module Contents")]
-    public GameObject[] modules;           // lahat ng content
+    public GameObject[] modules;
 
-    // 👉 OPEN MODULE
-    public void OpenModule(int index)
+    // 👉 OPEN MODULE (AUTO INDEX)
+    public void OpenModuleFromPanel(GameObject panel)
     {
+        int index = panel.transform.GetSiblingIndex() - 1; // 👈 OFFSET
+
         if (index < 0 || index >= modules.Length) return;
 
         moduleContainer.SetActive(false);
         contentPanel.SetActive(true);
 
-        // hide all modules
         foreach (GameObject m in modules)
         {
             m.SetActive(false);
         }
 
-        // show selected
         modules[index].SetActive(true);
     }
 
-    // 👉 BACK TO MODULE LIST
+    // 👉 BACK
     public void BackToModules()
     {
         moduleContainer.SetActive(true);
