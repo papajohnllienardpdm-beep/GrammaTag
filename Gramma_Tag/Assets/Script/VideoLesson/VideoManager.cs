@@ -10,10 +10,12 @@ public class VideoManager : MonoBehaviour
     public GameObject videoPanel;
     public GameObject gamePanel;
 
+    // 🔥 NEW (ADD THIS)
+    public GameObject mainMenu;
+
     public VideoPlayer videoPlayer;
     public VideoClip[] videos;
 
-    // 👉 scene per video
     public string[] nextScenes;
 
     public OrientationManager orientationManager;
@@ -29,15 +31,16 @@ public class VideoManager : MonoBehaviour
         // 👉 landscape mode
         orientationManager.SetLandscape();
 
+        // 🔥 NEW (HIDE MAIN MENU)
+        if (mainMenu != null)
+            mainMenu.SetActive(false);
+
         gamePanel.SetActive(false);
         videoPanel.SetActive(true);
 
         videoPlayer.clip = videos[index];
 
-        // 🔥 PREPARE FIRST (NO LAG START)
         videoPlayer.prepareCompleted += OnPrepared;
-
-        // 🔥 detect video end
         videoPlayer.loopPointReached += OnVideoFinished;
 
         videoPlayer.Prepare();
@@ -53,19 +56,21 @@ public class VideoManager : MonoBehaviour
     {
         vp.loopPointReached -= OnVideoFinished;
 
-        // 👉 stop video
         videoPlayer.Stop();
 
-        // 👉 balik portrait bago mag scene
+        // 👉 balik portrait
         orientationManager.SetPortrait();
 
-        // 👉 load scene after delay
+        // 🔥 NEW (SHOW MAIN MENU AGAIN)
+        if (mainMenu != null)
+            mainMenu.SetActive(true);
+
         StartCoroutine(LoadSceneAfterOrientation());
     }
 
     IEnumerator LoadSceneAfterOrientation()
     {
-        yield return new WaitForSecondsRealtime(0.2f); // 🔥 important delay
+        yield return new WaitForSecondsRealtime(0.2f);
 
         if (currentIndex >= 0 && currentIndex < nextScenes.Length)
         {
@@ -82,8 +87,12 @@ public class VideoManager : MonoBehaviour
     {
         videoPlayer.Stop();
 
-        // 👉 balik portrait
+        // 👉 portrait
         orientationManager.SetPortrait();
+
+        // 🔥 NEW (SHOW MAIN MENU AGAIN)
+        if (mainMenu != null)
+            mainMenu.SetActive(true);
 
         videoPanel.SetActive(false);
         gamePanel.SetActive(true);
