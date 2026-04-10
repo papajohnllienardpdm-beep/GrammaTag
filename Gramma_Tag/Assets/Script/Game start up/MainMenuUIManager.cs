@@ -32,7 +32,7 @@ public class MainMenuUIManager : MonoBehaviour
 
         nameText.text = DatabaseManager.Instance.GetPlayerName();
         coinsText.text = DatabaseManager.Instance.GetCoins().ToString();
-        heartsText.text = DatabaseManager.Instance.GetHearts().ToString();
+        
     }
 
     public void ShowHome()
