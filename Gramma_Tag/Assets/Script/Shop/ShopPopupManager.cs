@@ -35,7 +35,7 @@ public class ShopPopupManager : MonoBehaviour
 
     public void ConfirmBuy()
     {
-        Debug.Log("BOUGHT: " + currentItem.itemName);
+        ShopSystem.Instance.BuyItem(currentItem);
 
         popup.SetActive(false);
     }
