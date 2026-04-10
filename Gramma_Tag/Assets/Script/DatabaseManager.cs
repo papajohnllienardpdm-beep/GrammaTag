@@ -242,5 +242,71 @@ public class DatabaseManager : MonoBehaviour
     }
 
 
+    public bool HasPowerUp(string type)
+    {
+        lock (dbLock)
+        {
+            var result = db.Query<UserPowerUps>(
+                "SELECT * FROM UserPowerUps WHERE PowerUpType = ?", type);
+
+            return result.Count > 0;
+        }
+    }
+
+    public bool IsPowerUpActive(string type)
+    {
+        lock (dbLock)
+        {
+            var result = db.Query<UserPowerUps>(
+                "SELECT * FROM UserPowerUps WHERE PowerUpType = ?", type);
+
+            if (result.Count > 0)
+            {
+                return result[0].isActive == 1;
+            }
+
+            return false;
+        }
+    }
+
+    public void ActivatePowerUp(string type)
+    {
+        lock (dbLock)
+        {
+            var result = db.Query<UserPowerUps>(
+                "SELECT * FROM UserPowerUps WHERE PowerUpType = ?", type);
+
+            if (result.Count == 0)
+            {
+                // FIRST TIME → INSERT
+                db.Execute(
+                    "INSERT INTO UserPowerUps (UserID, PowerUpType, isActive) VALUES (?, ?, ?)",
+                    1, type, 1
+                );
+            }
+            else
+            {
+                // REUSE → UPDATE
+                db.Execute(
+                    "UPDATE UserPowerUps SET isActive = 1 WHERE PowerUpType = ?",
+                    type
+                );
+            }
+        }
+
+        Debug.Log("PowerUp Activated: " + type);
+    }
+
+    public void DeactivatePowerUp(string type)
+    {
+        lock (dbLock)
+        {
+            db.Execute(
+                "UPDATE UserPowerUps SET isActive = 0 WHERE PowerUpType = ?",
+                type
+            );
+        }
+    }
+
 
 }

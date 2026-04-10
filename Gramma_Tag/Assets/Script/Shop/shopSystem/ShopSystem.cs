@@ -34,6 +34,13 @@ public class ShopSystem : MonoBehaviour
         int playerCoins = coinSystem.currentCoins;
         int currentHearts = heartSystem.currentHearts;
 
+        // 🔥 CHECK IF POWERUP ITEM
+        if (item.itemName == "Double Coin")
+        {
+            HandlePowerUp(item);
+            return;
+        }
+
         // ❌ FULL HEARTS
         if (currentHearts >= heartSystem.maxHearts)
         {
@@ -67,4 +74,34 @@ public class ShopSystem : MonoBehaviour
 
         resultPopup.Show(successMessage);
     }
+
+
+    void HandlePowerUp(ShopItem item)
+    {
+        string type = "DoubleCoin";
+
+        // ❌ already active
+        if (DatabaseManager.Instance.IsPowerUpActive(type))
+        {
+            resultPopup.Show("Power-up is already active!");
+            return;
+        }
+
+        int playerCoins = coinSystem.currentCoins;
+
+        // ❌ not enough coins
+        if (playerCoins < item.price)
+        {
+            resultPopup.Show(notEnoughCoinsMessage);
+            return;
+        }
+
+        // ✅ BUY
+        coinSystem.SpendCoins(item.price);
+
+        DatabaseManager.Instance.ActivatePowerUp(type);
+
+        resultPopup.Show("Double Coins Activated!");
+    }
+
 }
