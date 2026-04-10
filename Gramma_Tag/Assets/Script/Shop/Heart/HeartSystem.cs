@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -12,17 +12,20 @@ public class HeartSystem : MonoBehaviour
 
     [Header("Settings")]
     public int maxHearts = 5;
-    public int currentHearts = 5;
     public float cooldownMinutes = 3f;
+
+    [Header("TEST MODE")]
+    public bool useInspectorValue = false;
+    public int inspectorHearts = 5;
+
+    [Header("Runtime")]
+    public int currentHearts = 5;
 
     private DateTime lastHeartTime;
 
     IEnumerator Start()
     {
-        // WAIT hanggang may instance
         yield return new WaitUntil(() => DatabaseManager.Instance != null);
-
-        // WAIT hanggang ready ang DB
         yield return new WaitUntil(() => DatabaseManager.Instance.IsDatabaseReady());
 
         LoadData();
@@ -31,8 +34,19 @@ public class HeartSystem : MonoBehaviour
 
     void LoadData()
     {
-        currentHearts = DatabaseManager.Instance.GetHearts();
-        lastHeartTime = DatabaseManager.Instance.GetLastHeartTime();
+        if (useInspectorValue)
+        {
+            currentHearts = inspectorHearts;
+            lastHeartTime = DateTime.Now;
+
+            // 🔥 save agad sa DB
+            DatabaseManager.Instance.UpdateHearts(currentHearts, lastHeartTime);
+        }
+        else
+        {
+            currentHearts = DatabaseManager.Instance.GetHearts();
+            lastHeartTime = DatabaseManager.Instance.GetLastHeartTime();
+        }
 
         UpdateUI();
     }
@@ -97,5 +111,21 @@ public class HeartSystem : MonoBehaviour
         int sec = Mathf.FloorToInt((float)seconds % 60);
 
         return $"{min:D2}:{sec:D2}";
+    }
+
+    // 🔥 AUTO UPDATE PAG BINAGO SA INSPECTOR
+    void OnValidate()
+    {
+        if (Application.isPlaying && useInspectorValue)
+        {
+            currentHearts = inspectorHearts;
+            lastHeartTime = DateTime.Now;
+
+            if (DatabaseManager.Instance != null && DatabaseManager.Instance.IsDatabaseReady())
+            {
+                DatabaseManager.Instance.UpdateHearts(currentHearts, lastHeartTime);
+                UpdateUI();
+            }
+        }
     }
 }

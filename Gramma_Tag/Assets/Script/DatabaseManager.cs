@@ -224,4 +224,21 @@ public class DatabaseManager : MonoBehaviour
         }
     }
 
+
+    public void UpdateCoins(int coins)
+    {
+        lock (dbLock)
+        {
+            var user = db.Table<User>().FirstOrDefault();
+
+            if (user != null)
+            {
+                user.Coins = coins;
+                db.Update(user);
+            }
+        }
+
+        Debug.Log("Coins updated: " + coins);
+    }
+
 }
