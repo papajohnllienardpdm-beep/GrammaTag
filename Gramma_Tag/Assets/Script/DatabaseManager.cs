@@ -241,4 +241,6 @@ public class DatabaseManager : MonoBehaviour
         Debug.Log("Coins updated: " + coins);
     }
 
+
+
 }
