@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class AudioManager : MonoBehaviour
 {
-
     public static AudioManager Instance;
 
     [Header("Audio Sources")]
@@ -16,9 +15,14 @@ public class AudioManager : MonoBehaviour
     public Slider musicSlider;
     public Slider sfxSlider;
 
+    private float musicVol;
+    private float sfxVol;
+
+    private bool isMusicMuted = false;
+
     void Awake()
     {
-        // Singleton para walang duplicate
+        // Singleton
         if (Instance == null)
         {
             Instance = this;
@@ -29,56 +33,62 @@ public class AudioManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+
+        // Load saved values
+        musicVol = PlayerPrefs.GetFloat("MusicVolume", 1f);
+        sfxVol = PlayerPrefs.GetFloat("SFXVolume", 1f);
+
+        musicSource.volume = musicVol;
+        sfxSource.volume = sfxVol;
     }
 
     void Start()
     {
-        // Load saved values
-        float musicVol = PlayerPrefs.GetFloat("MusicVolume", 1f);
-        float sfxVol = PlayerPrefs.GetFloat("SFXVolume", 1f);
-
-        // Apply volume
-        musicSource.volume = musicVol;
-        sfxSource.volume = sfxVol;
-
-        // Apply sa sliders (IMPORTANT)
+        // Sync sliders WITHOUT triggering event
         if (musicSlider != null)
-        {
-            musicSlider.value = musicVol;
-            musicSlider.onValueChanged.AddListener(SetMusicVolume);
-        }
+            musicSlider.SetValueWithoutNotify(musicVol);
 
         if (sfxSlider != null)
-        {
-            sfxSlider.value = sfxVol;
-            sfxSlider.onValueChanged.AddListener(SetSFXVolume);
-        }
+            sfxSlider.SetValueWithoutNotify(sfxVol);
 
-        // Ensure music is playing
+        // Always start playing music
         if (!musicSource.isPlaying)
         {
             musicSource.Play();
         }
     }
 
-    // 🎵 MUSIC
+    // 🎵 MUSIC CONTROL (FIXED)
     public void SetMusicVolume(float volume)
     {
-        musicSource.volume = volume;
+        musicVol = volume;
 
-        // 🔥 FIX: pag galing 0 → kailangan siguraduhin nagpe-play ulit
-        if (volume > 0 && !musicSource.isPlaying)
+        // 🔥 HANDLE ZERO PROPERLY
+        if (volume <= 0.0001f)
         {
-            musicSource.Play();
+            musicSource.volume = 0f;
+            isMusicMuted = true;
+        }
+        else
+        {
+            musicSource.volume = volume;
+
+            // 🔥 FORCE PLAY PAG GALING SA ZERO
+            if (isMusicMuted || !musicSource.isPlaying)
+            {
+                musicSource.Play();
+                isMusicMuted = false;
+            }
         }
 
         PlayerPrefs.SetFloat("MusicVolume", volume);
         PlayerPrefs.Save();
     }
 
-    // 🔊 SFX
+    // 🔊 SFX CONTROL
     public void SetSFXVolume(float volume)
     {
+        sfxVol = volume;
         sfxSource.volume = volume;
 
         PlayerPrefs.SetFloat("SFXVolume", volume);
