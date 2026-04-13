@@ -38,4 +38,6 @@ public class PlayerPrefsManager : MonoBehaviour
     {
         return PlayerPrefs.GetInt("Module_" + moduleIndex, 0) == 1;
     }
+
+   
 }
