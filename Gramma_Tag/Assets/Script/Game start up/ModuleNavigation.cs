@@ -11,20 +11,16 @@ public class ModuleNavigation : MonoBehaviour
     [Header("Module Contents")]
     public GameObject[] modules;
 
-    // 👉 OPEN MODULE (AUTO INDEX)
-    public void OpenModuleFromPanel(GameObject panel)
+    // 👉 OPEN MODULE
+    public void OpenModuleByIndex(int index)
     {
-        int index = panel.transform.GetSiblingIndex() - 1; // 👈 OFFSET
-
         if (index < 0 || index >= modules.Length) return;
 
         moduleContainer.SetActive(false);
         contentPanel.SetActive(true);
 
         foreach (GameObject m in modules)
-        {
             m.SetActive(false);
-        }
 
         modules[index].SetActive(true);
     }
@@ -36,8 +32,6 @@ public class ModuleNavigation : MonoBehaviour
         contentPanel.SetActive(false);
 
         foreach (GameObject m in modules)
-        {
             m.SetActive(false);
-        }
     }
 }

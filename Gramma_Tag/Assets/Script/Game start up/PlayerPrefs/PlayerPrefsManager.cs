@@ -36,8 +36,12 @@ public class PlayerPrefsManager : MonoBehaviour
     // 🔍 Check if unlocked
     public bool IsModuleUnlocked(int moduleIndex)
     {
+        // ✅ ALWAYS UNLOCK VIDEO PANEL
+        if (moduleIndex == 0)
+            return true;
+
         return PlayerPrefs.GetInt("Module_" + moduleIndex, 0) == 1;
     }
 
-   
+
 }

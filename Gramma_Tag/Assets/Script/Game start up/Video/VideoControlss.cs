@@ -23,20 +23,46 @@ public class VideoControlss : MonoBehaviour
     private bool isDragging = false;
     private float updateTimer = 0f;
 
+    // 🔥 INITIAL SETUP
     void Start()
     {
         videoPlayer.audioOutputMode = VideoAudioOutputMode.AudioSource;
         videoPlayer.SetTargetAudioSource(0, audioSource);
+
         videoPlayer.prepareCompleted += OnVideoPrepared;
         videoPlayer.Prepare();
+
         timeText.text = "00:00 / 00:00";
+    }
+
+    // 🔥 AUTO PLAY PAG BUKAS NG PANEL
+    void OnEnable()
+    {
+        TryAutoPlay();
+    }
+
+    void TryAutoPlay()
+    {
+        // kung ready na agad
+        if (isPrepared)
+        {
+            StartPlayback();
+        }
+        else
+        {
+            // hintayin matapos prepare
+            videoPlayer.prepareCompleted -= OnPreparedAutoPlay;
+            videoPlayer.prepareCompleted += OnPreparedAutoPlay;
+        }
     }
 
     void OnVideoPrepared(VideoPlayer vp)
     {
         isPrepared = true;
         slider.value = 0;
+
         timeText.text = "00:00 / " + FormatTime(videoPlayer.length);
+
         isPlaying = false;
         UpdatePlayPauseIcon();
     }
@@ -62,11 +88,11 @@ public class VideoControlss : MonoBehaviour
         }
     }
 
+    // ▶️ PLAY / PAUSE BUTTON
     public void TogglePlayPause()
     {
         if (!isPrepared) return;
 
-        // 🔥 CHECK: kung naka portrait → mag fullscreen muna
         if (Screen.orientation == ScreenOrientation.Portrait)
         {
             fullscreenToggle.EnterFullscreen();
@@ -91,6 +117,7 @@ public class VideoControlss : MonoBehaviour
         playPauseIcon.sprite = isPlaying ? pauseSprite : playSprite;
     }
 
+    // 🎚 SLIDER
     public void OnSliderChanged()
     {
         if (!isPrepared) return;
@@ -129,4 +156,36 @@ public class VideoControlss : MonoBehaviour
         return min.ToString("00") + ":" + sec.ToString("00");
     }
 
+    // 🎥 AUTO PLAY LOGIC
+    public void PlayVideoAuto()
+    {
+        if (!gameObject.activeInHierarchy) return;
+
+        if (!isPrepared)
+        {
+            videoPlayer.prepareCompleted -= OnPreparedAutoPlay;
+            videoPlayer.prepareCompleted += OnPreparedAutoPlay;
+            return;
+        }
+
+        StartPlayback();
+    }
+
+    void OnPreparedAutoPlay(VideoPlayer vp)
+    {
+        videoPlayer.prepareCompleted -= OnPreparedAutoPlay;
+        StartPlayback();
+    }
+
+    void StartPlayback()
+    {
+        // 👉 FULLSCREEN
+        fullscreenToggle.EnterFullscreen();
+
+        // 👉 PLAY VIDEO
+        videoPlayer.Play();
+        isPlaying = true;
+
+        UpdatePlayPauseIcon();
+    }
 }
