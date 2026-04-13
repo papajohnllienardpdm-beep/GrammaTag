@@ -6,7 +6,10 @@ using UnityEngine.Video;
 public class VideoCompletionUnlocker : MonoBehaviour
 {
     public VideoPlayer videoPlayer;
-    public ModuleLocker module1Locker;
+
+    [Header("Unlock Target")]
+    public int moduleToUnlock; // 🔥 inspector controlled
+    public ModuleLocker targetLocker;
 
     private bool unlocked = false;
 
@@ -19,11 +22,16 @@ public class VideoCompletionUnlocker : MonoBehaviour
     {
         if (unlocked) return;
 
-        Debug.Log("VIDEO FINISHED → Unlock Module 1");
+        Debug.Log("VIDEO FINISHED → Unlock Module " + moduleToUnlock);
 
-        PlayerPrefsManager.Instance.UnlockModule(1);
+        // 🔓 unlock gamit index
+        PlayerPrefsManager.Instance.UnlockModule(moduleToUnlock);
 
-        module1Locker.UpdateLockState();
+        // 🔄 update UI
+        if (targetLocker != null)
+        {
+            targetLocker.UpdateLockState();
+        }
 
         unlocked = true;
     }
