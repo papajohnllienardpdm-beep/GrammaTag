@@ -6,6 +6,14 @@ using UnityEngine.SceneManagement;
 
 public class Module6Manager : MonoBehaviour
 {
+    // ===== TIMER =====
+    [Header("Timer")]
+    public TextMeshProUGUI timerText;
+
+    private float timer = 30f;
+    private bool isTimerRunning = false;
+    // =================
+
     [Header("Buttons")]
     public Button buttonA;
     public Button buttonB;
@@ -48,6 +56,23 @@ public class Module6Manager : MonoBehaviour
         }
 
         nextButton.interactable = false;
+    }
+
+    void Update()
+    {
+        if (isTimerRunning)
+        {
+            timer -= Time.deltaTime;
+
+            if (timer <= 0)
+            {
+                timer = 0;
+                UpdateTimerUI();
+                TimeUp();
+            }
+
+            UpdateTimerUI();
+        }
     }
 
     void CreateQuestions()
@@ -162,10 +187,15 @@ public class Module6Manager : MonoBehaviour
         levelText.text = "Question " + (currentQuestion + 1) + "/" + selectedQuestions.Count;
 
         nextButton.interactable = false;
+
+        ResetTimer();
+        StartTimer();
     }
 
     void CheckAnswer(int index)
     {
+        StopTimer(); // 🔥 important
+
         if (hasAnswered) return;
 
         hasAnswered = true;
@@ -236,5 +266,53 @@ public class Module6Manager : MonoBehaviour
             case 3: return buttonD;
         }
         return null;
+    }
+
+    public void StartTimer()
+    {
+        timer = 30f;
+        isTimerRunning = true;
+    }
+
+    public void StopTimer()
+    {
+        isTimerRunning = false;
+    }
+
+    public void ResetTimer()
+    {
+        timer = 30f;
+        UpdateTimerUI();
+    }
+
+    void UpdateTimerUI()
+    {
+        if (timerText != null)
+        {
+            timerText.text = Mathf.Ceil(timer).ToString();
+
+            if (timer <= 5)
+                timerText.color = Color.red;
+            else
+                timerText.color = Color.white;
+        }
+    }
+
+    void TimeUp()
+    {
+        isTimerRunning = false;
+
+        if (hasAnswered) return;
+
+        hasAnswered = true;
+
+        Module6QuestionData q = selectedQuestions[currentQuestion];
+
+        // highlight correct answer
+        GetButton(q.correctIndex).GetComponent<Image>().color = Color.green;
+
+        DisableAllButtons();
+
+        nextButton.interactable = true;
     }
 }

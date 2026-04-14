@@ -8,6 +8,14 @@ using UnityEngine.SceneManagement;
 
 public class Module4GameManager : MonoBehaviour
 {
+    // ===== TIMER =====
+    [Header("UI - Timer")]
+    public TMP_Text timerText;
+
+    private float timer = 30f;
+    private bool isTimerRunning = false;
+    // =================
+
     [Header("UI - Question")]
     public TMP_Text sentenceText;
     public Image questionImage;
@@ -45,6 +53,23 @@ public class Module4GameManager : MonoBehaviour
         LoadQuestion();
     }
 
+    void Update()
+    {
+        if (isTimerRunning)
+        {
+            timer -= Time.deltaTime;
+
+            if (timer <= 0)
+            {
+                timer = 0;
+                UpdateTimerUI();
+                TimeUp();
+            }
+
+            UpdateTimerUI();
+        }
+    }
+
     // =============================
     // LOAD QUESTION
     // =============================
@@ -79,6 +104,8 @@ public class Module4GameManager : MonoBehaviour
     // =============================
     void SelectAnswer(string selectedAnswer)
     {
+        StopTimer(); // 🔥 important
+
         if (answered) return;
 
         answered = true;
@@ -133,6 +160,9 @@ public class Module4GameManager : MonoBehaviour
         progressText.text = (currentQuestionIndex + 1) + "/" + questions.Count;
         progressBar.maxValue = questions.Count;
         progressBar.value = currentQuestionIndex + 1;
+
+        ResetTimer();
+        StartTimer();
     }
 
     // =============================
@@ -251,4 +281,58 @@ public class Module4GameManager : MonoBehaviour
         });
     }
 
+    public void StartTimer()
+    {
+        timer = 30f;
+        isTimerRunning = true;
+    }
+
+    public void StopTimer()
+    {
+        isTimerRunning = false;
+    }
+
+    public void ResetTimer()
+    {
+        timer = 30f;
+        UpdateTimerUI();
+    }
+
+    void UpdateTimerUI()
+    {
+        if (timerText != null)
+        {
+            timerText.text = Mathf.Ceil(timer).ToString();
+
+            if (timer <= 5)
+                timerText.color = Color.red;
+            else
+                timerText.color = Color.white;
+        }
+    }
+
+    void TimeUp()
+    {
+        isTimerRunning = false;
+
+        if (answered) return;
+
+        answered = true;
+
+        QuestionData q = questions[currentQuestionIndex];
+
+        feedbackPanel.SetActive(true);
+        nextButton.interactable = true;
+
+        // disable buttons
+        foreach (Button btn in answerButtons)
+        {
+            btn.interactable = false;
+        }
+
+        feedbackText.text = "TIME'S UP!";
+        feedbackText.color = Color.red;
+
+        explanationText.text = q.explanation;
+    }
 }

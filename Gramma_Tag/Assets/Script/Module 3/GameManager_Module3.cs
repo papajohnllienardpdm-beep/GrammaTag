@@ -7,6 +7,10 @@ public class GameManager_Module3 : MonoBehaviour
 {
     public static GameManager_Module3 instance;
 
+    public TextMeshProUGUI timerText;
+    public float timer = 30f;
+    private bool isTimerRunning = false;
+
     void Awake()
     {
         Debug.Log("GameManager Awake: " + gameObject.name);
@@ -47,10 +51,30 @@ public class GameManager_Module3 : MonoBehaviour
 
         SpawnNext();
         UpdateScoreUI();
+        StartTimer(); // 🔥 ADD THIS
+    }
+
+    void Update()
+    {
+        if (isTimerRunning)
+        {
+            timer -= Time.deltaTime;
+
+            if (timer <= 0)
+            {
+                timer = 0;
+                UpdateTimerUI();
+                TimeUp();
+            }
+
+            UpdateTimerUI();
+        }
     }
 
     public void Answer(bool correct)
     {
+        StopTimer(); // 🔥 stop timer when answered
+
         if (current >= 10) return;
 
         hasActiveWord = false;
@@ -84,6 +108,9 @@ public class GameManager_Module3 : MonoBehaviour
 
         spawner.Spawn(current);
         hasActiveWord = true;
+
+        ResetTimer();   // 🔥 reset timer every question
+        StartTimer();   // 🔥 start again
     }
 
     void UpdateScoreUI()
@@ -94,5 +121,45 @@ public class GameManager_Module3 : MonoBehaviour
         {
             progressBar.fillAmount = (float)current / 10f;
         }
+    }
+
+    public void StartTimer()
+    {
+        timer = 30f;
+        isTimerRunning = true;
+    }
+
+    public void StopTimer()
+    {
+        isTimerRunning = false;
+    }
+
+    public void ResetTimer()
+    {
+        timer = 30f;
+        UpdateTimerUI();
+    }
+
+    void UpdateTimerUI()
+    {
+        if (timerText != null)
+        {
+            timerText.text = Mathf.Ceil(timer).ToString();
+
+            if (timer <= 5)
+                timerText.color = Color.red;
+            else
+                timerText.color = Color.white;
+        }
+    }
+
+    void TimeUp()
+    {
+        isTimerRunning = false;
+
+        Debug.Log("Time's up!");
+
+        // treat as WRONG answer
+        Answer(false);
     }
 }
