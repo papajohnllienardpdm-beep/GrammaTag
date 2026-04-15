@@ -4280,8 +4280,8 @@ MonoBehaviour:
   heartsText: {fileID: 169992812}
   timerText: {fileID: 297158766}
   maxHearts: 5
-  cooldownMinutes: 3
-  useInspectorValue: 1
+  cooldownMinutes: 60
+  useInspectorValue: 0
   inspectorHearts: 5
   currentHearts: 5
 --- !u!114 &133051384
@@ -4297,7 +4297,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coinsText: {fileID: 628877752}
-  useInspectorValue: 1
+  useInspectorValue: 0
   inspectorCoins: 0
   currentCoins: 0
 --- !u!1 &133486230

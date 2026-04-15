@@ -8,6 +8,7 @@ public class ResultManager : MonoBehaviour
 {
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI feedbackText;
+    public TextMeshProUGUI coinsText;
 
     public Image starImage; // 🔥 ImageStar
 
@@ -18,6 +19,9 @@ public class ResultManager : MonoBehaviour
     {
         int score = PlayerPrefs.GetInt("FinalScore", 0);
         int total = PlayerPrefs.GetInt("TotalQ", 10);
+        int coins = PlayerPrefs.GetInt("CoinsEarned", 0);
+        coinsText.text = "+" + coins + " Coins";
+
 
         scoreText.text = "Score: " + score + "/" + total;
 

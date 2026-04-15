@@ -26,6 +26,9 @@ public class BlendGameManager : MonoBehaviour
         while (DatabaseManager.Instance == null || !DatabaseManager.Instance.IsDatabaseReady())
             yield return null;
 
+        // ❤️ BAWAS HEART
+        DatabaseManager.Instance.DeductHeart();
+
         wordOriginalPos = draggableWord.GetComponent<RectTransform>().anchoredPosition;
 
         LoadQuestions();
@@ -159,14 +162,18 @@ public class BlendGameManager : MonoBehaviour
 
         int moduleID = PlayerPrefs.GetInt("SelectedModuleID");
 
-        // 🔥 SAVE WITH CHECK (highest only)
+        // 🔥 SAVE PROGRESS
         DatabaseManager.Instance.SaveProgressBetter(1, moduleID, score, passed, stars);
 
-        // 👉 para sa Result Scene
+        // 🪙 GIVE COINS
+        int coinsEarned = DatabaseManager.Instance.GiveCoins(moduleID, score, passed);
+
+        // 👉 RESULT SCENE
         PlayerPrefs.SetInt("FinalScore", score);
         PlayerPrefs.SetInt("TotalQ", total);
         PlayerPrefs.SetInt("Stars", stars);
         PlayerPrefs.SetInt("Passed", passed);
+        PlayerPrefs.SetInt("CoinsEarned", coinsEarned);
 
         PlayerPrefs.SetString("LastScene", SceneManager.GetActiveScene().name);
 

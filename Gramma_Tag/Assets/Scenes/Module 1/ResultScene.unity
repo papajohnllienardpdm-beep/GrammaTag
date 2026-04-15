@@ -1064,6 +1064,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scoreText: {fileID: 828748462}
   feedbackText: {fileID: 604755950}
+  coinsText: {fileID: 1048675190}
   starImage: {fileID: 627659330}
   starSprites:
   - {fileID: 21300000, guid: 5ed53b2c40918a8439cfe2f8db24e5ea, type: 3}
