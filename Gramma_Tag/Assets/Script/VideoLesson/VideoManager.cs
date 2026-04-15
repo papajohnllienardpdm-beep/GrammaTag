@@ -9,14 +9,13 @@ public class VideoManager : MonoBehaviour
 {
     public GameObject videoPanel;
     public GameObject gamePanel;
-
-    // 🔥 NEW (ADD THIS)
     public GameObject mainMenu;
 
     public VideoPlayer videoPlayer;
     public VideoClip[] videos;
 
     public string[] nextScenes;
+    public int[] moduleIDs; // 🔥 IMPORTANT
 
     public OrientationManager orientationManager;
 
@@ -28,10 +27,15 @@ public class VideoManager : MonoBehaviour
 
         currentIndex = index;
 
-        // 👉 landscape mode
+        // 🔥 SAVE MODULE ID
+        if (index < moduleIDs.Length)
+        {
+            PlayerPrefs.SetInt("SelectedModuleID", moduleIDs[index]);
+            Debug.Log("Saved ModuleID: " + moduleIDs[index]);
+        }
+
         orientationManager.SetLandscape();
 
-        // 🔥 NEW (HIDE MAIN MENU)
         if (mainMenu != null)
             mainMenu.SetActive(false);
 
@@ -58,10 +62,8 @@ public class VideoManager : MonoBehaviour
 
         videoPlayer.Stop();
 
-        // 👉 balik portrait
         orientationManager.SetPortrait();
 
-        // 🔥 NEW (SHOW MAIN MENU AGAIN)
         if (mainMenu != null)
             mainMenu.SetActive(true);
 
@@ -86,11 +88,8 @@ public class VideoManager : MonoBehaviour
     public void CloseVideo()
     {
         videoPlayer.Stop();
-
-        // 👉 portrait
         orientationManager.SetPortrait();
 
-        // 🔥 NEW (SHOW MAIN MENU AGAIN)
         if (mainMenu != null)
             mainMenu.SetActive(true);
 

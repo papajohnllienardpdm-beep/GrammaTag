@@ -1,9 +1,11 @@
-﻿using System;
-using System.IO;
-using UnityEngine;
-using SQLite;
-using UnityEngine.Networking;
+﻿using SQLite;
+using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.Networking;
 
 public class DatabaseManager : MonoBehaviour
 {
@@ -309,4 +311,51 @@ public class DatabaseManager : MonoBehaviour
     }
 
 
+
+
+    public List<DBQuestion> GetQuestionsByModule(int moduleID)
+    {
+        lock (dbLock)
+        {
+            return db.Query<DBQuestion>(
+                "SELECT * FROM AssessmentItems WHERE ModuleID = ?", moduleID
+            );
+        }
+    }
+
+
+
+    public void SaveProgressBetter(int userID, int moduleID, int score, int isPassed, int stars)
+    {
+        lock (dbLock)
+        {
+            var existing = db.Query<Progress>(
+                "SELECT * FROM Progress WHERE UserID = ? AND ModuleID = ?",
+                userID, moduleID
+            );
+
+            if (existing.Count > 0)
+            {
+                int oldScore = existing[0].Score;
+
+                if (score > oldScore)
+                {
+                    db.Execute(
+                        "UPDATE Progress SET Score=?, isPassed=?, Stars=? WHERE UserID=? AND ModuleID=?",
+                        score, isPassed, stars, userID, moduleID
+                    );
+                }
+            }
+            else
+            {
+                db.Execute(
+                    "INSERT INTO Progress (UserID, ModuleID, Score, isPassed, Stars) VALUES (?, ?, ?, ?, ?)",
+                    userID, moduleID, score, isPassed, stars
+                );
+            }
+        }
+    }
+
+
 }
+

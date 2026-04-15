@@ -11,22 +11,30 @@ public class ResultManager : MonoBehaviour
     {
         int score = PlayerPrefs.GetInt("FinalScore", 0);
         int total = PlayerPrefs.GetInt("TotalQ", 10);
+        int stars = PlayerPrefs.GetInt("Stars", 0);
 
         scoreText.text = "Score: " + score + "/" + total;
 
-        float percent = (float)score / total;
-
-        if (percent >= 0.8f)
-            feedbackText.text = "Excellent! (3 Stars)";
-        else if (percent >= 0.5f)
-            feedbackText.text = "Good Job! (2 Stars)";
-        else
-            feedbackText.text = "Keep Trying! (1 Star)";
+        switch (stars)
+        {
+            case 3:
+                feedbackText.text = "Excellent!";
+                break;
+            case 2:
+                feedbackText.text = "Good Job!";
+                break;
+            case 1:
+                feedbackText.text = "Nice!";
+                break;
+            default:
+                feedbackText.text = "Try Again!";
+                break;
+        }
     }
 
     public void PlayAgain()
     {
-        string scene = PlayerPrefs.GetString("LastScene", "Module1_GameScene");
+        string scene = PlayerPrefs.GetString("LastScene");
         SceneManager.LoadScene(scene);
     }
 
