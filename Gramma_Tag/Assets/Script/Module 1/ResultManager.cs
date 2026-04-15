@@ -1,35 +1,48 @@
 ﻿using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
 
 public class ResultManager : MonoBehaviour
 {
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI feedbackText;
 
+    public Image starImage; // 🔥 ImageStar
+
+    public Sprite[] starSprites; // 🔥 array ng images (0–3 stars)
+    public string[] feedbackMessages; // 🔥 array ng messages
+
     void Start()
     {
         int score = PlayerPrefs.GetInt("FinalScore", 0);
         int total = PlayerPrefs.GetInt("TotalQ", 10);
-        int stars = PlayerPrefs.GetInt("Stars", 0);
 
         scoreText.text = "Score: " + score + "/" + total;
 
-        switch (stars)
+        // 🔥 COMPUTE STARS
+        int stars = GetStars(score);
+
+        // 🔥 SET IMAGE
+        if (starSprites != null && starSprites.Length > stars)
         {
-            case 3:
-                feedbackText.text = "Excellent!";
-                break;
-            case 2:
-                feedbackText.text = "Good Job!";
-                break;
-            case 1:
-                feedbackText.text = "Nice!";
-                break;
-            default:
-                feedbackText.text = "Try Again!";
-                break;
+            starImage.sprite = starSprites[stars];
         }
+
+        // 🔥 SET FEEDBACK TEXT
+        if (feedbackMessages != null && feedbackMessages.Length > stars)
+        {
+            feedbackText.text = feedbackMessages[stars];
+        }
+    }
+
+    int GetStars(int score)
+    {
+        if (score >= 9) return 3;
+        if (score >= 7) return 2;
+        if (score >= 6) return 1;
+        return 0;
     }
 
     public void PlayAgain()
