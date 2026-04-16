@@ -1,9 +1,11 @@
-﻿using System;
-using System.IO;
-using UnityEngine;
-using SQLite;
-using UnityEngine.Networking;
+﻿using SQLite;
+using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.Networking;
 
 public class DatabaseManager : MonoBehaviour
 {
@@ -309,4 +311,126 @@ public class DatabaseManager : MonoBehaviour
     }
 
 
+
+
+    public List<DBQuestion> GetQuestionsByModule(int moduleID)
+    {
+        lock (dbLock)
+        {
+            return db.Query<DBQuestion>(
+                "SELECT * FROM AssessmentItems WHERE ModuleID = ?", moduleID
+            );
+        }
+    }
+
+
+
+    public void SaveProgressBetter(int userID, int moduleID, int score, int isPassed, int stars)
+    {
+        lock (dbLock)
+        {
+            var existing = db.Query<Progress>(
+                "SELECT * FROM Progress WHERE UserID = ? AND ModuleID = ?",
+                userID, moduleID
+            );
+
+            if (existing.Count > 0)
+            {
+                int oldScore = existing[0].Score;
+
+                if (score > oldScore)
+                {
+                    db.Execute(
+                        "UPDATE Progress SET Score=?, isPassed=?, Stars=? WHERE UserID=? AND ModuleID=?",
+                        score, isPassed, stars, userID, moduleID
+                    );
+                }
+            }
+            else
+            {
+                db.Execute(
+                    "INSERT INTO Progress (UserID, ModuleID, Score, isPassed, Stars) VALUES (?, ?, ?, ?, ?)",
+                    userID, moduleID, score, isPassed, stars
+                );
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------------------------------------
+
+    public int GetUserID()
+    {
+        lock (dbLock)
+        {
+            var user = db.Table<User>().FirstOrDefault();
+            return user != null ? user.UserID : 1;
+        }
+    }
+
+    // ❤️ Bawas heart pag pasok sa game
+    public void DeductHeart()
+    {
+        lock (dbLock)
+        {
+            var user = db.Table<User>().FirstOrDefault();
+
+            if (user != null && user.Hearts > 0)
+            {
+                user.Hearts -= 1;
+                user.lastHeartTime = DateTime.Now.ToString();
+                db.Update(user);
+
+                Debug.Log("Heart deducted! Remaining: " + user.Hearts);
+            }
+            else
+            {
+                Debug.Log("No hearts left!");
+            }
+        }
+    }
+
+    // 🪙 Reward system
+    public int GiveCoins(int moduleID, int score, int passed)
+    {
+        lock (dbLock)
+        {
+            var user = db.Table<User>().FirstOrDefault();
+
+            if (user == null) return 0;
+
+            var existing = db.Query<Progress>(
+                "SELECT * FROM Progress WHERE UserID = ? AND ModuleID = ?",
+                user.UserID, moduleID
+            );
+
+            int reward = 0;
+
+            if (passed == 1)
+            {
+                if (existing.Count == 0)
+                {
+                    // FIRST TIME PASS
+                    reward = 200;
+                }
+                else
+                {
+                    // REPEAT PASS
+                    reward = 50;
+                }
+            }
+            else
+            {
+                // FAIL
+                reward = 20;
+            }
+
+            user.Coins += reward;
+            db.Update(user);
+
+            Debug.Log("Coins Earned: " + reward);
+            return reward;
+        }
+    }
+
 }
+
