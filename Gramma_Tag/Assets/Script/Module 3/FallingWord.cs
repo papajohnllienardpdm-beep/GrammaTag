@@ -24,7 +24,8 @@ public class FallingWord : MonoBehaviour
 
     // 🔥 DITO MO ILALAGAY
 
-
+    public RectTransform catchPointCH;
+    public RectTransform catchPointSH;
 
 
     void Start()
@@ -73,12 +74,12 @@ public class FallingWord : MonoBehaviour
         // 🔥 prevent early catch
         if (rt.anchoredPosition.y > 100f) return;
 
-        if (!isProcessing && BasketDrag.activeBasket == "CH" && CheckCollision(basketCH))
+        if (!isProcessing && BasketDrag.activeBasket == "CH" && CheckCollision(catchPointCH))
         {
             CheckAnswer("CH");
             return;
         }
-        else if (!isProcessing && BasketDrag.activeBasket == "SH" && CheckCollision(basketSH))
+        else if (!isProcessing && BasketDrag.activeBasket == "SH" && CheckCollision(catchPointSH))
         {
             CheckAnswer("SH");
             return;
@@ -97,29 +98,40 @@ public class FallingWord : MonoBehaviour
 
         Debug.Log("HIT DETECTED: " + basketTag + " | Correct: " + correctAnswer);
 
+        RectTransform targetPoint = (basketTag == "CH") ? catchPointCH : catchPointSH;
+
+        // 👇 SNAP AGAD (NO LERP / NO ANGAT)
+        rt.position = targetPoint.position + new Vector3(0, -20f, 0);
+
         StartCoroutine(DestroyAndAnswer(basketTag == correctAnswer));
+
+        GetComponent<CanvasGroup>().alpha = 0f;
     }
 
 
 
-    bool CheckCollision(RectTransform basket)
+    bool CheckCollision(RectTransform catchPoint)
     {
         if (BasketDrag.activeBasket == "") return false;
 
-        // 👉 kunin screen position ng word (center)
-        Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(null, rt.position);
+        Vector2 wordPos = RectTransformUtility.WorldToScreenPoint(null, rt.position);
+        Vector2 catchPos = RectTransformUtility.WorldToScreenPoint(null, catchPoint.position);
 
-        // 👉 check kung nasa loob ng basket
-        return RectTransformUtility.RectangleContainsScreenPoint(
-            basket,
-            screenPoint,
-            null
-        );
+        float yDiff = Mathf.Abs(wordPos.y - catchPos.y);
+        float xDiff = Mathf.Abs(wordPos.x - catchPos.x);
+
+        // 🔥 dapat malapit sa butas vertically
+        if (yDiff > 1f) return false;
+
+        // 🔥 dapat nasa loob ng lapad ng basket
+        if (xDiff > 100f) return false;
+
+        return true;
     }
 
     IEnumerator DestroyAndAnswer(bool isCorrect)
     {
-        yield return new WaitForSeconds(0.05f);
+        yield return null;
 
         if (gameManager != null)
         {
@@ -128,6 +140,8 @@ public class FallingWord : MonoBehaviour
 
         Destroy(gameObject);
     }
+
+    
 
     void Awake()
     {

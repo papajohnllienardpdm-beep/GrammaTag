@@ -27,5 +27,8 @@ public class WordSpawner : MonoBehaviour
         fw.basketSH = GameObject.Find("Basket_SH").GetComponent<RectTransform>();
 
         fw.gameArea = gameArea;
+
+        fw.catchPointCH = GameObject.Find("Basket_CH/CatchPoint").GetComponent<RectTransform>();
+        fw.catchPointSH = GameObject.Find("Basket_SH/CatchPoint").GetComponent<RectTransform>();
     }
 }

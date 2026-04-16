@@ -11,6 +11,8 @@ public class GameManager_Module3 : MonoBehaviour
     public float timer = 30f;
     private bool isTimerRunning = false;
 
+
+
     void Awake()
     {
         Debug.Log("GameManager Awake: " + gameObject.name);
@@ -30,6 +32,7 @@ public class GameManager_Module3 : MonoBehaviour
     public WordSpawner spawner;
 
     public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI progressText;
     public Image progressBar;
 
     int current = 0;
@@ -84,9 +87,8 @@ public class GameManager_Module3 : MonoBehaviour
             score++;
         }
 
-        UpdateScoreUI();
-
-        current++;
+        current++;          // 🔥 una muna increment
+        UpdateScoreUI();    // 🔥 saka update UI
 
         SpawnNext();
     }
@@ -115,7 +117,13 @@ public class GameManager_Module3 : MonoBehaviour
 
     void UpdateScoreUI()
     {
-        scoreText.text = "Score: " + score.ToString();
+        // optional: kung ayaw mo na ng score
+        // scoreText.text = "Score: " + score.ToString();
+
+        if (progressText != null)
+        {
+            progressText.text = "Progress " + current + "/10";
+        }
 
         if (progressBar != null)
         {
