@@ -7,8 +7,7 @@ public class VideoCompletionUnlocker : MonoBehaviour
 {
     public VideoPlayer videoPlayer;
 
-    [Header("Unlock Target")]
-    public int moduleToUnlock; // 🔥 inspector controlled
+    public int moduleToUnlock = 1;
     public ModuleLocker targetLocker;
 
     private bool unlocked = false;
@@ -24,15 +23,20 @@ public class VideoCompletionUnlocker : MonoBehaviour
 
         Debug.Log("VIDEO FINISHED → Unlock Module " + moduleToUnlock);
 
-        // 🔓 unlock gamit index
         PlayerPrefsManager.Instance.UnlockModule(moduleToUnlock);
 
-        // 🔄 update UI
+        StartCoroutine(RefreshUI());
+
+        unlocked = true;
+    }
+
+    IEnumerator RefreshUI()
+    {
+        yield return new WaitForSeconds(0.1f);
+
         if (targetLocker != null)
         {
             targetLocker.UpdateLockState();
         }
-
-        unlocked = true;
     }
 }
