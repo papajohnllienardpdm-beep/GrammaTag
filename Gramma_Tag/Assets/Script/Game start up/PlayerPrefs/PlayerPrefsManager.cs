@@ -24,24 +24,20 @@ public class PlayerPrefsManager : MonoBehaviour
     {
         PlayerPrefs.SetInt("Module_" + moduleIndex, 1);
         PlayerPrefs.Save();
+
+        Debug.Log("Unlocked Module: " + moduleIndex);
     }
 
-    // 🔒 Lock module
-    public void LockModule(int moduleIndex)
-    {
-        PlayerPrefs.SetInt("Module_" + moduleIndex, 0);
-        PlayerPrefs.Save();
-    }
-
-    // 🔍 Check if unlocked
+    // 🔍 Check
     public bool IsModuleUnlocked(int moduleIndex)
     {
-        // ✅ ALWAYS UNLOCK VIDEO PANEL
-        if (moduleIndex == 0)
-            return true;
-
         return PlayerPrefs.GetInt("Module_" + moduleIndex, 0) == 1;
     }
 
+    // ❗ optional reset (for testing)
+    public void ResetAllModules()
+    {
+        PlayerPrefs.DeleteAll();
+    }
 
 }

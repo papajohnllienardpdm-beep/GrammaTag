@@ -354,6 +354,16 @@ public class DatabaseManager : MonoBehaviour
                 );
             }
         }
+
+        // 🔥 AUTO UNLOCK NEXT MODULE
+        if (isPassed == 1)
+        {
+            int nextModule = moduleID + 1;
+
+            PlayerPrefsManager.Instance.UnlockModule(nextModule);
+
+            Debug.Log("AUTO UNLOCK MODULE: " + nextModule);
+        }
     }
 
     //--------------------------------------------------------------------------------------------------
@@ -429,6 +439,20 @@ public class DatabaseManager : MonoBehaviour
 
             Debug.Log("Coins Earned: " + reward);
             return reward;
+        }
+    }
+
+
+    public bool IsSubtopicPassed(int moduleID)
+    {
+        lock (dbLock)
+        {
+            var result = db.Query<Progress>(
+                "SELECT * FROM Progress WHERE ModuleID = ? AND isPassed = 1",
+                moduleID
+            );
+
+            return result.Count > 0;
         }
     }
 
