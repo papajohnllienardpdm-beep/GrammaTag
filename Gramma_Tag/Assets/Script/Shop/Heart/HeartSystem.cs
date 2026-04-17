@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class HeartSystem : MonoBehaviour
 {
+    public static HeartSystem Instance;
+
     [Header("UI")]
     public TextMeshProUGUI heartsText;
     public TextMeshProUGUI timerText;
@@ -14,14 +16,26 @@ public class HeartSystem : MonoBehaviour
     public int maxHearts = 5;
     public float cooldownMinutes = 3f;
 
-    [Header("TEST MODE")]
-    public bool useInspectorValue = false;
-    public int inspectorHearts = 5;
-
     [Header("Runtime")]
     public int currentHearts = 5;
 
     private DateTime lastHeartTime;
+
+    // 🔥 EVENT (ITO ANG FIX)
+    public Action OnHeartUpdated;
+
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     IEnumerator Start()
     {
@@ -34,19 +48,8 @@ public class HeartSystem : MonoBehaviour
 
     void LoadData()
     {
-        if (useInspectorValue)
-        {
-            currentHearts = inspectorHearts;
-            lastHeartTime = DateTime.Now;
-
-            // 🔥 save agad sa DB
-            DatabaseManager.Instance.UpdateHearts(currentHearts, lastHeartTime);
-        }
-        else
-        {
-            currentHearts = DatabaseManager.Instance.GetHearts();
-            lastHeartTime = DatabaseManager.Instance.GetLastHeartTime();
-        }
+        currentHearts = DatabaseManager.Instance.GetHearts();
+        lastHeartTime = DatabaseManager.Instance.GetLastHeartTime();
 
         UpdateUI();
     }
@@ -66,17 +69,26 @@ public class HeartSystem : MonoBehaviour
                     lastHeartTime = DateTime.Now;
 
                     DatabaseManager.Instance.UpdateHearts(currentHearts, lastHeartTime);
+
+                    Debug.Log("❤️ Heart regenerated!");
+
+                    // 🔥 TRIGGER EVENT
+                    OnHeartUpdated?.Invoke();
                 }
-                else
+
+                double remaining = secondsNeeded - timePassed.TotalSeconds;
+                if (remaining < 0) remaining = 0;
+
+                if (timerText != null)
                 {
-                    double remaining = secondsNeeded - timePassed.TotalSeconds;
-                    timerText.text = FormatTime(remaining);
+                    timerText.text = GetFormattedTime();
                     timerText.gameObject.SetActive(true);
                 }
             }
             else
             {
-                timerText.gameObject.SetActive(false);
+                if (timerText != null)
+                    timerText.gameObject.SetActive(false);
             }
 
             UpdateUI();
@@ -98,11 +110,39 @@ public class HeartSystem : MonoBehaviour
         DatabaseManager.Instance.UpdateHearts(currentHearts, lastHeartTime);
 
         UpdateUI();
+
+        // 🔥 TRIGGER EVENT
+        OnHeartUpdated?.Invoke();
     }
 
     void UpdateUI()
     {
-        heartsText.text = currentHearts.ToString();
+        if (heartsText != null)
+            heartsText.text = currentHearts.ToString();
+    }
+
+    public double GetRemainingTime()
+    {
+        if (currentHearts >= maxHearts) return 0;
+
+        TimeSpan timePassed = DateTime.Now - lastHeartTime;
+        double secondsNeeded = cooldownMinutes * 60;
+
+        double remaining = secondsNeeded - timePassed.TotalSeconds;
+
+        if (remaining < 0) remaining = 0;
+
+        return remaining;
+    }
+
+    public string GetFormattedTime()
+    {
+        double remaining = GetRemainingTime();
+
+        int min = Mathf.FloorToInt((float)remaining / 60);
+        int sec = Mathf.FloorToInt((float)remaining % 60);
+
+        return $"{min:D2}:{sec:D2}";
     }
 
     string FormatTime(double seconds)
@@ -113,19 +153,4 @@ public class HeartSystem : MonoBehaviour
         return $"{min:D2}:{sec:D2}";
     }
 
-    // 🔥 AUTO UPDATE PAG BINAGO SA INSPECTOR
-    void OnValidate()
-    {
-        if (Application.isPlaying && useInspectorValue)
-        {
-            currentHearts = inspectorHearts;
-            lastHeartTime = DateTime.Now;
-
-            if (DatabaseManager.Instance != null && DatabaseManager.Instance.IsDatabaseReady())
-            {
-                DatabaseManager.Instance.UpdateHearts(currentHearts, lastHeartTime);
-                UpdateUI();
-            }
-        }
-    }
 }
