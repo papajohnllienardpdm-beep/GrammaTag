@@ -456,5 +456,16 @@ public class DatabaseManager : MonoBehaviour
         }
     }
 
+
+    public Modules GetModuleData(int moduleID)
+    {
+        lock (dbLock)
+        {
+            return db.Table<Modules>()
+                     .Where(m => m.ModuleID == moduleID)
+                     .FirstOrDefault();
+        }
+    }
+
 }
 

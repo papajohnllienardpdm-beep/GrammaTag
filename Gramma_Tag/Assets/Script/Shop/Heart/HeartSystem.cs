@@ -51,7 +51,37 @@ public class HeartSystem : MonoBehaviour
         currentHearts = DatabaseManager.Instance.GetHearts();
         lastHeartTime = DatabaseManager.Instance.GetLastHeartTime();
 
+        RecoverOfflineHearts(); // 🔥 ADD THIS
+
         UpdateUI();
+    }
+
+    void RecoverOfflineHearts()
+    {
+        if (currentHearts >= maxHearts) return;
+
+        TimeSpan timePassed = DateTime.Now - lastHeartTime;
+        double secondsNeeded = cooldownMinutes * 60;
+
+        int heartsToAdd = (int)(timePassed.TotalSeconds / secondsNeeded);
+
+        if (heartsToAdd > 0)
+        {
+            currentHearts += heartsToAdd;
+
+            if (currentHearts > maxHearts)
+                currentHearts = maxHearts;
+
+            // 🔥 UPDATE lastHeartTime BASED SA SOBRA
+            double usedSeconds = heartsToAdd * secondsNeeded;
+            lastHeartTime = lastHeartTime.AddSeconds(usedSeconds);
+
+            DatabaseManager.Instance.UpdateHearts(currentHearts, lastHeartTime);
+
+            Debug.Log("Offline hearts added: " + heartsToAdd);
+
+            OnHeartUpdated?.Invoke(); // 🔥 IMPORTANT
+        }
     }
 
     IEnumerator HeartRegeneration()
@@ -63,21 +93,26 @@ public class HeartSystem : MonoBehaviour
                 TimeSpan timePassed = DateTime.Now - lastHeartTime;
                 double secondsNeeded = cooldownMinutes * 60;
 
-                if (timePassed.TotalSeconds >= secondsNeeded)
+                int heartsToAdd = (int)(timePassed.TotalSeconds / secondsNeeded);
+
+                if (heartsToAdd > 0)
                 {
-                    currentHearts++;
-                    lastHeartTime = DateTime.Now;
+                    currentHearts += heartsToAdd;
+
+                    if (currentHearts > maxHearts)
+                        currentHearts = maxHearts;
+
+                    double usedSeconds = heartsToAdd * secondsNeeded;
+                    lastHeartTime = lastHeartTime.AddSeconds(usedSeconds);
 
                     DatabaseManager.Instance.UpdateHearts(currentHearts, lastHeartTime);
 
-                    Debug.Log("❤️ Heart regenerated!");
+                    Debug.Log("❤️ Heart regenerated x" + heartsToAdd);
 
-                    // 🔥 TRIGGER EVENT
                     OnHeartUpdated?.Invoke();
                 }
 
-                double remaining = secondsNeeded - timePassed.TotalSeconds;
-                if (remaining < 0) remaining = 0;
+                double remaining = GetRemainingTime();
 
                 if (timerText != null)
                 {
@@ -151,6 +186,25 @@ public class HeartSystem : MonoBehaviour
         int sec = Mathf.FloorToInt((float)seconds % 60);
 
         return $"{min:D2}:{sec:D2}";
+    }
+
+    void OnApplicationPause(bool pause)
+    {
+        if (pause)
+        {
+            if (DatabaseManager.Instance != null && DatabaseManager.Instance.IsDatabaseReady())
+            {
+                DatabaseManager.Instance.UpdateHearts(currentHearts, lastHeartTime);
+            }
+        }
+    }
+
+    void OnApplicationQuit()
+    {
+        if (DatabaseManager.Instance != null && DatabaseManager.Instance.IsDatabaseReady())
+        {
+            DatabaseManager.Instance.UpdateHearts(currentHearts, lastHeartTime);
+        }
     }
 
 }
