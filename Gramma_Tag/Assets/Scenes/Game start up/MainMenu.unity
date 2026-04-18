@@ -10900,6 +10900,7 @@ MonoBehaviour:
   moduleIndex: 6
   lockPanel: {fileID: 1113868940}
   moduleButton: {fileID: 1290200030}
+  achievementLockPanel: {fileID: 1138973217}
   useVideoUnlock: 0
   requiredSubtopicID: 0
 --- !u!1 &196602614
@@ -24593,7 +24594,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -23.41388, y: 16.379883}
+  m_AnchoredPosition: {x: -23.414001, y: 16.379883}
   m_SizeDelta: {x: -271.695, y: -170.778}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &516238236
@@ -26211,6 +26212,7 @@ MonoBehaviour:
   moduleIndex: 7
   lockPanel: {fileID: 1074845455}
   moduleButton: {fileID: 843598468}
+  achievementLockPanel: {fileID: 974385473}
   useVideoUnlock: 0
   requiredSubtopicID: 0
 --- !u!1 &557793194
@@ -26309,6 +26311,7 @@ MonoBehaviour:
   moduleIndex: 4
   lockPanel: {fileID: 1015254609}
   moduleButton: {fileID: 868760294}
+  achievementLockPanel: {fileID: 1477781075}
   useVideoUnlock: 0
   requiredSubtopicID: 6
 --- !u!1 &563734295
@@ -38957,7 +38960,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &880318846
 RectTransform:
   m_ObjectHideFlags: 0
@@ -47982,7 +47985,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 3.4050293, y: -23.666016}
+  m_AnchoredPosition: {x: 3.4050293, y: -23.666565}
   m_SizeDelta: {x: -2.5101318, y: -465.2246}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1107792422
@@ -48657,7 +48660,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1125497227
 RectTransform:
   m_ObjectHideFlags: 0
@@ -56751,6 +56754,7 @@ MonoBehaviour:
   moduleIndex: 8
   lockPanel: {fileID: 1814290347}
   moduleButton: {fileID: 2020681270}
+  achievementLockPanel: {fileID: 1179575344}
   useVideoUnlock: 0
   requiredSubtopicID: 0
 --- !u!1 &1344141134
@@ -57151,7 +57155,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1278761296}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.30920976
+  m_Size: 0.30954924
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -62508,6 +62512,7 @@ MonoBehaviour:
   moduleIndex: 3
   lockPanel: {fileID: 1311756525}
   moduleButton: {fileID: 1338956715}
+  achievementLockPanel: {fileID: 517342692}
   useVideoUnlock: 0
   requiredSubtopicID: 2
 --- !u!1 &1439941883
@@ -65555,7 +65560,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -40.002808, y: 0.025878906}
+  m_AnchoredPosition: {x: -40.002686, y: 0.025878906}
   m_SizeDelta: {x: 2010.242, y: 915.228}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1510379446
@@ -68776,7 +68781,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 888433972}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.30902335
+  m_Size: 0.30946314
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -71145,6 +71150,7 @@ MonoBehaviour:
   moduleIndex: 1
   lockPanel: {fileID: 0}
   moduleButton: {fileID: 0}
+  achievementLockPanel: {fileID: 0}
   useVideoUnlock: 0
   requiredSubtopicID: 0
 --- !u!114 &1638846042
@@ -74659,6 +74665,7 @@ MonoBehaviour:
   moduleIndex: 9
   lockPanel: {fileID: 966307554}
   moduleButton: {fileID: 1931393465}
+  achievementLockPanel: {fileID: 0}
   useVideoUnlock: 0
   requiredSubtopicID: 0
 --- !u!1 &1715648620
@@ -85344,6 +85351,7 @@ MonoBehaviour:
   moduleIndex: 5
   lockPanel: {fileID: 114174762}
   moduleButton: {fileID: 510606537}
+  achievementLockPanel: {fileID: 421715526}
   useVideoUnlock: 0
   requiredSubtopicID: 0
 --- !u!1 &1957638998
@@ -88614,6 +88622,7 @@ MonoBehaviour:
   moduleIndex: 2
   lockPanel: {fileID: 961492345}
   moduleButton: {fileID: 441591707}
+  achievementLockPanel: {fileID: 482210511}
   useVideoUnlock: 1
   requiredSubtopicID: 0
 --- !u!1 &2013057364
