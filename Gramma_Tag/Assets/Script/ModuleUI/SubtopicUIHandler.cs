@@ -15,13 +15,22 @@ public class SubtopicUIHandler : MonoBehaviour
 
     public SubtopicData[] subtopics;
 
-    void Start()
+    IEnumerator Start()
     {
-        LoadSubtopics();
+        yield return new WaitUntil(() => DatabaseManager.Instance != null);
+        yield return new WaitUntil(() => DatabaseManager.Instance.IsDatabaseReady());
+
+        LoadSubtopics(); // or LoadOverview()
     }
 
     void LoadSubtopics()
     {
+        if (DatabaseManager.Instance == null)
+        {
+            Debug.LogError("DatabaseManager is NULL!");
+            return;
+        }
+
         if (!DatabaseManager.Instance.IsDatabaseReady())
         {
             Debug.LogError("Database not ready!");
@@ -30,12 +39,21 @@ public class SubtopicUIHandler : MonoBehaviour
 
         foreach (var sub in subtopics)
         {
+            if (sub == null)
+            {
+                Debug.LogError("Subtopic is NULL!");
+                continue;
+            }
+
             var data = DatabaseManager.Instance.GetModuleData(sub.moduleID);
 
             if (data != null)
             {
-                sub.moduleNameText.text = data.ModuleName;
-                sub.difficultyText.text = data.Difficulty;
+                if (sub.moduleNameText != null)
+                    sub.moduleNameText.text = data.ModuleName;
+
+                if (sub.difficultyText != null)
+                    sub.difficultyText.text = data.Difficulty;
             }
             else
             {
