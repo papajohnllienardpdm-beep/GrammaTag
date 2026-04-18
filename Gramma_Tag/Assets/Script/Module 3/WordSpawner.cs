@@ -7,6 +7,7 @@ public class WordSpawner : MonoBehaviour
     public Transform spawnPoint;
     public GameManager_Module3 gameManager;
     public RectTransform gameArea;
+    public RectTransform catchPoint;
 
     public string[] words = { "ship", "chair", "shoe", "chicken", "shark", "cheese", "shop", "chalk", "shell", "chop" };
     public string[] answers = { "SH", "CH", "SH", "CH", "SH", "CH", "SH", "CH", "SH", "CH" };
@@ -15,20 +16,19 @@ public class WordSpawner : MonoBehaviour
     {
         GameObject obj = Instantiate(wordPrefab, spawnPoint.position, Quaternion.identity, spawnPoint.parent);
 
-        obj.GetComponentInChildren<TextMeshProUGUI>().text = words[index];
-
         FallingWord fw = obj.GetComponent<FallingWord>();
+        fw.wordTMP.text = words[index];
 
-        fw.correctAnswer = answers[index];
+       
+
+        fw.wordText = words[index];
         fw.gameManager = gameManager;
 
         // 👇 ADD THIS
-        fw.basketCH = GameObject.Find("Basket_CH").GetComponent<RectTransform>();
-        fw.basketSH = GameObject.Find("Basket_SH").GetComponent<RectTransform>();
+
 
         fw.gameArea = gameArea;
 
-        fw.catchPointCH = GameObject.Find("Basket_CH/CatchPoint").GetComponent<RectTransform>();
-        fw.catchPointSH = GameObject.Find("Basket_SH/CatchPoint").GetComponent<RectTransform>();
+        fw.catchPoint = catchPoint;
     }
 }

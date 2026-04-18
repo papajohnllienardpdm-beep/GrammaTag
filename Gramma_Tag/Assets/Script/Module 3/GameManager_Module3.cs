@@ -11,7 +11,29 @@ public class GameManager_Module3 : MonoBehaviour
     public float timer = 30f;
     private bool isTimerRunning = false;
 
+    public enum SubtopicType
+    {
+        BeginningCH,
+        EndingCH,
+        BeginningSH,
+        EndingSH
+    }
 
+    public SubtopicType currentSubtopic;
+
+    public Image basketImage;
+    public Sprite chSprite;
+    public Sprite shSprite;
+
+    public TextMeshProUGUI basketLabel;
+
+    int lastIndex = -1;
+
+    [Header("Feedback UI")]
+    public GameObject correctPanel;
+    public GameObject wrongPanel;
+
+  
 
     void Awake()
     {
@@ -38,7 +60,7 @@ public class GameManager_Module3 : MonoBehaviour
     int current = 0;
     int score = 0;
 
-    bool hasActiveWord = false;
+    public bool hasActiveWord = false;
 
     void Start()
     {
@@ -55,6 +77,26 @@ public class GameManager_Module3 : MonoBehaviour
         SpawnNext();
         UpdateScoreUI();
         StartTimer(); // 🔥 ADD THIS
+
+        SetupBasket(); 
+
+       
+    }
+
+    void SetupBasket()
+    {
+        if (basketImage == null) return;
+
+        if (currentSubtopic == SubtopicType.BeginningCH || currentSubtopic == SubtopicType.EndingCH)
+        {
+            basketImage.sprite = chSprite;
+            basketLabel.text = "";
+        }
+        else
+        {
+            basketImage.sprite = shSprite;
+            basketLabel.text = "";
+        }
     }
 
     void Update()
@@ -73,24 +115,27 @@ public class GameManager_Module3 : MonoBehaviour
             UpdateTimerUI();
         }
     }
-
     public void Answer(bool correct)
     {
-        StopTimer(); // 🔥 stop timer when answered
+        StopTimer();
 
         if (current >= 10) return;
 
         hasActiveWord = false;
+
+        ShowFeedback(correct); // ✅
 
         if (correct)
         {
             score++;
         }
 
-        current++;          // 🔥 una muna increment
-        UpdateScoreUI();    // 🔥 saka update UI
+        current++;
+        UpdateScoreUI();
 
-        SpawnNext();
+        Invoke(nameof(SpawnNext), 1.5f); // delay
+
+        Debug.Log("ANSWER: " + correct);
     }
 
     void SpawnNext()
@@ -108,7 +153,16 @@ public class GameManager_Module3 : MonoBehaviour
             return; // 🔥 VERY IMPORTANT
         }
 
-        spawner.Spawn(current);
+        int index;
+
+        do
+        {
+            index = Random.Range(0, spawner.words.Length);
+        }
+        while (index == lastIndex);
+
+        lastIndex = index;
+        spawner.Spawn(index);
         hasActiveWord = true;
 
         ResetTimer();   // 🔥 reset timer every question
@@ -170,4 +224,53 @@ public class GameManager_Module3 : MonoBehaviour
         // treat as WRONG answer
         Answer(false);
     }
+
+    public bool IsCorrectWord(string word)
+    {
+        switch (currentSubtopic)
+        {
+            case SubtopicType.BeginningCH:
+                return word.StartsWith("ch");
+
+            case SubtopicType.EndingCH:
+                return word.EndsWith("ch");
+
+            case SubtopicType.BeginningSH:
+                return word.StartsWith("sh");
+
+            case SubtopicType.EndingSH:
+                return word.EndsWith("sh");
+        }
+
+        return false;
+    }
+
+    public void ShowFeedback(bool correct)
+    {
+        // 🔥 siguraduhing nasa ibabaw
+        correctPanel.transform.SetAsLastSibling();
+        wrongPanel.transform.SetAsLastSibling();
+
+        if (correct)
+        {
+            correctPanel.SetActive(true);
+            wrongPanel.SetActive(false);
+        }
+        else
+        {
+            wrongPanel.SetActive(true);
+            correctPanel.SetActive(false);
+        }
+
+        CancelInvoke(nameof(HideFeedback));
+        Invoke(nameof(HideFeedback), 1.5f);
+    }
+
+    void HideFeedback()
+    {
+        correctPanel.SetActive(false);
+        wrongPanel.SetActive(false);
+    }
+
+ 
 }

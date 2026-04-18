@@ -15,8 +15,19 @@ public class BasketDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
     public RectTransform topLimit; // 👈 progress bar or text
     public static string activeBasket = "";
 
+    public static bool hasMoved = false;
 
     private Vector2 offset;
+
+    public RectTransform bottomLimit; // 👈 CLOUDS
+
+    void Start()
+    {
+        if (gameObject.name.Contains("CH"))
+            activeBasket = "CH";
+        else
+            activeBasket = "SH";
+    }
 
     void Awake()
     {
@@ -32,13 +43,14 @@ public class BasketDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
         }
 
         startPos = rectTransform.anchoredPosition;
-    }
 
+        
+    }
     public void OnBeginDrag(PointerEventData eventData)
     {
         isDragging = true;
 
-        activeBasket = gameObject.name.Contains("CH") ? "CH" : "SH";
+        canvasGroup.blocksRaycasts = false;
 
         Vector2 localPoint;
 
@@ -50,72 +62,49 @@ public class BasketDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
         );
 
         offset = rectTransform.anchoredPosition - localPoint;
-
-        canvasGroup.blocksRaycasts = false;
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (rectTransform == null || gameArea == null) return;
-
         if (!isDragging) return;
 
         Vector2 localPoint;
 
-        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
             gameArea,
             eventData.position,
             canvas.worldCamera,
-            out localPoint))
-        {
-            Vector2 targetPos = localPoint + offset;
+            out localPoint
+        );
 
-            float halfWidth = gameArea.rect.width / 2;
-            float halfHeight = gameArea.rect.height / 2;
+        Vector2 targetPos = localPoint + offset;
 
-            float basketHalfWidth = rectTransform.rect.width / 2;
-            float basketHalfHeight = rectTransform.rect.height / 2;
+        float basketHalfWidth = rectTransform.rect.width / 2;
+        float basketHalfHeight = rectTransform.rect.height / 2;
 
-            float clampedX = Mathf.Clamp(
-                targetPos.x,
-                -halfWidth + basketHalfWidth,
-                halfWidth - basketHalfWidth
-            );
+        float halfWidth = gameArea.rect.width / 2;
+        float halfHeight = gameArea.rect.height / 2;
 
-            float minY = -halfHeight + basketHalfHeight;
+        float minX = -halfWidth + basketHalfWidth;
+        float maxX = halfWidth - basketHalfWidth;
 
-            float clampedY = targetPos.y;
+        float minY = bottomLimit.anchoredPosition.y + 20f;
+        float maxY = halfHeight - basketHalfHeight; // 🔥 FIXED TOP
 
-            // 👉 kung may limit, saka lang i-clamp
-            if (topLimit != null)
-            {
-                Vector2 limitPos;
-                RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                    gameArea,
-                    RectTransformUtility.WorldToScreenPoint(canvas.worldCamera, topLimit.position),
-                    canvas.worldCamera,
-                    out limitPos
-                );
+        float clampedX = Mathf.Clamp(targetPos.x, minX, maxX);
+        float clampedY = Mathf.Clamp(targetPos.y, minY, maxY);
 
-                float maxY = limitPos.y - basketHalfHeight + 50f;
-                clampedY = Mathf.Clamp(targetPos.y, minY, maxY);
-            }
-            else
-            {
-                clampedY = Mathf.Clamp(targetPos.y, minY, halfHeight);
-            }
-
-            rectTransform.anchoredPosition = new Vector2(clampedX, clampedY);
-        }
+        rectTransform.anchoredPosition = new Vector2(clampedX, clampedY);
     }
+
     public void OnEndDrag(PointerEventData eventData)
     {
         isDragging = false;
         canvasGroup.blocksRaycasts = true;
 
-        activeBasket = "";
+        hasMoved = false; // ✅ RESET
 
-        ResetPosition(); // dito lang dapat
+        ResetPosition();
     }
 
     public void ResetPosition()
