@@ -14,18 +14,22 @@ public class DatabaseManager : MonoBehaviour
     private SQLiteConnection db;
     private object dbLock = new object();
 
-    IEnumerator Start()
+    void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-            yield return StartCoroutine(SetupDatabase());
         }
         else
         {
             Destroy(gameObject);
         }
+    }
+
+    IEnumerator Start()
+    {
+        yield return StartCoroutine(SetupDatabase());
     }
 
     IEnumerator SetupDatabase()
@@ -464,6 +468,19 @@ public class DatabaseManager : MonoBehaviour
             return db.Table<Modules>()
                      .Where(m => m.ModuleID == moduleID)
                      .FirstOrDefault();
+        }
+    }
+
+
+    public string GetModuleOverview(int moduleID)
+    {
+        lock (dbLock)
+        {
+            var module = db.Table<Modules>()
+                           .Where(m => m.ModuleID == moduleID)
+                           .FirstOrDefault();
+
+            return module != null ? module.Overview : "No Overview Available";
         }
     }
 

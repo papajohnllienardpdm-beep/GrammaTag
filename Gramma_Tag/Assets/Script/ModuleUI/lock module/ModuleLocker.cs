@@ -7,17 +7,20 @@ public class ModuleLocker : MonoBehaviour
 {
     public int moduleIndex;
 
-    [Header("UI")]
+    [Header("MAIN UI")]
     public GameObject lockPanel;
     public Button moduleButton;
 
-    [Header("Unlock Settings")]
-    public bool useVideoUnlock; // ✅ para sa Module 1 lang
-    public int requiredSubtopicID; // ✅ database based
+    [Header("ACHIEVEMENT UI")]
+    public GameObject achievementLockPanel; // 🔥 bagong idinagdag
+
+    [Header("UNLOCK SETTINGS")]
+    public bool useVideoUnlock;        // para sa Module 1
+    public int requiredSubtopicID;     // para sa Module 2+
 
     IEnumerator Start()
     {
-        // wait for systems
+        // 🔥 wait for systems
         while (PlayerPrefsManager.Instance == null ||
                DatabaseManager.Instance == null ||
                !DatabaseManager.Instance.IsDatabaseReady())
@@ -30,7 +33,9 @@ public class ModuleLocker : MonoBehaviour
 
     void OnEnable()
     {
-        if (PlayerPrefsManager.Instance != null && DatabaseManager.Instance != null)
+        if (PlayerPrefsManager.Instance != null &&
+            DatabaseManager.Instance != null &&
+            DatabaseManager.Instance.IsDatabaseReady())
         {
             UpdateLockState();
         }
@@ -40,23 +45,29 @@ public class ModuleLocker : MonoBehaviour
     {
         bool unlocked = false;
 
-        // 🎬 CASE 1: VIDEO BASED (Module 1)
+        // 🎬 VIDEO BASED (Module 1)
         if (useVideoUnlock)
         {
             unlocked = PlayerPrefsManager.Instance.IsModuleUnlocked(moduleIndex);
         }
         else
         {
-            // 📚 CASE 2: DATABASE BASED
+            // 📚 DATABASE BASED (Module 2 pataas)
             unlocked = DatabaseManager.Instance.IsSubtopicPassed(requiredSubtopicID);
         }
 
+        // 🔒 MAIN LOCK PANEL
         if (lockPanel != null)
             lockPanel.SetActive(!unlocked);
 
+        // 🔘 BUTTON INTERACTABLE
         if (moduleButton != null)
             moduleButton.interactable = unlocked;
 
-        Debug.Log($"Module {moduleIndex} unlocked: {unlocked}");
+        // 🏆 ACHIEVEMENT LOCK PANEL (🔥 NEW)
+        if (achievementLockPanel != null)
+            achievementLockPanel.SetActive(!unlocked);
+
+        Debug.Log($"[Module {moduleIndex}] unlocked: {unlocked} | RequiredSubtopic: {requiredSubtopicID}");
     }
 }
