@@ -4,13 +4,14 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Linq; // 🔥 IMPORTANT for random
+using UnityEngine.UI;
 
 public class BlendGameManager : MonoBehaviour
 {
-    public TextMeshProUGUI wordText;
+   
     public TextMeshProUGUI progressText;
     public GameObject feedbackArea;
-    public TextMeshProUGUI feedbackText;
+  
     public BlendDraggable draggableWord;
     public Transform wordOriginalParent;
 
@@ -21,6 +22,21 @@ public class BlendGameManager : MonoBehaviour
 
     private int totalQuestions = 10; // 🔥 LIMIT
 
+    public TextMeshProUGUI choiceAText;
+    public TextMeshProUGUI choiceBText;
+
+    public BlendDropZone choiceAZone;
+    public BlendDropZone choiceBZone;
+
+  
+
+    public Image progressBarFill;
+    public Image feedbackImage;
+
+    public Sprite correctSprite;
+    public Sprite wrongSprite;
+
+    public GameObject feedbackOverlay;
     IEnumerator Start()
     {
         while (DatabaseManager.Instance == null || !DatabaseManager.Instance.IsDatabaseReady())
@@ -39,26 +55,42 @@ public class BlendGameManager : MonoBehaviour
     {
         questions.Clear();
 
-        int moduleID = PlayerPrefs.GetInt("SelectedModuleID", 1);
-
-        Debug.Log("ModuleID: " + moduleID);
+        int moduleID = 1;
 
         var dbQuestions = DatabaseManager.Instance.GetQuestionsByModule(moduleID);
 
         Debug.Log("DB Count: " + dbQuestions.Count);
 
-        // 🔥 RANDOMIZE
-        dbQuestions = dbQuestions.OrderBy(x => Random.value).ToList();
-
-        // 🔥 LIMIT TO 10
-        dbQuestions = dbQuestions.Take(totalQuestions).ToList();
+        dbQuestions = dbQuestions.OrderBy(x => Random.value).Take(totalQuestions).ToList();
 
         foreach (var q in dbQuestions)
         {
-            questions.Add(new Question(q.QuestionText, q.CorrectAnswer));
+            string word = q.QuestionText.ToLower();
+
+            // GET BLEND
+            string blend = "";
+            if (q.CorrectAnswer == "Initial Blend")
+                blend = word.Substring(0, 2);
+            else if (q.CorrectAnswer == "Final Blend")
+                blend = word.Substring(word.Length - 2);
+
+            // 🔥 IMPORTANT: get WRONG from opposite category
+            var wrongPool = dbQuestions
+      .Where(x => x.CorrectAnswer != q.CorrectAnswer)
+      .ToList();
+
+            var other = wrongPool
+                .OrderBy(x => Random.value)
+                .FirstOrDefault();
+
+            string wrongWord = other != null ? other.QuestionText : "cat";
+
+            questions.Add(new Question(blend, word, wrongWord));
         }
 
         Debug.Log("Final Questions: " + questions.Count);
+
+        Debug.Log("SelectedModuleID: " + moduleID);
     }
 
     void ShowQuestion()
@@ -77,47 +109,31 @@ public class BlendGameManager : MonoBehaviour
 
         Question q = questions[currentIndex];
 
-        if (wordText != null)
+        if (Random.value > 0.5f)
         {
-            wordText.text = q.word;
+            choiceAText.text = q.correctWord;
+            choiceBText.text = q.wrongWord;
+
+            choiceAZone.isCorrect = true;
+            choiceBZone.isCorrect = false;
         }
         else
         {
-            Debug.LogError("WORDTEXT NOT ASSIGNED!");
-        } // 🔥 IMPORTANT
+            choiceAText.text = q.wrongWord;
+            choiceBText.text = q.correctWord;
+
+            choiceAZone.isCorrect = false;
+            choiceBZone.isCorrect = true;
+        }
 
         progressText.text = $"Question {currentIndex + 1} / {questions.Count}";
+        progressBarFill.fillAmount = (float)currentIndex / questions.Count;
     }
 
-    public void SubmitAnswer(string category)
-    {
-        if (currentIndex >= questions.Count) return;
-
-        string correct = questions[currentIndex].category;
-
-        Debug.Log("Chosen: " + category);
-        Debug.Log("Correct: " + correct);
-
-        if (category == correct)
-        {
-            score++;
-            feedbackText.text = "Correct!";
-            feedbackText.color = Color.green;
-        }
-        else
-        {
-            feedbackText.text = "Wrong!";
-            feedbackText.color = Color.red;
-        }
-
-        feedbackArea.SetActive(true);
-
-        Invoke("NextQuestion", 0.8f);
-    }
 
     void NextQuestion()
     {
-        feedbackArea.SetActive(false);
+        feedbackOverlay.SetActive(false);
 
         currentIndex++;
 
@@ -179,17 +195,54 @@ public class BlendGameManager : MonoBehaviour
 
         SceneManager.LoadScene("ResultScene");
     }
+
+    public void CorrectAnswer()
+    {
+        score++;
+
+        feedbackImage.sprite = correctSprite;
+
+        feedbackOverlay.SetActive(true);
+
+        Invoke("NextQuestion", 1.5f);
+    }
+
+    public void WrongAnswer()
+    {
+        feedbackImage.sprite = wrongSprite;
+
+        feedbackOverlay.SetActive(true);
+
+        Invoke("NextQuestion", 1.5f);
+    }
+
+    public Vector2 GetOriginalPos()
+    {
+        return wordOriginalPos;
+    }
+
+    public string GetCurrentCorrectWord()
+    {
+        if (currentIndex >= questions.Count)
+            return ""; // or null
+
+        return questions[currentIndex].correctWord;
+    }
 }
 
 [System.Serializable]
 public class Question
 {
-    public string word;
-    public string category;
+    public string blend;
+    public string correctWord;
+    public string wrongWord;
 
-    public Question(string w, string c)
+    public Question(string b, string correct, string wrong)
     {
-        word = w;
-        category = c;
+        blend = b;
+        correctWord = correct;
+        wrongWord = wrong;
     }
+
+
 }
