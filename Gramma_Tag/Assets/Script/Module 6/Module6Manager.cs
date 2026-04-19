@@ -4,8 +4,15 @@ using TMPro;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
+
+
 public class Module6Manager : MonoBehaviour
 {
+
+    Color normalColor = Color.white;
+    Color dimColor = new Color(0.7f, 0.7f, 0.7f); // gray
+    Color correctColor = Color.green;
+    Color wrongColor = Color.red;
     // ===== TIMER =====
     [Header("Timer")]
     public TextMeshProUGUI timerText;
@@ -29,8 +36,7 @@ public class Module6Manager : MonoBehaviour
     public TextMeshProUGUI levelText;
 
     [Header("UI")]
-    public Slider progressBar;
-    public Button nextButton;
+    public Image progressBar;
 
     private List<Module6QuestionData> allQuestions = new List<Module6QuestionData>();
     private List<Module6QuestionData> selectedQuestions = new List<Module6QuestionData>();
@@ -39,6 +45,23 @@ public class Module6Manager : MonoBehaviour
     private bool hasAnswered = false;
 
     private int score = 0;
+
+    public Image overlayA;
+    public Image overlayB;
+    public Image overlayC;
+    public Image overlayD;
+
+    Image GetOverlay(int index)
+    {
+        switch (index)
+        {
+            case 0: return overlayA;
+            case 1: return overlayB;
+            case 2: return overlayC;
+            case 3: return overlayD;
+        }
+        return null;
+    }
 
     void Start()
     {
@@ -55,7 +78,7 @@ public class Module6Manager : MonoBehaviour
             LoadQuestion();
         }
 
-        nextButton.interactable = false;
+
     }
 
     void Update()
@@ -79,72 +102,132 @@ public class Module6Manager : MonoBehaviour
     {
         allQuestions.Add(new Module6QuestionData
         {
-            question = "Cause: Leaving lights on",
-            choices = new string[] { "Saving Money", "Using Less Energy", "No Power", "High Bill" },
-            correctIndex = 3
+            question = "Maria woke up early in the morning. She wore her uniform, packed her bag, and waited for the school service outside their house.",
+            choices = new string[]
+            {
+            "Maria will go to the market",
+            "Maria will go to school",
+            "Maria will visit a friend",
+            "Maria will stay at home"
+            },
+            correctIndex = 1
         });
 
         allQuestions.Add(new Module6QuestionData
         {
-            question = "Cause: Heavy rain",
-            choices = new string[] { "Flood", "Sunny Day", "Dry Ground", "Clean Sky" },
+            question = "John brought an umbrella and wore boots. Dark clouds filled the sky.",
+            choices = new string[]
+            {
+            "It is sunny",
+            "It will rain",
+            "It is very hot",
+            "It is night time"
+            },
+            correctIndex = 1
+        });
+
+        allQuestions.Add(new Module6QuestionData
+        {
+            question = "Anna is holding a birthday cake with candles. Her friends are singing around her.",
+            choices = new string[]
+            {
+            "Anna is at school",
+            "Anna is celebrating her birthday",
+            "Anna is cooking dinner",
+            "Anna is going to sleep"
+            },
+            correctIndex = 1
+        });
+
+        allQuestions.Add(new Module6QuestionData
+        {
+            question = "Tom is wearing a jacket, scarf, and gloves. His breath can be seen in the air.",
+            choices = new string[]
+            {
+            "It is very hot",
+            "It is raining",
+            "It is cold",
+            "It is summer"
+            },
+            correctIndex = 2
+        });
+
+        allQuestions.Add(new Module6QuestionData
+        {
+            question = "Lisa is holding a book and sitting quietly in a room full of shelves with many books.",
+            choices = new string[]
+            {
+            "She is in a library",
+            "She is in a playground",
+            "She is in a market",
+            "She is in a hospital"
+            },
             correctIndex = 0
         });
 
         allQuestions.Add(new Module6QuestionData
         {
-            question = "Cause: Not studying",
-            choices = new string[] { "High Grades", "Failing Test", "Smart", "Top Student" },
-            correctIndex = 1
-        });
-
-        allQuestions.Add(new Module6QuestionData
-        {
-            question = "Cause: Eating junk food",
-            choices = new string[] { "Healthy Body", "Strong Muscles", "Getting Sick", "Good Health" },
+            question = "Mark is sweating and drinking water while the sun is shining brightly above him.",
+            choices = new string[]
+            {
+            "It is raining",
+            "It is cold",
+            "It is hot",
+            "It is night"
+            },
             correctIndex = 2
         });
 
         allQuestions.Add(new Module6QuestionData
         {
-            question = "Cause: No sleep",
-            choices = new string[] { "Energetic", "Sleepy", "Healthy", "Strong" },
+            question = "The ground is wet and people are carrying umbrellas.",
+            choices = new string[]
+            {
+            "It is sunny",
+            "It has rained",
+            "It is windy",
+            "It is night"
+            },
             correctIndex = 1
         });
 
         allQuestions.Add(new Module6QuestionData
         {
-            question = "Cause: Exercising daily",
-            choices = new string[] { "Weak body", "Healthy body", "Sick", "Tired always" },
+            question = "Ben is wearing a swimsuit and playing in the water with a beach ball.",
+            choices = new string[]
+            {
+            "He is at school",
+            "He is at the beach",
+            "He is in a hospital",
+            "He is in a library"
+            },
             correctIndex = 1
         });
 
         allQuestions.Add(new Module6QuestionData
         {
-            question = "Cause: Studying hard",
-            choices = new string[] { "Failing", "Low grades", "High grades", "Confused" },
+            question = "Sara is carrying many shopping bags and walking out of a store.",
+            choices = new string[]
+            {
+            "She is studying",
+            "She is shopping",
+            "She is cooking",
+            "She is sleeping"
+            },
+            correctIndex = 1
+        });
+
+        allQuestions.Add(new Module6QuestionData
+        {
+            question = "The lights are off and the children are lying in their beds with their eyes closed.",
+            choices = new string[]
+            {
+            "They are eating",
+            "They are playing",
+            "They are sleeping",
+            "They are studying"
+            },
             correctIndex = 2
-        });
-
-        allQuestions.Add(new Module6QuestionData
-        {
-            question = "Cause: Drinking dirty water",
-            choices = new string[] { "Healthy", "Strong", "Sick", "Happy" },
-            correctIndex = 2
-        });
-
-        allQuestions.Add(new Module6QuestionData
-        {
-            question = "Cause: Planting trees",
-            choices = new string[] { "Dirty air", "Clean environment", "Pollution", "Hot weather" },
-            correctIndex = 1
-        });
-
-        allQuestions.Add(new Module6QuestionData
-        {
-            question = "Cause: Throwing trash anywhere",
-            choices = new string[] { "Clean surroundings", "Flood", "Beautiful place", "Healthy area" },
-            correctIndex = 1
         });
     }
 
@@ -176,17 +259,17 @@ public class Module6Manager : MonoBehaviour
 
         questionText.text = q.question;
 
-        textA.text = "[A] " + q.choices[0];
-        textB.text = "[B] " + q.choices[1];
-        textC.text = "[C] " + q.choices[2];
-        textD.text = "[D] " + q.choices[3];
+        textA.text = q.choices[0];
+        textB.text = q.choices[1];
+        textC.text = q.choices[2];
+        textD.text = q.choices[3];
 
         ResetButtons();
 
-        progressBar.value = (float)(currentQuestion + 1) / selectedQuestions.Count;
+        progressBar.fillAmount = (float)(currentQuestion + 1) / selectedQuestions.Count;
         levelText.text = "Question " + (currentQuestion + 1) + "/" + selectedQuestions.Count;
 
-        nextButton.interactable = false;
+   
 
         ResetTimer();
         StartTimer();
@@ -194,27 +277,29 @@ public class Module6Manager : MonoBehaviour
 
     void CheckAnswer(int index)
     {
-        StopTimer(); // 🔥 important
+        StopTimer();
 
         if (hasAnswered) return;
-
         hasAnswered = true;
 
         Module6QuestionData q = selectedQuestions[currentQuestion];
 
+        // 👉 dim lahat (overlay gray)
+        SetAllOverlayColor(new Color(0, 0, 0, 0.4f));
+
         if (index == q.correctIndex)
         {
-            score++; // 🔥 ADD THIS
-            GetButton(index).GetComponent<Image>().color = Color.green;
+            score++;
+            GetOverlay(index).color = new Color(0, 1, 0, 0.6f); // green
         }
         else
         {
-            GetButton(index).GetComponent<Image>().color = Color.red;
-            GetButton(q.correctIndex).GetComponent<Image>().color = Color.green;
+            GetOverlay(index).color = new Color(1, 0, 0, 0.6f); // red
+            GetOverlay(q.correctIndex).color = new Color(0, 1, 0, 0.6f); // green
         }
 
         DisableAllButtons();
-        nextButton.interactable = true;
+        Invoke(nameof(NextQuestion), 1.5f);
     }
 
     public void NextQuestion()
@@ -242,7 +327,6 @@ public class Module6Manager : MonoBehaviour
         buttonC.interactable = false;
         buttonD.interactable = false;
     }
-
     void ResetButtons()
     {
         buttonA.interactable = true;
@@ -250,10 +334,7 @@ public class Module6Manager : MonoBehaviour
         buttonC.interactable = true;
         buttonD.interactable = true;
 
-        buttonA.GetComponent<Image>().color = Color.white;
-        buttonB.GetComponent<Image>().color = Color.white;
-        buttonC.GetComponent<Image>().color = Color.white;
-        buttonD.GetComponent<Image>().color = Color.white;
+        SetAllOverlayColor(new Color(0, 0, 0, 0)); // transparent
     }
 
     Button GetButton(int index)
@@ -303,16 +384,30 @@ public class Module6Manager : MonoBehaviour
         isTimerRunning = false;
 
         if (hasAnswered) return;
-
         hasAnswered = true;
 
         Module6QuestionData q = selectedQuestions[currentQuestion];
 
-        // highlight correct answer
-        GetButton(q.correctIndex).GetComponent<Image>().color = Color.green;
+        SetAllOverlayColor(new Color(0, 0, 0, 0.4f));
+        GetOverlay(q.correctIndex).color = new Color(0, 1, 0, 0.6f);
 
         DisableAllButtons();
+        Invoke(nameof(NextQuestion), 1.5f);
+    }
 
-        nextButton.interactable = true;
+    void SetAllButtonsColor(Color color)
+    {
+        buttonA.GetComponent<Image>().color = color;
+        buttonB.GetComponent<Image>().color = color;
+        buttonC.GetComponent<Image>().color = color;
+        buttonD.GetComponent<Image>().color = color;
+    }
+
+    void SetAllOverlayColor(Color color)
+    {
+        overlayA.color = color;
+        overlayB.color = color;
+        overlayC.color = color;
+        overlayD.color = color;
     }
 }
