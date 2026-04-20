@@ -46,20 +46,28 @@ public class LoginManager : MonoBehaviour
 
         int age = int.Parse(ageDropdown.options[ageDropdown.value].text);
 
-        DatabaseManager.Instance.InsertUser(
+        DatabaseManager.Instance.InsertUser
+        (
             firstNameInput.text,
             lastNameInput.text,
             age,
             playerSex
         );
 
+        // 👉 SAVE GENDER TEMP (for cutscene)
+        PlayerPrefs.SetString("SelectedGender", playerSex);
+        PlayerPrefs.Save();
+
         StartCoroutine(LoadSceneDelayed());
     }
 
     IEnumerator LoadSceneDelayed()
     {
-        yield return new WaitForSeconds(0.3f); // from 0.1 → 0.3
+        yield return new WaitForSeconds(0.3f);
 
-        SceneManager.LoadScene("MainMenu");
+        PlayerPrefs.SetString("SelectedGender", playerSex); // 👈 ADD THIS
+        PlayerPrefs.Save();
+
+        SceneManager.LoadScene("CutScene1");
     }
 }

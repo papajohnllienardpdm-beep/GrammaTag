@@ -24598,7 +24598,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -23.414001, y: 16.379883}
+  m_AnchoredPosition: {x: -23.413757, y: 16.379883}
   m_SizeDelta: {x: -271.695, y: -170.778}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &516238236
@@ -26398,7 +26398,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 563734298}
   m_Template: {fileID: 1909234507}
   m_CaptionText: {fileID: 1682693613}
@@ -47989,7 +47989,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 3.4050293, y: -23.666565}
+  m_AnchoredPosition: {x: 3.4050293, y: -23.666992}
   m_SizeDelta: {x: -2.5101318, y: -465.2246}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1107792422
@@ -49450,7 +49450,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1145938212}
   m_TextViewport: {fileID: 1707518923}
   m_TextComponent: {fileID: 780612671}
@@ -53106,7 +53106,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1259164930}
   m_TextViewport: {fileID: 633515536}
   m_TextComponent: {fileID: 874131111}
@@ -57159,7 +57159,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1278761296}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.30985606
+  m_Size: 0.30927283
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -65564,7 +65564,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -40.002686, y: 0.025878906}
+  m_AnchoredPosition: {x: -40.00244, y: 0.025878906}
   m_SizeDelta: {x: 2010.242, y: 915.228}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1510379446
@@ -68785,7 +68785,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 888433972}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.30986065
+  m_Size: 0.30910504
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -91602,7 +91602,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -93755,6 +93755,7 @@ GameObject:
   - component: {fileID: 2110685621}
   - component: {fileID: 2110685623}
   - component: {fileID: 2110685622}
+  - component: {fileID: 2110685624}
   m_Layer: 5
   m_Name: SettingsPanel
   m_TagString: Untagged
@@ -93821,6 +93822,26 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2110685620}
   m_CullTransparentMesh: 1
+--- !u!114 &2110685624
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2110685620}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8852daee6a549a46befe2cc67f2619b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  firstNameInput: {fileID: 1145938211}
+  lastNameInput: {fileID: 1259164929}
+  ageDropdown: {fileID: 563734297}
+  genderInput: {fileID: 2078242087}
+  editButton: {fileID: 1441354027}
+  charImage: {fileID: 782773095}
+  boySprite: {fileID: 21300000, guid: f25bd8e793f616440a817e92dddb6079, type: 3}
+  girlSprite: {fileID: 21300000, guid: 87b967d5e10715d4d8dbe824f95a8f02, type: 3}
 --- !u!1 &2111456181
 GameObject:
   m_ObjectHideFlags: 0
