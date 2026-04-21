@@ -17,9 +17,11 @@ public class BasketDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
 
     public static bool hasMoved = false;
 
-    private Vector2 offset;
+    private Vector2 lastLocalPoint;
 
     public RectTransform bottomLimit; // 👈 CLOUDS
+
+    public RectTransform cloudTopPoint;
 
     void Start()
     {
@@ -44,24 +46,19 @@ public class BasketDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
 
         startPos = rectTransform.anchoredPosition;
 
-        
+
     }
     public void OnBeginDrag(PointerEventData eventData)
     {
         isDragging = true;
-
         canvasGroup.blocksRaycasts = false;
 
-        Vector2 localPoint;
-
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            gameArea,
+            canvasRect,
             eventData.position,
-            canvas.worldCamera,
-            out localPoint
+            eventData.pressEventCamera,
+            out lastLocalPoint
         );
-
-        offset = rectTransform.anchoredPosition - localPoint;
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -71,40 +68,31 @@ public class BasketDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
         Vector2 localPoint;
 
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            gameArea,
+            canvasRect,
             eventData.position,
-            canvas.worldCamera,
+            eventData.pressEventCamera,
             out localPoint
         );
 
-        Vector2 targetPos = localPoint + offset;
+        Vector2 delta = localPoint - lastLocalPoint; // 🔥 movement difference
 
-        float basketHalfWidth = rectTransform.rect.width / 2;
-        float basketHalfHeight = rectTransform.rect.height / 2;
+        MoveBasket(delta);
 
-        float halfWidth = gameArea.rect.width / 2;
-        float halfHeight = gameArea.rect.height / 2;
+        // update lang kung hindi na-clamp
 
-        float minX = -halfWidth + basketHalfWidth;
-        float maxX = halfWidth - basketHalfWidth;
-
-        float minY = bottomLimit.anchoredPosition.y + 20f;
-        float maxY = halfHeight - basketHalfHeight; // 🔥 FIXED TOP
-
-        float clampedX = Mathf.Clamp(targetPos.x, minX, maxX);
-        float clampedY = Mathf.Clamp(targetPos.y, minY, maxY);
-
-        rectTransform.anchoredPosition = new Vector2(clampedX, clampedY);
     }
+
+
 
     public void OnEndDrag(PointerEventData eventData)
     {
         isDragging = false;
         canvasGroup.blocksRaycasts = true;
 
-        hasMoved = false; // ✅ RESET
+        hasMoved = false;
 
-        ResetPosition();
+        // ❌ REMOVE THIS
+        // ResetPosition();
     }
 
     public void ResetPosition()
@@ -127,5 +115,62 @@ public class BasketDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
         }
 
         rectTransform.anchoredPosition = startPos;
+    }
+
+    void MoveBasket(Vector2 delta)
+    {
+        float basketHalfWidth = rectTransform.rect.width / 2;
+        float basketHalfHeight = rectTransform.rect.height / 2;
+
+        float halfWidth = canvasRect.rect.width / 2;
+        float halfHeight = canvasRect.rect.height / 2;
+
+        float minX = -halfWidth + basketHalfWidth;
+        float maxX = halfWidth - basketHalfWidth;
+
+        Vector3[] corners = new Vector3[4];
+        bottomLimit.GetWorldCorners(corners);
+
+        float pivotOffset = rectTransform.pivot.y * rectTransform.rect.height;
+        float minY = cloudTopPoint.anchoredPosition.y + pivotOffset;
+
+
+        float maxY = halfHeight - basketHalfHeight;
+
+        Vector2 newPos = rectTransform.anchoredPosition + delta;
+
+        float clampedX = Mathf.Clamp(newPos.x, minX, maxX);
+        float clampedY = Mathf.Clamp(newPos.y, minY, maxY);
+
+        rectTransform.anchoredPosition = new Vector2(clampedX, clampedY);
+
+        // ✅ anti-stuck fix
+        if (clampedX > minX && clampedX < maxX)
+            lastLocalPoint.x += delta.x;
+
+        if (clampedY > minY && clampedY < maxY)
+            lastLocalPoint.y += delta.y;
+    }
+
+    void Update()
+    {
+        // 🖱 PC: kapag hindi na naka-hold ang mouse
+        if (isDragging && !Input.GetMouseButton(0))
+        {
+            ForceRelease();
+        }
+
+        // 📱 Mobile: kapag wala nang touch
+        if (isDragging && Input.touchCount == 0)
+        {
+            ForceRelease();
+        }
+    }
+
+    void ForceRelease()
+    {
+        isDragging = false;
+        canvasGroup.blocksRaycasts = true;
+        ResetPosition(); // 🔥 balik sa start
     }
 }

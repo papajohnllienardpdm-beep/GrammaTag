@@ -33,7 +33,7 @@ public class GameManager_Module3 : MonoBehaviour
     public GameObject correctPanel;
     public GameObject wrongPanel;
 
-  
+
 
     void Awake()
     {
@@ -78,9 +78,9 @@ public class GameManager_Module3 : MonoBehaviour
         UpdateScoreUI();
         StartTimer(); // 🔥 ADD THIS
 
-        SetupBasket(); 
+        SetupBasket();
 
-       
+
     }
 
     void SetupBasket()
@@ -272,5 +272,5 @@ public class GameManager_Module3 : MonoBehaviour
         wrongPanel.SetActive(false);
     }
 
- 
+
 }
