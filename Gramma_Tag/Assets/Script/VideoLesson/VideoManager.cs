@@ -52,6 +52,10 @@ public class VideoManager : MonoBehaviour
 
         orientationManager.SetLandscape();
 
+        // 🔥 MUTE AUDIO
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.MuteAll();
+
         mainMenu?.SetActive(false);
         gamePanel.SetActive(false);
         videoPanel.SetActive(true);
@@ -75,6 +79,10 @@ public class VideoManager : MonoBehaviour
         vp.loopPointReached -= OnVideoFinished;
 
         videoPlayer.Stop();
+
+        // 🔊 RESTORE AUDIO
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.RestoreAll();
 
         if (HeartSystem.Instance.currentHearts <= 0)
         {
@@ -121,6 +129,10 @@ public class VideoManager : MonoBehaviour
     public void CloseNoLivesPopup()
     {
         noLivesPanel.SetActive(false);
+
+        // 🔊 RESTORE AUDIO
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.RestoreAll();
 
         orientationManager.SetPortrait();
 

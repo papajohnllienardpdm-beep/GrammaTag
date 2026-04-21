@@ -20,6 +20,10 @@ public class AudioManager : MonoBehaviour
 
     private bool isMusicMuted = false;
 
+    private float prevMusicVolume;
+    private float prevSFXVolume;
+
+
     void Awake()
     {
         // Singleton
@@ -94,4 +98,22 @@ public class AudioManager : MonoBehaviour
         PlayerPrefs.SetFloat("SFXVolume", volume);
         PlayerPrefs.Save();
     }
+
+    // 🔇 MUTE ALL AUDIO (SAVE PREVIOUS STATE)
+    public void MuteAll()
+    {
+        prevMusicVolume = musicSource.volume;
+        prevSFXVolume = sfxSource.volume;
+
+        musicSource.volume = 0f;
+        sfxSource.volume = 0f;
+    }
+
+    // 🔊 RESTORE AUDIO
+    public void RestoreAll()
+    {
+        musicSource.volume = prevMusicVolume;
+        sfxSource.volume = prevSFXVolume;
+    }
+
 }
