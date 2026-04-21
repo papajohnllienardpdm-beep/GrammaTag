@@ -6,7 +6,7 @@ using TMPro; // ADD THIS
 
 public class BlendDropZone : MonoBehaviour, IDropHandler
 {
-    public bool isCorrect;
+    public string answerText; // 🔥 eto ang laman ng button
     public BlendGameManager gameManager;
 
     public void OnDrop(PointerEventData eventData)
@@ -14,10 +14,11 @@ public class BlendDropZone : MonoBehaviour, IDropHandler
         BlendDraggable dragged = eventData.pointerDrag?.GetComponent<BlendDraggable>();
         if (dragged == null) return;
 
-        // balik sa gitna
+        // snap pabalik
         dragged.ResetPosition(gameManager.wordOriginalParent, gameManager.GetOriginalPos());
 
-        if (isCorrect)
+        // 🔥 CHECK using STRING
+        if (answerText == gameManager.GetCurrentCorrectAnswer())
             gameManager.CorrectAnswer();
         else
             gameManager.WrongAnswer();

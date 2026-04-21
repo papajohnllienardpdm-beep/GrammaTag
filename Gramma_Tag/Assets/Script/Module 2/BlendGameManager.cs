@@ -8,10 +8,10 @@ using UnityEngine.UI;
 
 public class BlendGameManager : MonoBehaviour
 {
-   
+
     public TextMeshProUGUI progressText;
     public GameObject feedbackArea;
-  
+
     public BlendDraggable draggableWord;
     public Transform wordOriginalParent;
 
@@ -28,7 +28,7 @@ public class BlendGameManager : MonoBehaviour
     public BlendDropZone choiceAZone;
     public BlendDropZone choiceBZone;
 
-  
+
 
     public Image progressBarFill;
     public Image feedbackImage;
@@ -37,6 +37,9 @@ public class BlendGameManager : MonoBehaviour
     public Sprite wrongSprite;
 
     public GameObject feedbackOverlay;
+
+    public TextMeshProUGUI questionText; // 🔥 NEW
+
     IEnumerator Start()
     {
         while (DatabaseManager.Instance == null || !DatabaseManager.Instance.IsDatabaseReady())
@@ -55,52 +58,25 @@ public class BlendGameManager : MonoBehaviour
     {
         questions.Clear();
 
-        int moduleID = 1;
-
+        int moduleID = PlayerPrefs.GetInt("SelectedModuleID", 1);
+        Debug.Log("🎯 GAME RECEIVED MODULE ID: " + moduleID);
         var dbQuestions = DatabaseManager.Instance.GetQuestionsByModule(moduleID);
-
-        Debug.Log("DB Count: " + dbQuestions.Count);
 
         dbQuestions = dbQuestions.OrderBy(x => Random.value).Take(totalQuestions).ToList();
 
         foreach (var q in dbQuestions)
         {
-            string word = q.QuestionText.ToLower();
-
-            // GET BLEND
-            string blend = "";
-            if (q.CorrectAnswer == "Initial Blend")
-                blend = word.Substring(0, 2);
-            else if (q.CorrectAnswer == "Final Blend")
-                blend = word.Substring(word.Length - 2);
-
-            // 🔥 IMPORTANT: get WRONG from opposite category
-            var wrongPool = dbQuestions
-      .Where(x => x.CorrectAnswer != q.CorrectAnswer)
-      .ToList();
-
-            var other = wrongPool
-                .OrderBy(x => Random.value)
-                .FirstOrDefault();
-
-            string wrongWord = other != null ? other.QuestionText : "cat";
-
-            questions.Add(new Question(blend, word, wrongWord));
+            questions.Add(new Question(
+                q.QuestionText,   // 🔥 WORD
+                q.ChoiceA,
+                q.ChoiceB,
+                q.CorrectAnswer
+            ));
         }
-
-        Debug.Log("Final Questions: " + questions.Count);
-
-        Debug.Log("SelectedModuleID: " + moduleID);
     }
 
     void ShowQuestion()
     {
-        if (questions.Count == 0)
-        {
-            Debug.LogError("NO QUESTIONS!");
-            return;
-        }
-
         if (currentIndex >= questions.Count)
         {
             EndGame();
@@ -109,21 +85,28 @@ public class BlendGameManager : MonoBehaviour
 
         Question q = questions[currentIndex];
 
+        // 🔥 SHOW QUESTION TEXT (ITO ANG FIX)
+        if (questionText != null)
+            questionText.text = q.word;
+        else
+            Debug.LogError("❌ questionText not assigned!");
+
+        // random swap
         if (Random.value > 0.5f)
         {
-            choiceAText.text = q.correctWord;
-            choiceBText.text = q.wrongWord;
+            choiceAText.text = q.choiceA;
+            choiceBText.text = q.choiceB;
 
-            choiceAZone.isCorrect = true;
-            choiceBZone.isCorrect = false;
+            choiceAZone.answerText = q.choiceA;
+            choiceBZone.answerText = q.choiceB;
         }
         else
         {
-            choiceAText.text = q.wrongWord;
-            choiceBText.text = q.correctWord;
+            choiceAText.text = q.choiceB;
+            choiceBText.text = q.choiceA;
 
-            choiceAZone.isCorrect = false;
-            choiceBZone.isCorrect = true;
+            choiceAZone.answerText = q.choiceB;
+            choiceBZone.answerText = q.choiceA;
         }
 
         progressText.text = $"Question {currentIndex + 1} / {questions.Count}";
@@ -176,15 +159,25 @@ public class BlendGameManager : MonoBehaviour
             passed = 0;
         }
 
-        int moduleID = PlayerPrefs.GetInt("SelectedModuleID");
+        int moduleID = PlayerPrefs.GetInt("SelectedModuleID", 1);
 
-        // 🔥 SAVE PROGRESS
+        // 🔥 IMPORTANT: gamitin coroutine
+        StartCoroutine(SaveAndExit(moduleID, total, stars, passed));
+    }
+
+    IEnumerator SaveAndExit(int moduleID, int total, int stars, int passed)
+    {
+        // 🔥 WAIT hanggang ready DB
+        while (DatabaseManager.Instance == null || !DatabaseManager.Instance.IsDatabaseReady())
+            yield return null;
+
+        // ✅ SAVE
         DatabaseManager.Instance.SaveProgressBetter(1, moduleID, score, passed, stars);
 
-        // 🪙 GIVE COINS
+        // ✅ COINS
         int coinsEarned = DatabaseManager.Instance.GiveCoins(moduleID, score, passed);
 
-        // 👉 RESULT SCENE
+        // ✅ SAVE RESULT DATA
         PlayerPrefs.SetInt("FinalScore", score);
         PlayerPrefs.SetInt("TotalQ", total);
         PlayerPrefs.SetInt("Stars", stars);
@@ -193,6 +186,7 @@ public class BlendGameManager : MonoBehaviour
 
         PlayerPrefs.SetString("LastScene", SceneManager.GetActiveScene().name);
 
+        // 👉 LOAD RESULT
         SceneManager.LoadScene("ResultScene");
     }
 
@@ -226,23 +220,31 @@ public class BlendGameManager : MonoBehaviour
         if (currentIndex >= questions.Count)
             return ""; // or null
 
-        return questions[currentIndex].correctWord;
+        return questions[currentIndex].correctAnswer;
+    }
+
+    public string GetCurrentCorrectAnswer()
+    {
+        if (currentIndex >= questions.Count)
+            return "";
+
+        return questions[currentIndex].correctAnswer;
     }
 }
 
 [System.Serializable]
 public class Question
 {
-    public string blend;
-    public string correctWord;
-    public string wrongWord;
+    public string word; // 🔥 ito yung QuestionText
+    public string choiceA;
+    public string choiceB;
+    public string correctAnswer;
 
-    public Question(string b, string correct, string wrong)
+    public Question(string w, string a, string b, string correct)
     {
-        blend = b;
-        correctWord = correct;
-        wrongWord = wrong;
+        word = w;
+        choiceA = a;
+        choiceB = b;
+        correctAnswer = correct;
     }
-
-
 }
