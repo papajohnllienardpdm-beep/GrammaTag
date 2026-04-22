@@ -19,7 +19,7 @@ public class WordSpawner : MonoBehaviour
         FallingWord fw = obj.GetComponent<FallingWord>();
         fw.wordTMP.text = words[index];
 
-       
+
 
         fw.wordText = words[index];
         fw.gameManager = gameManager;
