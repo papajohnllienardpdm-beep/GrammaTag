@@ -524,5 +524,22 @@ public class DatabaseManager : MonoBehaviour
         }
     }
 
+    public List<CertificateData> GetCertificateData(int userID)
+    {
+        lock (dbLock)
+        {
+            return db.Query<CertificateData>(
+                @"SELECT m.ModuleID, m.ModuleName, 
+                     IFNULL(p.Score, 0) as Score, 
+                     IFNULL(p.Stars, 0) as Stars
+              FROM Modules m
+              LEFT JOIN Progress p 
+              ON m.ModuleID = p.ModuleID AND p.UserID = ?
+              ORDER BY m.ModuleID ASC",
+                userID
+            );
+        }
+    }
+
 }
 
