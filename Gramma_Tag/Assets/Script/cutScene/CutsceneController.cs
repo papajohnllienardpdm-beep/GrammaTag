@@ -33,7 +33,7 @@ public class CutsceneController : MonoBehaviour
             videoPlayer.clip = girlVideo;
             Debug.Log("Playing Girl Cutscene");
         }
-
+         
         // 👉 PLAY VIDEO
         videoPlayer.Play();
 
