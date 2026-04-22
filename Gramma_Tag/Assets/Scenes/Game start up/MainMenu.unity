@@ -24599,7 +24599,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -23.413788, y: 16.379883}
+  m_AnchoredPosition: {x: -23.413666, y: 16.379883}
   m_SizeDelta: {x: -271.695, y: -170.778}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &516238236
@@ -48548,7 +48548,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.6550293, y: -0.12298584}
+  m_AnchoredPosition: {x: -0.6550293, y: -0.123046875}
   m_SizeDelta: {x: 493.2351, y: 1018.69995}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1119898428
@@ -68409,7 +68409,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 368142711}
         m_TargetAssemblyTypeName: VideoManager, Assembly-CSharp
-        m_MethodName: CloseVideo
+        m_MethodName: BackToMenu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

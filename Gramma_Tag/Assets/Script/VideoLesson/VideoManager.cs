@@ -166,4 +166,32 @@ public class VideoManager : MonoBehaviour
                 SceneManager.LoadScene(sceneName);
         }
     }
+
+
+    public void BackToMenu()
+    {
+        
+
+        // ❌ tanggalin listener para di mag auto next scene
+        videoPlayer.loopPointReached -= OnVideoFinished;
+
+        // ⏹ stop video
+        videoPlayer.Stop();
+
+        // 🔊 restore audio
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.RestoreAll();
+
+        // 🔄 portrait mode
+        orientationManager.SetPortrait();
+
+        // 🧹 reset current index
+        currentIndex = -1;
+
+        // 📺 balik UI
+        videoPanel.SetActive(false);
+        mainMenu?.SetActive(true);
+        gamePanel.SetActive(true);
+    }
+
 }
