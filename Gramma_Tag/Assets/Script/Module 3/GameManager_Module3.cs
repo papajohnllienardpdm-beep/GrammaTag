@@ -2,13 +2,17 @@
 using UnityEngine.SceneManagement;
 using TMPro;
 using UnityEngine.UI;
+using System.Collections;
 
 public class GameManager_Module3 : MonoBehaviour
 {
     public static GameManager_Module3 instance;
 
     public TextMeshProUGUI timerText;
-    public float timer = 30f;
+    [Header("Game Timer")]
+    public float gameDuration = 300f; // 5 minutes default
+
+    private float timer;
     private bool isTimerRunning = false;
 
     public enum SubtopicType
@@ -29,26 +33,21 @@ public class GameManager_Module3 : MonoBehaviour
 
     int lastIndex = -1;
 
-    [Header("Feedback UI")]
-    public GameObject correctPanel;
-    public GameObject wrongPanel;
 
+    [Header("Tutorial Mode")]
+    public bool isTutorial = false;
+    public int tutorialTarget = 3;
+
+    private int tutorialScore = 0;
+
+    public TextMeshProUGUI tutorialText; // instruction text
+
+    public GameObject getReadyText;
 
 
     void Awake()
     {
-        Debug.Log("GameManager Awake: " + gameObject.name);
-
-        if (instance == null)
-        {
-            instance = this;
-        }
-        else
-        {
-            Debug.Log("DUPLICATE GameManager DESTROYED");
-            Destroy(gameObject);
-            return;
-        }
+        Debug.Log("GameManager Loaded: " + gameObject.name);
     }
 
     public WordSpawner spawner;
@@ -64,38 +63,54 @@ public class GameManager_Module3 : MonoBehaviour
 
     void Start()
     {
-        Debug.Log("ScoreText: " + scoreText);
-        Debug.Log("ProgressBar: " + progressBar);
-
-        Debug.Log("GameManager instance: " + this);
-
         if (hasActiveWord) return;
 
         if (spawner == null)
             spawner = FindObjectOfType<WordSpawner>();
 
-        SpawnNext();
-        UpdateScoreUI();
-        StartTimer(); // 🔥 ADD THIS
-
         SetupBasket();
 
+        if (isTutorial)
+        {
+            // ✅ TUTORIAL FLOW
+            if (timerText != null)
+                timerText.gameObject.SetActive(false);
 
+            SpawnNext(); // diretso laro
+        }
+        else
+        {
+            // ✅ GAME FLOW
+            timer = gameDuration;
+
+            if (getReadyText != null)
+            {
+                StartCoroutine(StartGameWithDelay()); // 🔥 once lang
+            }
+            else
+            {
+                StartTimer();
+                SpawnNext();
+            }
+        }
+
+        UpdateScoreUI();
+        UpdateTutorialText();
     }
 
     void SetupBasket()
     {
-        if (basketImage == null) return;
+        if (basketLabel == null) return;
 
         if (currentSubtopic == SubtopicType.BeginningCH || currentSubtopic == SubtopicType.EndingCH)
         {
             basketImage.sprite = chSprite;
-            basketLabel.text = "";
+            basketLabel.text = "CH"; // ✅ IMPORTANT
         }
         else
         {
             basketImage.sprite = shSprite;
-            basketLabel.text = "";
+            basketLabel.text = "SH"; // ✅ IMPORTANT
         }
     }
 
@@ -117,13 +132,41 @@ public class GameManager_Module3 : MonoBehaviour
     }
     public void Answer(bool correct)
     {
-        StopTimer();
-
-        if (current >= 10) return;
-
         hasActiveWord = false;
 
-        ShowFeedback(correct); // ✅
+        // 🔥 TUTORIAL MODE
+        if (isTutorial)
+        {
+            if (!correct)
+            {
+                Debug.Log("WRONG → RESET");
+
+                ResetTutorial(); // 🔥 reset to 0
+                SpawnNext();
+
+                return;
+            }
+
+            // ✅ tama
+            tutorialScore++;
+            UpdateScoreUI();
+            UpdateTutorialText();
+
+            if (tutorialScore >= tutorialTarget)
+            {
+                Debug.Log("TUTORIAL COMPLETE");
+                SceneManager.LoadScene("Module3_GameScene");
+                return;
+            }
+
+            SpawnNext();
+            return;
+        }
+
+
+
+        // 🔽 NORMAL GAME
+        if (current >= 10) return;
 
         if (correct)
         {
@@ -133,7 +176,7 @@ public class GameManager_Module3 : MonoBehaviour
         current++;
         UpdateScoreUI();
 
-        Invoke(nameof(SpawnNext), 1.5f); // delay
+        SpawnNext();
 
         Debug.Log("ANSWER: " + correct);
     }
@@ -142,7 +185,7 @@ public class GameManager_Module3 : MonoBehaviour
     {
         if (hasActiveWord) return;
 
-        if (current >= 10)
+        if (!isTutorial && current >= 10)
         {
             PlayerPrefs.SetInt("FinalScore", score);
             PlayerPrefs.SetInt("TotalQ", 10);
@@ -165,29 +208,32 @@ public class GameManager_Module3 : MonoBehaviour
         spawner.Spawn(index);
         hasActiveWord = true;
 
-        ResetTimer();   // 🔥 reset timer every question
-        StartTimer();   // 🔥 start again
+
     }
 
     void UpdateScoreUI()
     {
-        // optional: kung ayaw mo na ng score
-        // scoreText.text = "Score: " + score.ToString();
-
-        if (progressText != null)
+        if (isTutorial)
         {
-            progressText.text = "Progress " + current + "/10";
+            if (progressText != null)
+                progressText.text = tutorialScore + " / " + tutorialTarget;
+
+            if (progressBar != null)
+                progressBar.fillAmount = (float)tutorialScore / tutorialTarget;
+
+            return;
         }
+
+        // normal game
+        if (progressText != null)
+            progressText.text = "Progress " + current + "/10";
 
         if (progressBar != null)
-        {
             progressBar.fillAmount = (float)current / 10f;
-        }
     }
 
     public void StartTimer()
     {
-        timer = 30f;
         isTimerRunning = true;
     }
 
@@ -196,22 +242,21 @@ public class GameManager_Module3 : MonoBehaviour
         isTimerRunning = false;
     }
 
-    public void ResetTimer()
-    {
-        timer = 30f;
-        UpdateTimerUI();
-    }
+
 
     void UpdateTimerUI()
     {
         if (timerText != null)
         {
-            timerText.text = Mathf.Ceil(timer).ToString();
+            int minutes = Mathf.FloorToInt(timer / 60);
+            int seconds = Mathf.FloorToInt(timer % 60);
 
-            if (timer <= 5)
+            timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+
+            if (timer <= 10)
                 timerText.color = Color.red;
             else
-                timerText.color = Color.white;
+                timerText.color = Color.black;
         }
     }
 
@@ -219,58 +264,107 @@ public class GameManager_Module3 : MonoBehaviour
     {
         isTimerRunning = false;
 
-        Debug.Log("Time's up!");
+        Debug.Log("TIME'S UP - GAME OVER");
 
-        // treat as WRONG answer
-        Answer(false);
+        PlayerPrefs.SetInt("FinalScore", score);
+        PlayerPrefs.SetInt("TotalQ", current);
+        PlayerPrefs.SetString("LastScene", SceneManager.GetActiveScene().name);
+        PlayerPrefs.Save();
+
+        SceneManager.LoadScene("ResultScene");
     }
 
     public bool IsCorrectWord(string word)
     {
-        switch (currentSubtopic)
+        string basket = basketLabel.text.ToLower();
+
+        Debug.Log("WORD: " + word);
+        Debug.Log("BASKET: " + basket);
+
+        if (currentSubtopic == SubtopicType.BeginningCH || currentSubtopic == SubtopicType.BeginningSH)
         {
-            case SubtopicType.BeginningCH:
-                return word.StartsWith("ch");
-
-            case SubtopicType.EndingCH:
-                return word.EndsWith("ch");
-
-            case SubtopicType.BeginningSH:
-                return word.StartsWith("sh");
-
-            case SubtopicType.EndingSH:
-                return word.EndsWith("sh");
-        }
-
-        return false;
-    }
-
-    public void ShowFeedback(bool correct)
-    {
-        // 🔥 siguraduhing nasa ibabaw
-        correctPanel.transform.SetAsLastSibling();
-        wrongPanel.transform.SetAsLastSibling();
-
-        if (correct)
-        {
-            correctPanel.SetActive(true);
-            wrongPanel.SetActive(false);
+            return word.StartsWith(basket);
         }
         else
         {
-            wrongPanel.SetActive(true);
-            correctPanel.SetActive(false);
+            return word.EndsWith(basket);
+        }
+    }
+
+    void UpdateTutorialText()
+    {
+        if (!isTutorial || tutorialText == null) return;
+
+        if (tutorialScore == 0)
+            tutorialText.text = "Catch a word that starts with " + basketLabel.text;
+
+        else if (tutorialScore == 1)
+            tutorialText.text = "Good! Catch another one!";
+
+        else if (tutorialScore == 2)
+            tutorialText.text = "Great! One more!";
+    }
+
+    void ShowWrongFeedback()
+    {
+        if (tutorialText != null)
+        {
+            tutorialText.text = "Oops! Try again!";
+
+            CancelInvoke(nameof(UpdateTutorialText));
+            Invoke(nameof(UpdateTutorialText), 1.5f);
+        }
+    }
+
+
+
+    public void ResetTutorial()
+    {
+        tutorialScore = 0;
+
+        UpdateScoreUI();        // 🔥 IMPORTANT (ito ang kulang)
+        UpdateTutorialText();
+
+        ShowWrongFeedback();
+    }
+
+    public void ShowAvoidFeedback()
+    {
+        if (tutorialText != null)
+        {
+            tutorialText.text = "Good! Avoid wrong words!";
+
+            CancelInvoke(nameof(UpdateTutorialText));
+            Invoke(nameof(UpdateTutorialText), 1.2f);
+        }
+    }
+
+    IEnumerator StartGameWithDelay()
+    {
+        if (getReadyText == null)
+        {
+            StartTimer(); // 🔥 fallback
+            SpawnNext();
+            yield break;
         }
 
-        CancelInvoke(nameof(HideFeedback));
-        Invoke(nameof(HideFeedback), 1.5f);
+        getReadyText.SetActive(true);
+
+        TextMeshProUGUI txt = getReadyText.GetComponent<TextMeshProUGUI>();
+
+        txt.text = "3";
+        yield return new WaitForSeconds(1f);
+
+        txt.text = "2";
+        yield return new WaitForSeconds(1f);
+
+        txt.text = "1";
+        yield return new WaitForSeconds(1f);
+
+        getReadyText.SetActive(false);
+
+        StartTimer();      // 🔥 START TIMER HERE
+        UpdateTimerUI();   // 🔥 UPDATE UI
+        SpawnNext();
     }
-
-    void HideFeedback()
-    {
-        correctPanel.SetActive(false);
-        wrongPanel.SetActive(false);
-    }
-
-
 }
