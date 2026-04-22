@@ -331,6 +331,12 @@ public class DatabaseManager : MonoBehaviour
 
     public void SaveProgressBetter(int userID, int moduleID, int score, int isPassed, int stars)
     {
+        if (db == null)
+        {
+            Debug.LogError("❌ DB NOT READY! SaveProgress skipped.");
+            return;
+        }
+
         lock (dbLock)
         {
             var existing = db.Query<Progress>(
@@ -359,14 +365,18 @@ public class DatabaseManager : MonoBehaviour
             }
         }
 
-        // 🔥 AUTO UNLOCK NEXT MODULE
+        // 🔥 AUTO UNLOCK
         if (isPassed == 1)
         {
             int nextModule = moduleID + 1;
 
-            PlayerPrefsManager.Instance.UnlockModule(nextModule);
+            if (PlayerPrefsManager.Instance != null)
+            {
+                PlayerPrefsManager.Instance.UnlockModule(nextModule);
+            }
 
-            Debug.Log("AUTO UNLOCK MODULE: " + nextModule);
+            int realUserID = GetUserID();
+            SaveAchievement(realUserID, moduleID);
         }
     }
 
@@ -481,6 +491,36 @@ public class DatabaseManager : MonoBehaviour
                            .FirstOrDefault();
 
             return module != null ? module.Overview : "No Overview Available";
+        }
+    }
+
+    public void SaveAchievement(int userID, int moduleID)
+    {
+        lock (dbLock)
+        {
+            // 🔍 CHECK kung meron na (avoid duplicate)
+            var existing = db.Query<Achievement>(
+                "SELECT * FROM Achievement WHERE UserID = ? AND ModuleID = ?",
+                userID, moduleID
+            );
+
+            if (existing.Count == 0)
+            {
+                Achievement newAch = new Achievement
+                {
+                    UserID = userID,
+                    ModuleID = moduleID,
+                    dateEarned = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                };
+
+                db.Insert(newAch);
+
+                Debug.Log("🏆 Achievement SAVED → Module " + moduleID);
+            }
+            else
+            {
+                Debug.Log("⚠️ Achievement already exists → skip");
+            }
         }
     }
 

@@ -48,7 +48,18 @@ public class VideoManager : MonoBehaviour
         currentIndex = index;
 
         if (index < moduleIDs.Length)
-            PlayerPrefs.SetInt("SelectedModuleID", moduleIDs[index]);
+        {
+            int selectedModule = moduleIDs[index];
+
+            PlayerPrefs.SetInt("SelectedModuleID", selectedModule);
+            PlayerPrefs.Save(); // 🔥 IMPORTANT
+
+            Debug.Log("🔥 SELECTED MODULE ID: " + selectedModule);
+        }
+        else
+        {
+            Debug.LogError("❌ INVALID INDEX FOR MODULE ID: " + index);
+        }
 
         orientationManager.SetLandscape();
 
