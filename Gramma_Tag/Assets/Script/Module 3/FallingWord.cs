@@ -50,15 +50,30 @@ public class FallingWord : MonoBehaviour
 
             if (isCorrect)
             {
-                // ❌ Dapat nasalo pero hindi → WRONG (may feedback)
+                // ❌ dapat nasalo pero hindi
+                if (gameManager.isTutorial)
+                {
+                    gameManager.ResetTutorial(); // 🔥 ADD THIS
+                }
+
                 Answer(false);
             }
             else
             {
-                // ✅ Hindi dapat saluhin → IGNORE (no feedback)
+                // ✅ tama na hindi sinalo
+                if (gameManager.isTutorial)
+                {
+                    gameManager.ShowAvoidFeedback();
+                }
+
                 Destroy(gameObject);
-                gameManager.hasActiveWord = false;
-                gameManager.Invoke("SpawnNext", 0.2f);
+
+                // 🔥 IMPORTANT: sabihin sa GameManager na pwede na ulit mag spawn
+                if (gameManager != null)
+                {
+                    gameManager.hasActiveWord = false;
+                    gameManager.Invoke("SpawnNext", 0.2f);
+                }
             }
 
             return;
@@ -106,6 +121,7 @@ public class FallingWord : MonoBehaviour
 
         gameManager.Answer(correct);
 
+        // 🔥 ALWAYS destroy (para clean)
         Destroy(gameObject);
     }
 }
