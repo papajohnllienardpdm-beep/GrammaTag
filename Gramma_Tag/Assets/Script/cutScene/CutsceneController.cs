@@ -16,10 +16,13 @@ public class CutsceneController : MonoBehaviour
 
     void Start()
     {
+        // 👉 FORCE LANDSCAPE FOR CUTSCENE
+        Screen.orientation = ScreenOrientation.LandscapeLeft;
+
         // 👉 GET SELECTED GENDER
         string gender = PlayerPrefs.GetString("SelectedGender", "Girl");
 
-        // 👉 SELECT VIDEO BASED ON GENDER
+        // 👉 SELECT VIDEO
         if (gender == "Boy")
         {
             videoPlayer.clip = boyVideo;
@@ -34,12 +37,14 @@ public class CutsceneController : MonoBehaviour
         // 👉 PLAY VIDEO
         videoPlayer.Play();
 
-        // 👉 WHEN FINISHED
+        // 👉 LISTEN END
         videoPlayer.loopPointReached += OnVideoFinished;
     }
 
     void OnVideoFinished(VideoPlayer vp)
     {
+        // ❌ TINANGGAL NA: Screen.orientation = ScreenOrientation.Portrait;
+
         SceneManager.LoadScene(nextScene);
     }
 }
