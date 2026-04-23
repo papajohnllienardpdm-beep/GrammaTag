@@ -167,11 +167,8 @@ public class VideoManager : MonoBehaviour
         }
     }
 
-
     public void BackToMenu()
     {
-        
-
         // ❌ tanggalin listener para di mag auto next scene
         videoPlayer.loopPointReached -= OnVideoFinished;
 
