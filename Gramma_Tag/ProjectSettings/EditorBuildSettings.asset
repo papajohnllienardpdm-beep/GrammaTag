@@ -44,4 +44,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Module 6/Module6Final.unity
     guid: 30a03db5a0f4b7242b5e3528c6f2244e
+  - enabled: 1
+    path: Assets/Scenes/Module 4/Module4Tutorial.unity
+    guid: f3a8e68282b05b446bf89f33d9e395cd
+  - enabled: 1
+    path: Assets/Scenes/Module 4/Module4Game.unity
+    guid: ab80290421b973f43b99e55ba6509cd8
   m_configObjects: {}

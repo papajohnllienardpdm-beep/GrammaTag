@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
-
+using System.Collections;
 
 
 public class Module4GameManager : MonoBehaviour
@@ -12,25 +12,25 @@ public class Module4GameManager : MonoBehaviour
     [Header("UI - Timer")]
     public TMP_Text timerText;
 
-    private float timer = 30f;
+    [Header("Game Timer Settings")]
+    public float gameDuration = 300f; // 5 minutes (editable sa inspector)
+
+    private float timer;
     private bool isTimerRunning = false;
+
     // =================
 
     [Header("UI - Question")]
     public TMP_Text sentenceText;
-    public Image questionImage;
 
     [Header("UI - Answers")]
     public Button[] answerButtons;
     public TMP_Text[] answerTexts;
 
-    [Header("UI - Feedback")]
-    public GameObject feedbackPanel;
-    public TMP_Text feedbackText;
-    public TMP_Text explanationText;
+
 
     [Header("UI - Navigation")]
-    public Button nextButton;
+
 
     [Header("UI - Progress")]
     public TMP_Text progressText;
@@ -43,14 +43,34 @@ public class Module4GameManager : MonoBehaviour
     private int score = 0;
     private bool answered = false;
 
+    public float nextDelay = 1.5f; // ilang seconds bago next
+
+    Color correctColor = new Color(0.2f, 0.8f, 0.2f); // bright green
+    Color wrongColor = new Color(1f, 0.3f, 0.3f);     // soft red
+    Color normalColor = Color.white;
+    Color dimColor = new Color(0.7f, 0.7f, 0.7f);     // gray
+
+    [Header("Start Countdown")]
+    public GameObject getReadyText;
+    public GameObject gameUI;
+
     void Start()
     {
-        feedbackPanel.SetActive(false);
-        nextButton.interactable = false;
+        SetupSampleQuestions();
 
-        SetupSampleQuestions(); // temporary (pwede mo palitan later)
+        timer = gameDuration;
 
-        LoadQuestion();
+        if (getReadyText != null)
+        {
+            gameUI.SetActive(false); // hide muna
+            StartCoroutine(StartGameWithDelay());
+        }
+        else
+        {
+            gameUI.SetActive(true);
+            StartTimer();
+            LoadQuestion();
+        }
     }
 
     void Update()
@@ -80,7 +100,7 @@ public class Module4GameManager : MonoBehaviour
         QuestionData q = questions[currentQuestionIndex];
 
         sentenceText.text = q.sentenceText;
-        questionImage.sprite = q.image;
+
 
         for (int i = 0; i < answerButtons.Length; i++)
         {
@@ -93,10 +113,23 @@ public class Module4GameManager : MonoBehaviour
             answerButtons[i].onClick.AddListener(() => SelectAnswer(q.choices[index]));
         }
 
-        feedbackPanel.SetActive(false);
-        nextButton.interactable = false;
+
+
 
         UpdateProgress();
+
+        foreach (Button btn in answerButtons)
+        {
+            btn.interactable = true;
+
+            Image img = btn.GetComponent<Image>();
+            img.color = normalColor;
+        }
+
+        if (sentenceText != null)
+            sentenceText.text = q.sentenceText;
+
+
     }
 
     // =============================
@@ -104,36 +137,47 @@ public class Module4GameManager : MonoBehaviour
     // =============================
     void SelectAnswer(string selectedAnswer)
     {
-        StopTimer(); // 🔥 important
-
         if (answered) return;
 
         answered = true;
 
         QuestionData q = questions[currentQuestionIndex];
 
-        feedbackPanel.SetActive(true);
-        nextButton.interactable = true;
-
-        // Disable buttons
-        foreach (Button btn in answerButtons)
+        for (int i = 0; i < answerButtons.Length; i++)
         {
+            Button btn = answerButtons[i];
             btn.interactable = false;
+
+            Image img = btn.GetComponent<Image>();
+            TMP_Text txt = answerTexts[i];
+
+            string choice = q.choices[i];
+
+            // 👉 default: dim lahat
+            img.color = dimColor;
+            txt.color = new Color(0.3f, 0.3f, 0.3f); // dark gray text
+
+            // ✅ correct answer (ONLY THIS STANDS OUT)
+            if (choice == q.correctAnswer)
+            {
+                img.color = new Color(0.2f, 1f, 0.2f); // bright green
+                txt.color = Color.white;
+            }
+
+            // ❌ maling pinili mo (optional highlight)
+            if (choice == selectedAnswer && choice != q.correctAnswer)
+            {
+                img.color = new Color(1f, 0.3f, 0.3f); // red
+                txt.color = Color.white;
+            }
         }
 
         if (selectedAnswer == q.correctAnswer)
         {
-            feedbackText.text = "CORRECT";
-            feedbackText.color = Color.green;
             score++;
         }
-        else
-        {
-            feedbackText.text = "WRONG";
-            feedbackText.color = Color.red;
-        }
 
-        explanationText.text = q.explanation;
+        Invoke(nameof(NextQuestion), nextDelay);
     }
 
     // =============================
@@ -158,11 +202,10 @@ public class Module4GameManager : MonoBehaviour
     void UpdateProgress()
     {
         progressText.text = (currentQuestionIndex + 1) + "/" + questions.Count;
-        progressBar.maxValue = questions.Count;
-        progressBar.value = currentQuestionIndex + 1;
+        progressBar.value = (float)(currentQuestionIndex) / questions.Count;
+        progressBar.maxValue = 1f;
 
-        ResetTimer();
-        StartTimer();
+
     }
 
     // =============================
@@ -192,26 +235,23 @@ public class Module4GameManager : MonoBehaviour
 
         questions.Add(new QuestionData
         {
-            questionType = QuestionType.MultipleChoice,
-            sentenceText = "This is ____ ball.",
+            sentenceText = "This is John's toy.\nIt is ____",
             correctAnswer = "his",
             choices = new string[] { "his", "her", "their", "my" },
-            explanation = "\"His\" shows that the ball belongs to the boy."
+            explanation = "\"His\" shows that the toy belongs to John."
         });
 
         questions.Add(new QuestionData
         {
-            questionType = QuestionType.MultipleChoice,
-            sentenceText = "That is ____ bag.",
+            sentenceText = "This is Maria's bag.\nIt is ____",
             correctAnswer = "her",
             choices = new string[] { "his", "her", "their", "my" },
-            explanation = "\"Her\" shows that the bag belongs to the girl."
+            explanation = "\"Her\" shows that the bag belongs to Maria."
         });
 
         questions.Add(new QuestionData
         {
-            questionType = QuestionType.MultipleChoice,
-            sentenceText = "These are ____ toys.",
+            sentenceText = "These are Ben and Ana's toys.\nThey are ____",
             correctAnswer = "their",
             choices = new string[] { "his", "her", "their", "my" },
             explanation = "\"Their\" is used for more than one owner."
@@ -219,71 +259,65 @@ public class Module4GameManager : MonoBehaviour
 
         questions.Add(new QuestionData
         {
-            questionType = QuestionType.MultipleChoice,
-            sentenceText = "This is ____ book.",
+            sentenceText = "This is my book.\nIt is ____",
             correctAnswer = "my",
             choices = new string[] { "his", "her", "their", "my" },
             explanation = "\"My\" shows that the speaker owns the book."
         });
 
+        // 👉 dagdag pa
         questions.Add(new QuestionData
         {
-            questionType = QuestionType.MultipleChoice,
-            sentenceText = "That is ____ pencil.",
+            sentenceText = "This is Ben's hat.\nIt is ____",
             correctAnswer = "his",
             choices = new string[] { "his", "her", "their", "my" },
-            explanation = "\"His\" is used for a boy's possession."
+            explanation = "\"His\" shows that the hat belongs to Ben."
         });
 
         questions.Add(new QuestionData
         {
-            questionType = QuestionType.MultipleChoice,
-            sentenceText = "This is ____ dress.",
+            sentenceText = "This is Anna's dress.\nIt is ____",
             correctAnswer = "her",
             choices = new string[] { "his", "her", "their", "my" },
-            explanation = "\"Her\" is used for a girl's possession."
+            explanation = "\"Her\" shows that the dress belongs to Anna."
         });
 
         questions.Add(new QuestionData
         {
-            questionType = QuestionType.MultipleChoice,
-            sentenceText = "These are ____ books.",
+            sentenceText = "These are the kids' shoes.\nThey are ____",
             correctAnswer = "their",
             choices = new string[] { "his", "her", "their", "my" },
-            explanation = "\"Their\" shows ownership by many people."
+            explanation = "\"Their\" is used for plural owners."
         });
 
         questions.Add(new QuestionData
         {
-            questionType = QuestionType.MultipleChoice,
-            sentenceText = "This is ____ toy car.",
+            sentenceText = "This is my pencil.\nIt is ____",
             correctAnswer = "my",
             choices = new string[] { "his", "her", "their", "my" },
-            explanation = "\"My\" shows that it belongs to the speaker."
+            explanation = "\"My\" shows ownership of the speaker."
         });
 
         questions.Add(new QuestionData
         {
-            questionType = QuestionType.MultipleChoice,
-            sentenceText = "That is ____ hat.",
+            sentenceText = "This is Carlo's book.\nIt is ____",
             correctAnswer = "his",
             choices = new string[] { "his", "her", "their", "my" },
-            explanation = "\"His\" shows that the hat belongs to the boy."
+            explanation = "\"His\" shows that the book belongs to Carlo."
         });
 
         questions.Add(new QuestionData
         {
-            questionType = QuestionType.MultipleChoice,
-            sentenceText = "These are ____ shoes.",
-            correctAnswer = "their",
+            sentenceText = "This is Mia's bag.\nIt is ____",
+            correctAnswer = "her",
             choices = new string[] { "his", "her", "their", "my" },
-            explanation = "\"Their\" is used for plural ownership."
+            explanation = "\"Her\" shows that the bag belongs to Mia."
         });
     }
 
     public void StartTimer()
     {
-        timer = 30f;
+        timer = gameDuration; // ✔ tama
         isTimerRunning = true;
     }
 
@@ -302,12 +336,15 @@ public class Module4GameManager : MonoBehaviour
     {
         if (timerText != null)
         {
-            timerText.text = Mathf.Ceil(timer).ToString();
+            int minutes = Mathf.FloorToInt(timer / 60f);
+            int seconds = Mathf.FloorToInt(timer % 60f);
+
+            timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
 
             if (timer <= 5)
                 timerText.color = Color.red;
             else
-                timerText.color = Color.white;
+                timerText.color = Color.black;
         }
     }
 
@@ -321,8 +358,6 @@ public class Module4GameManager : MonoBehaviour
 
         QuestionData q = questions[currentQuestionIndex];
 
-        feedbackPanel.SetActive(true);
-        nextButton.interactable = true;
 
         // disable buttons
         foreach (Button btn in answerButtons)
@@ -330,9 +365,36 @@ public class Module4GameManager : MonoBehaviour
             btn.interactable = false;
         }
 
-        feedbackText.text = "TIME'S UP!";
-        feedbackText.color = Color.red;
 
-        explanationText.text = q.explanation;
+
+
+        // 👉 auto next after delay
+        Invoke(nameof(NextQuestion), nextDelay);
+    }
+
+    IEnumerator StartGameWithDelay()
+    {
+        getReadyText.SetActive(true);
+
+        TMP_Text txt = getReadyText.GetComponent<TMP_Text>();
+
+        txt.text = "3";
+        yield return new WaitForSeconds(1f);
+
+        txt.text = "2";
+        yield return new WaitForSeconds(1f);
+
+        txt.text = "1";
+        yield return new WaitForSeconds(1f);
+
+        txt.text = "GO!";
+        yield return new WaitForSeconds(0.8f);
+
+        getReadyText.SetActive(false);
+
+        gameUI.SetActive(true);
+
+        StartTimer();
+        LoadQuestion();
     }
 }
