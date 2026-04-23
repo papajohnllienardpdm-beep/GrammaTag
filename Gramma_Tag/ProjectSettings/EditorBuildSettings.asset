@@ -30,7 +30,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Module 2/Module2_GameScene.unity
     guid: 86f071d323af8cb40b652b93aafb7e37
   - enabled: 1
-    path: Assets/Scenes/Module 6/Module6Game.unity
+    path: Assets/Scenes/Module 6/wala to.unity
     guid: 6442666ebaa3aed469e04f2b2931b33b
   - enabled: 1
     path: Assets/Scenes/Module 3/Module3_TutorialScene.unity
@@ -38,4 +38,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Module 3/Module3_GameScene.unity
     guid: 86d4a05e29a80384ba6e16409be42c9f
+  - enabled: 1
+    path: Assets/Scenes/Module 6/M6TutorialScene.unity
+    guid: d016b5256de0064469528d3a233c9f39
+  - enabled: 1
+    path: Assets/Scenes/Module 6/Module6Final.unity
+    guid: 30a03db5a0f4b7242b5e3528c6f2244e
   m_configObjects: {}

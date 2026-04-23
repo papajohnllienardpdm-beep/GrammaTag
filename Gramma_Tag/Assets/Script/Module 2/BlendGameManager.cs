@@ -58,7 +58,7 @@ public class BlendGameManager : MonoBehaviour
     {
         questions.Clear();
 
-        int moduleID = PlayerPrefs.GetInt("SelectedModuleID", 1);
+        int moduleID = 1;
         Debug.Log("🎯 GAME RECEIVED MODULE ID: " + moduleID);
         var dbQuestions = DatabaseManager.Instance.GetQuestionsByModule(moduleID);
 
@@ -159,7 +159,7 @@ public class BlendGameManager : MonoBehaviour
             passed = 0;
         }
 
-        int moduleID = PlayerPrefs.GetInt("SelectedModuleID", 1);
+        int moduleID = 1;
 
         // 🔥 IMPORTANT: gamitin coroutine
         StartCoroutine(SaveAndExit(moduleID, total, stars, passed));

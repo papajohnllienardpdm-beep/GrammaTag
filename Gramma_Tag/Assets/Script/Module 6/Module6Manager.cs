@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
-
+using System.Collections;
 
 
 public class Module6Manager : MonoBehaviour
@@ -17,7 +17,10 @@ public class Module6Manager : MonoBehaviour
     [Header("Timer")]
     public TextMeshProUGUI timerText;
 
-    private float timer = 30f;
+    [Header("Game Timer")]
+    public float totalGameTime = 300f; // 5 minutes (editable sa Inspector)
+
+    private float timer;
     private bool isTimerRunning = false;
     // =================
 
@@ -51,6 +54,9 @@ public class Module6Manager : MonoBehaviour
     public Image overlayC;
     public Image overlayD;
 
+    public GameObject getReadyText;
+
+    public GameObject gameUI;
     Image GetOverlay(int index)
     {
         switch (index)
@@ -74,10 +80,22 @@ public class Module6Manager : MonoBehaviour
         PickRandomQuestions();
 
         if (selectedQuestions.Count > 0)
-        {
-            LoadQuestion();
-        }
+{
+    timer = totalGameTime;
 
+    if (getReadyText != null)
+    {
+        gameUI.SetActive(false); // 🔥 HIDE muna
+        StartCoroutine(StartGameWithDelay());
+    }
+    else
+    {
+        gameUI.SetActive(true);
+        isTimerRunning = true;
+        UpdateTimerUI();
+        LoadQuestion();
+    }
+}
 
     }
 
@@ -91,7 +109,10 @@ public class Module6Manager : MonoBehaviour
             {
                 timer = 0;
                 UpdateTimerUI();
-                TimeUp();
+
+                Debug.Log("⏰ TIME'S UP - GAME OVER");
+
+                EndGameDueToTime(); // 🔥 bagong function
             }
 
             UpdateTimerUI();
@@ -266,18 +287,17 @@ public class Module6Manager : MonoBehaviour
 
         ResetButtons();
 
-        progressBar.fillAmount = (float)(currentQuestion + 1) / selectedQuestions.Count;
+        progressBar.fillAmount = (float)(currentQuestion) / selectedQuestions.Count;
         levelText.text = "Question " + (currentQuestion + 1) + "/" + selectedQuestions.Count;
 
-   
 
-        ResetTimer();
-        StartTimer();
+
+
     }
 
     void CheckAnswer(int index)
     {
-        StopTimer();
+
 
         if (hasAnswered) return;
         hasAnswered = true;
@@ -370,12 +390,15 @@ public class Module6Manager : MonoBehaviour
     {
         if (timerText != null)
         {
-            timerText.text = Mathf.Ceil(timer).ToString();
+            int minutes = Mathf.FloorToInt(timer / 60f);
+            int seconds = Mathf.FloorToInt(timer % 60f);
+
+            timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
 
             if (timer <= 5)
                 timerText.color = Color.red;
             else
-                timerText.color = Color.white;
+                timerText.color = Color.black;
         }
     }
 
@@ -410,4 +433,42 @@ public class Module6Manager : MonoBehaviour
         overlayC.color = color;
         overlayD.color = color;
     }
+
+    void EndGameDueToTime()
+    {
+        isTimerRunning = false;
+
+        PlayerPrefs.SetInt("FinalScore", score);
+        PlayerPrefs.SetInt("TotalQ", selectedQuestions.Count);
+        PlayerPrefs.SetString("LastScene", "Module6Game");
+
+        SceneManager.LoadScene("ResultScene");
+    }
+
+    IEnumerator StartGameWithDelay()
+{
+    getReadyText.SetActive(true);
+
+    TextMeshProUGUI txt = getReadyText.GetComponent<TextMeshProUGUI>();
+
+    txt.text = "3";
+    yield return new WaitForSeconds(1f);
+
+    txt.text = "2";
+    yield return new WaitForSeconds(1f);
+
+    txt.text = "1";
+    yield return new WaitForSeconds(1f);
+
+    txt.text = "GO!";
+    yield return new WaitForSeconds(0.8f);
+
+    getReadyText.SetActive(false);
+
+    gameUI.SetActive(true); // 🔥 SHOW ulit
+
+    isTimerRunning = true;
+    UpdateTimerUI();
+    LoadQuestion();
+}
 }
