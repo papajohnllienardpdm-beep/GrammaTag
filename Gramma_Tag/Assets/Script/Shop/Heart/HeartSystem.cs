@@ -207,4 +207,19 @@ public class HeartSystem : MonoBehaviour
         }
     }
 
+
+    public void ReloadFromDatabase()
+    {
+        if (DatabaseManager.Instance == null) return;
+
+        currentHearts = DatabaseManager.Instance.GetHearts();
+        lastHeartTime = DatabaseManager.Instance.GetLastHeartTime();
+
+        RecoverOfflineHearts();
+        UpdateUI();
+
+        OnHeartUpdated?.Invoke();
+
+        Debug.Log("🔄 Hearts reloaded from DB: " + currentHearts);
+    }
 }

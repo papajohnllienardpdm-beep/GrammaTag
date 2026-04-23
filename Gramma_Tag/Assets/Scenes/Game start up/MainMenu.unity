@@ -24599,7 +24599,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -23.413666, y: 16.379883}
+  m_AnchoredPosition: {x: -23.413605, y: 16.379883}
   m_SizeDelta: {x: -271.695, y: -170.778}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &516238236
@@ -34639,6 +34639,52 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 773582766}
   m_CullTransparentMesh: 1
+--- !u!1 &780585341
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 780585343}
+  - component: {fileID: 780585342}
+  m_Layer: 0
+  m_Name: HeartUIBinder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &780585342
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 780585341}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e218c33f3f4cf042bdba232fdd6849e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  heartsText: {fileID: 169992812}
+  timerText: {fileID: 297158766}
+--- !u!4 &780585343
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 780585341}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 215.05687, y: 244.43147, z: -5.593772}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &780612669
 GameObject:
   m_ObjectHideFlags: 0
@@ -57274,7 +57320,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1278761296}
   m_Direction: 2
   m_Value: 1.0000001
-  m_Size: 0.3095493
+  m_Size: 0.32052827
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -65679,7 +65725,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -40.00244, y: 0.025878906}
+  m_AnchoredPosition: {x: -40.002502, y: 0.025878906}
   m_SizeDelta: {x: 2010.242, y: 915.228}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1510379446
@@ -94915,3 +94961,4 @@ SceneRoots:
   - {fileID: 696817548}
   - {fileID: 995182524}
   - {fileID: 2055749657}
+  - {fileID: 780585343}
