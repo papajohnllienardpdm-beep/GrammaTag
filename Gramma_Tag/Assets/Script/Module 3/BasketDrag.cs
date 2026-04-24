@@ -59,28 +59,31 @@ public class BasketDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
             eventData.pressEventCamera,
             out lastLocalPoint
         );
+
+        Debug.Log("DRAG STARTED");
     }
 
     public void OnDrag(PointerEventData eventData)
-    {
-        if (!isDragging) return;
+{
+    if (!isDragging) return;
 
-        Vector2 localPoint;
+    Vector2 localPoint;
 
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            canvasRect,
-            eventData.position,
-            eventData.pressEventCamera,
-            out localPoint
-        );
+    RectTransformUtility.ScreenPointToLocalPointInRectangle(
+        canvasRect,
+        eventData.position,
+        eventData.pressEventCamera,
+        out localPoint
+    );
 
-        Vector2 delta = localPoint - lastLocalPoint; // 🔥 movement difference
+    Vector2 delta = localPoint - lastLocalPoint;
 
-        MoveBasket(delta);
+    MoveBasket(delta);
 
-        // update lang kung hindi na-clamp
+    lastLocalPoint = localPoint; // 🔥 IMPORTANT
 
-    }
+    if (bottomLimit == null || cloudTopPoint == null) return;
+}
 
 
 
@@ -154,23 +157,8 @@ public class BasketDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
 
     void Update()
     {
-        // 🖱 PC: kapag hindi na naka-hold ang mouse
-        if (isDragging && !Input.GetMouseButton(0))
-        {
-            ForceRelease();
-        }
-
-        // 📱 Mobile: kapag wala nang touch
-        if (isDragging && Input.touchCount == 0)
-        {
-            ForceRelease();
-        }
+        
     }
 
-    void ForceRelease()
-    {
-        isDragging = false;
-        canvasGroup.blocksRaycasts = true;
-        ResetPosition(); // 🔥 balik sa start
-    }
+    
 }
