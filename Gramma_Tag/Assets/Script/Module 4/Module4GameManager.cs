@@ -1,24 +1,22 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using TMPro;
+using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections;
+using UnityEngine.UI;
 
 
 public class Module4GameManager : MonoBehaviour
 {
-    // ===== TIMER =====
     [Header("UI - Timer")]
     public TMP_Text timerText;
 
     [Header("Game Timer Settings")]
-    public float gameDuration = 300f; // 5 minutes (editable sa inspector)
+    public float gameDuration = 300f;
 
     private float timer;
     private bool isTimerRunning = false;
-
-    // =================
 
     [Header("UI - Question")]
     public TMP_Text sentenceText;
@@ -27,28 +25,23 @@ public class Module4GameManager : MonoBehaviour
     public Button[] answerButtons;
     public TMP_Text[] answerTexts;
 
-
-
-    [Header("UI - Navigation")]
-
-
     [Header("UI - Progress")]
     public TMP_Text progressText;
     public Slider progressBar;
 
-    [Header("Questions")]
-    public List<QuestionData> questions = new List<QuestionData>();
+    private List<Module4Question> questions = new List<Module4Question>();
+    private int totalQuestions = 10;
 
     private int currentQuestionIndex = 0;
     private int score = 0;
     private bool answered = false;
 
-    public float nextDelay = 1.5f; // ilang seconds bago next
+    private List<string> currentShuffledChoices;
 
-    Color correctColor = new Color(0.2f, 0.8f, 0.2f); // bright green
-    Color wrongColor = new Color(1f, 0.3f, 0.3f);     // soft red
+    public float nextDelay = 1.5f;
+
     Color normalColor = Color.white;
-    Color dimColor = new Color(0.7f, 0.7f, 0.7f);     // gray
+    Color dimColor = new Color(0.7f, 0.7f, 0.7f);
 
     [Header("Start Countdown")]
     public GameObject getReadyText;
@@ -56,13 +49,23 @@ public class Module4GameManager : MonoBehaviour
 
     void Start()
     {
-        SetupSampleQuestions();
+        StartCoroutine(WaitForDB()); // ✅ FIXED
+    }
+
+    IEnumerator WaitForDB()
+    {
+        while (DatabaseManager.Instance == null || !DatabaseManager.Instance.IsDatabaseReady())
+            yield return null;
+
+        DatabaseManager.Instance.DeductHeart();
+
+        LoadQuestionsFromDB();
 
         timer = gameDuration;
 
         if (getReadyText != null)
         {
-            gameUI.SetActive(false); // hide muna
+            gameUI.SetActive(false);
             StartCoroutine(StartGameWithDelay());
         }
         else
@@ -73,116 +76,95 @@ public class Module4GameManager : MonoBehaviour
         }
     }
 
-    void Update()
+    void LoadQuestionsFromDB()
     {
-        if (isTimerRunning)
+        questions.Clear();
+
+        int moduleID = PlayerPrefs.GetInt("SelectedModuleID", 1);
+
+        var dbQuestions = DatabaseManager.Instance
+            .GetQuestionsByModule(moduleID)
+            .OrderBy(x => Random.value)
+            .Take(totalQuestions)
+            .ToList();
+
+        foreach (var q in dbQuestions)
         {
-            timer -= Time.deltaTime;
-
-            if (timer <= 0)
-            {
-                timer = 0;
-                UpdateTimerUI();
-                TimeUp();
-            }
-
-            UpdateTimerUI();
+            questions.Add(new Module4Question(
+                q.QuestionText,
+                q.ChoiceA,
+                q.ChoiceB,
+                q.ChoiceC,
+                q.ChoiceD,
+                q.CorrectAnswer
+            ));
         }
     }
 
-    // =============================
-    // LOAD QUESTION
-    // =============================
     void LoadQuestion()
     {
         answered = false;
 
-        QuestionData q = questions[currentQuestionIndex];
+        Module4Question q = questions[currentQuestionIndex];
 
-        sentenceText.text = q.sentenceText;
+        sentenceText.text = q.questionText;
 
+        currentShuffledChoices = q.choices.OrderBy(x => Random.value).ToList();
 
         for (int i = 0; i < answerButtons.Length; i++)
         {
-            answerButtons[i].interactable = true;
-
-            answerTexts[i].text = q.choices[i];
+            answerTexts[i].text = currentShuffledChoices[i];
 
             int index = i;
             answerButtons[i].onClick.RemoveAllListeners();
-            answerButtons[i].onClick.AddListener(() => SelectAnswer(q.choices[index]));
+            answerButtons[i].onClick.AddListener(() => SelectAnswer(currentShuffledChoices[index]));
+
+            answerButtons[i].interactable = true;
+            answerButtons[i].GetComponent<Image>().color = normalColor;
         }
-
-
-
 
         UpdateProgress();
-
-        foreach (Button btn in answerButtons)
-        {
-            btn.interactable = true;
-
-            Image img = btn.GetComponent<Image>();
-            img.color = normalColor;
-        }
-
-        if (sentenceText != null)
-            sentenceText.text = q.sentenceText;
-
-
     }
 
-    // =============================
-    // SELECT ANSWER
-    // =============================
     void SelectAnswer(string selectedAnswer)
     {
         if (answered) return;
 
         answered = true;
 
-        QuestionData q = questions[currentQuestionIndex];
+        Module4Question q = questions[currentQuestionIndex];
 
         for (int i = 0; i < answerButtons.Length; i++)
         {
             Button btn = answerButtons[i];
-            btn.interactable = false;
-
-            Image img = btn.GetComponent<Image>();
             TMP_Text txt = answerTexts[i];
 
-            string choice = q.choices[i];
+            btn.interactable = false;
 
-            // 👉 default: dim lahat
-            img.color = dimColor;
-            txt.color = new Color(0.3f, 0.3f, 0.3f); // dark gray text
+            string choice = currentShuffledChoices[i];
 
-            // ✅ correct answer (ONLY THIS STANDS OUT)
+            btn.GetComponent<Image>().color = dimColor;
+            txt.color = Color.gray;
+
             if (choice == q.correctAnswer)
             {
-                img.color = new Color(0.2f, 1f, 0.2f); // bright green
+                btn.GetComponent<Image>().color = Color.green;
                 txt.color = Color.white;
             }
 
-            // ❌ maling pinili mo (optional highlight)
             if (choice == selectedAnswer && choice != q.correctAnswer)
             {
-                img.color = new Color(1f, 0.3f, 0.3f); // red
+                btn.GetComponent<Image>().color = Color.red;
                 txt.color = Color.white;
             }
         }
 
         if (selectedAnswer == q.correctAnswer)
-        {
             score++;
-        }
 
         Invoke(nameof(NextQuestion), nextDelay);
     }
 
-    // =============================
-    // NEXT BUTTON
-    // =============================
     public void NextQuestion()
     {
         currentQuestionIndex++;
@@ -196,199 +178,89 @@ public class Module4GameManager : MonoBehaviour
         LoadQuestion();
     }
 
-    // =============================
-    // PROGRESS UPDATE
-    // =============================
     void UpdateProgress()
     {
         progressText.text = (currentQuestionIndex + 1) + "/" + questions.Count;
-        progressBar.value = (float)(currentQuestionIndex) / questions.Count;
-        progressBar.maxValue = 1f;
-
-
+        progressBar.value = (float)currentQuestionIndex / questions.Count;
     }
-
-    // =============================
-    // FINISH GAME → RESULT SCENE
-    // =============================
 
     void FinishGame()
     {
         int total = questions.Count;
-        int coins = (score >= 7) ? 100 : 20;
+
+        int stars = 0;
+        int passed = 0;
+
+        if (score >= 9) { stars = 3; passed = 1; }
+        else if (score >= 7) { stars = 2; passed = 1; }
+        else if (score >= 6) { stars = 1; passed = 1; }
+
+        int moduleID = PlayerPrefs.GetInt("SelectedModuleID", 1);
+
+        StartCoroutine(SaveAndExit(moduleID, total, stars, passed));
+    }
+
+    IEnumerator SaveAndExit(int moduleID, int total, int stars, int passed)
+    {
+        DatabaseManager.Instance.SaveProgressBetter(1, moduleID, score, passed, stars);
+
+        int coinsEarned = DatabaseManager.Instance.GiveCoins(moduleID, score, passed);
 
         PlayerPrefs.SetInt("FinalScore", score);
         PlayerPrefs.SetInt("TotalQ", total);
-        PlayerPrefs.SetInt("CoinsEarned", coins);
-
-        PlayerPrefs.SetString("LastScene", SceneManager.GetActiveScene().name);
+        PlayerPrefs.SetInt("Stars", stars);
+        PlayerPrefs.SetInt("Passed", passed);
+        PlayerPrefs.SetInt("CoinsEarned", coinsEarned);
 
         SceneManager.LoadScene("ResultScene");
-    }
-
-    // =============================
-    // SAMPLE QUESTIONS (TEMP ONLY)
-    // =============================
-    void SetupSampleQuestions()
-    {
-        questions.Clear();
-
-        questions.Add(new QuestionData
-        {
-            sentenceText = "This is John's toy.\nIt is ____",
-            correctAnswer = "his",
-            choices = new string[] { "his", "her", "their", "my" },
-            explanation = "\"His\" shows that the toy belongs to John."
-        });
-
-        questions.Add(new QuestionData
-        {
-            sentenceText = "This is Maria's bag.\nIt is ____",
-            correctAnswer = "her",
-            choices = new string[] { "his", "her", "their", "my" },
-            explanation = "\"Her\" shows that the bag belongs to Maria."
-        });
-
-        questions.Add(new QuestionData
-        {
-            sentenceText = "These are Ben and Ana's toys.\nThey are ____",
-            correctAnswer = "their",
-            choices = new string[] { "his", "her", "their", "my" },
-            explanation = "\"Their\" is used for more than one owner."
-        });
-
-        questions.Add(new QuestionData
-        {
-            sentenceText = "This is my book.\nIt is ____",
-            correctAnswer = "my",
-            choices = new string[] { "his", "her", "their", "my" },
-            explanation = "\"My\" shows that the speaker owns the book."
-        });
-
-        // 👉 dagdag pa
-        questions.Add(new QuestionData
-        {
-            sentenceText = "This is Ben's hat.\nIt is ____",
-            correctAnswer = "his",
-            choices = new string[] { "his", "her", "their", "my" },
-            explanation = "\"His\" shows that the hat belongs to Ben."
-        });
-
-        questions.Add(new QuestionData
-        {
-            sentenceText = "This is Anna's dress.\nIt is ____",
-            correctAnswer = "her",
-            choices = new string[] { "his", "her", "their", "my" },
-            explanation = "\"Her\" shows that the dress belongs to Anna."
-        });
-
-        questions.Add(new QuestionData
-        {
-            sentenceText = "These are the kids' shoes.\nThey are ____",
-            correctAnswer = "their",
-            choices = new string[] { "his", "her", "their", "my" },
-            explanation = "\"Their\" is used for plural owners."
-        });
-
-        questions.Add(new QuestionData
-        {
-            sentenceText = "This is my pencil.\nIt is ____",
-            correctAnswer = "my",
-            choices = new string[] { "his", "her", "their", "my" },
-            explanation = "\"My\" shows ownership of the speaker."
-        });
-
-        questions.Add(new QuestionData
-        {
-            sentenceText = "This is Carlo's book.\nIt is ____",
-            correctAnswer = "his",
-            choices = new string[] { "his", "her", "their", "my" },
-            explanation = "\"His\" shows that the book belongs to Carlo."
-        });
-
-        questions.Add(new QuestionData
-        {
-            sentenceText = "This is Mia's bag.\nIt is ____",
-            correctAnswer = "her",
-            choices = new string[] { "his", "her", "their", "my" },
-            explanation = "\"Her\" shows that the bag belongs to Mia."
-        });
+        yield return null;
     }
 
     public void StartTimer()
     {
-        timer = gameDuration; // ✔ tama
+        timer = gameDuration;
         isTimerRunning = true;
     }
 
-    public void StopTimer()
+    void Update()
     {
-        isTimerRunning = false;
-    }
+        if (!isTimerRunning) return;
 
-    public void ResetTimer()
-    {
-        timer = 30f;
+        timer -= Time.deltaTime;
+
+        if (timer <= 0)
+        {
+            timer = 0;
+            TimeUp();
+        }
+
         UpdateTimerUI();
     }
 
     void UpdateTimerUI()
     {
-        if (timerText != null)
-        {
-            int minutes = Mathf.FloorToInt(timer / 60f);
-            int seconds = Mathf.FloorToInt(timer % 60f);
+        int minutes = Mathf.FloorToInt(timer / 60f);
+        int seconds = Mathf.FloorToInt(timer % 60f);
 
-            timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
-
-            if (timer <= 5)
-                timerText.color = Color.red;
-            else
-                timerText.color = Color.black;
-        }
+        timerText.text = $"{minutes:00}:{seconds:00}";
+        timerText.color = timer <= 5 ? Color.red : Color.black;
     }
 
     void TimeUp()
     {
         isTimerRunning = false;
-
-        if (answered) return;
-
-        answered = true;
-
-        QuestionData q = questions[currentQuestionIndex];
-
-
-        // disable buttons
-        foreach (Button btn in answerButtons)
-        {
-            btn.interactable = false;
-        }
-
-
-
-
-        // 👉 auto next after delay
         Invoke(nameof(NextQuestion), nextDelay);
     }
 
     IEnumerator StartGameWithDelay()
     {
         getReadyText.SetActive(true);
-
         TMP_Text txt = getReadyText.GetComponent<TMP_Text>();
 
-        txt.text = "3";
-        yield return new WaitForSeconds(1f);
-
-        txt.text = "2";
-        yield return new WaitForSeconds(1f);
-
-        txt.text = "1";
-        yield return new WaitForSeconds(1f);
-
-        txt.text = "GO!";
-        yield return new WaitForSeconds(0.8f);
+        txt.text = "3"; yield return new WaitForSeconds(1);
+        txt.text = "2"; yield return new WaitForSeconds(1);
+        txt.text = "1"; yield return new WaitForSeconds(1);
+        txt.text = "GO!"; yield return new WaitForSeconds(0.8f);
 
         getReadyText.SetActive(false);
 
@@ -396,5 +268,20 @@ public class Module4GameManager : MonoBehaviour
 
         StartTimer();
         LoadQuestion();
+    }
+}
+
+[System.Serializable]
+public class Module4Question
+{
+    public string questionText;
+    public string[] choices;
+    public string correctAnswer;
+
+    public Module4Question(string q, string a, string b, string c, string d, string correct)
+    {
+        questionText = q;
+        choices = new string[] { a, b, c, d };
+        correctAnswer = correct;
     }
 }
