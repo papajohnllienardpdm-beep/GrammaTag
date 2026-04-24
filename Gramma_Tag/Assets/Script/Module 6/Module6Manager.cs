@@ -1,474 +1,303 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
+﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using TMPro;
+using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections;
+using UnityEngine.UI;
 
 
 public class Module6Manager : MonoBehaviour
 {
 
+
+    // COLORS
     Color normalColor = Color.white;
-    Color dimColor = new Color(0.7f, 0.7f, 0.7f); // gray
+    Color dimColor = new Color(0.7f, 0.7f, 0.7f);
     Color correctColor = Color.green;
     Color wrongColor = Color.red;
-    // ===== TIMER =====
-    [Header("Timer")]
-    public TextMeshProUGUI timerText;
 
-    [Header("Game Timer")]
-    public float totalGameTime = 300f; // 5 minutes (editable sa Inspector)
+    // TIMER
+    [Header("UI - Timer")]
+    public TMP_Text timerText;
+
+    [Header("Game Timer Settings")]
+    public float totalGameTime = 300f;
 
     private float timer;
     private bool isTimerRunning = false;
-    // =================
 
-    [Header("Buttons")]
-    public Button buttonA;
-    public Button buttonB;
-    public Button buttonC;
-    public Button buttonD;
+    // QUESTION UI
+    [Header("UI - Question")]
+    public TMP_Text questionText;
 
-    [Header("Texts")]
-    public TextMeshProUGUI textA;
-    public TextMeshProUGUI textB;
-    public TextMeshProUGUI textC;
-    public TextMeshProUGUI textD;
-    public TextMeshProUGUI questionText;
-    public TextMeshProUGUI levelText;
+    // ANSWERS
+    [Header("UI - Answers")]
+    public Button[] answerButtons;
+    public TMP_Text[] answerTexts;
 
-    [Header("UI")]
-    public Image progressBar;
+    // PROGRESS
+    [Header("UI - Progress")]
+    public TMP_Text progressText;
+    public Slider progressBar;
 
-    private List<Module6QuestionData> allQuestions = new List<Module6QuestionData>();
-    private List<Module6QuestionData> selectedQuestions = new List<Module6QuestionData>();
-
-    private int currentQuestion = 0;
-    private bool hasAnswered = false;
-
-    private int score = 0;
-
+    // OVERLAY (optional)
     public Image overlayA;
     public Image overlayB;
     public Image overlayC;
     public Image overlayD;
 
+    // START UI
     public GameObject getReadyText;
-
     public GameObject gameUI;
-    Image GetOverlay(int index)
-    {
-        switch (index)
-        {
-            case 0: return overlayA;
-            case 1: return overlayB;
-            case 2: return overlayC;
-            case 3: return overlayD;
-        }
-        return null;
-    }
+
+    // DATA
+    private List<Module6Question> questions = new List<Module6Question>();
+    private List<string> shuffledChoices;
+
+    private int currentQuestion = 0;
+    private int score = 0;
+    private bool hasAnswered = false;
+
+    public float nextDelay = 1.5f;
+    private int totalQuestions = 10;
 
     void Start()
     {
-        buttonA.onClick.AddListener(() => CheckAnswer(0));
-        buttonB.onClick.AddListener(() => CheckAnswer(1));
-        buttonC.onClick.AddListener(() => CheckAnswer(2));
-        buttonD.onClick.AddListener(() => CheckAnswer(3));
-
-        CreateQuestions();
-        PickRandomQuestions();
-
-        if (selectedQuestions.Count > 0)
-{
-    timer = totalGameTime;
-
-    if (getReadyText != null)
-    {
-        gameUI.SetActive(false); // 🔥 HIDE muna
-        StartCoroutine(StartGameWithDelay());
-    }
-    else
-    {
-        gameUI.SetActive(true);
-        isTimerRunning = true;
-        UpdateTimerUI();
-        LoadQuestion();
-    }
-}
-
+        StartCoroutine(WaitForDB());
     }
 
-    void Update()
+    IEnumerator WaitForDB()
     {
-        if (isTimerRunning)
+        while (DatabaseManager.Instance == null || !DatabaseManager.Instance.IsDatabaseReady())
+            yield return null;
+
+        // ❤️ bawas heart
+        DatabaseManager.Instance.DeductHeart();
+
+        LoadQuestionsFromDB();
+
+        timer = totalGameTime;
+
+        if (getReadyText != null)
         {
-            timer -= Time.deltaTime;
-
-            if (timer <= 0)
-            {
-                timer = 0;
-                UpdateTimerUI();
-
-                Debug.Log("⏰ TIME'S UP - GAME OVER");
-
-                EndGameDueToTime(); // 🔥 bagong function
-            }
-
-            UpdateTimerUI();
+            gameUI.SetActive(false);
+            StartCoroutine(StartGameWithDelay());
+        }
+        else
+        {
+            gameUI.SetActive(true);
+            StartTimer();
+            LoadQuestion();
         }
     }
 
-    void CreateQuestions()
+    void LoadQuestionsFromDB()
     {
-        allQuestions.Add(new Module6QuestionData
+        questions.Clear();
+
+        int moduleID = PlayerPrefs.GetInt("SelectedModuleID", 6);
+
+        var dbQuestions = DatabaseManager.Instance
+            .GetQuestionsByModule(moduleID)
+            .OrderBy(x => Random.value)
+            .Take(totalQuestions)
+            .ToList();
+
+        foreach (var q in dbQuestions)
         {
-            question = "Maria woke up early in the morning. She wore her uniform, packed her bag, and waited for the school service outside their house.",
-            choices = new string[]
-            {
-            "Maria will go to the market",
-            "Maria will go to school",
-            "Maria will visit a friend",
-            "Maria will stay at home"
-            },
-            correctIndex = 1
-        });
-
-        allQuestions.Add(new Module6QuestionData
-        {
-            question = "John brought an umbrella and wore boots. Dark clouds filled the sky.",
-            choices = new string[]
-            {
-            "It is sunny",
-            "It will rain",
-            "It is very hot",
-            "It is night time"
-            },
-            correctIndex = 1
-        });
-
-        allQuestions.Add(new Module6QuestionData
-        {
-            question = "Anna is holding a birthday cake with candles. Her friends are singing around her.",
-            choices = new string[]
-            {
-            "Anna is at school",
-            "Anna is celebrating her birthday",
-            "Anna is cooking dinner",
-            "Anna is going to sleep"
-            },
-            correctIndex = 1
-        });
-
-        allQuestions.Add(new Module6QuestionData
-        {
-            question = "Tom is wearing a jacket, scarf, and gloves. His breath can be seen in the air.",
-            choices = new string[]
-            {
-            "It is very hot",
-            "It is raining",
-            "It is cold",
-            "It is summer"
-            },
-            correctIndex = 2
-        });
-
-        allQuestions.Add(new Module6QuestionData
-        {
-            question = "Lisa is holding a book and sitting quietly in a room full of shelves with many books.",
-            choices = new string[]
-            {
-            "She is in a library",
-            "She is in a playground",
-            "She is in a market",
-            "She is in a hospital"
-            },
-            correctIndex = 0
-        });
-
-        allQuestions.Add(new Module6QuestionData
-        {
-            question = "Mark is sweating and drinking water while the sun is shining brightly above him.",
-            choices = new string[]
-            {
-            "It is raining",
-            "It is cold",
-            "It is hot",
-            "It is night"
-            },
-            correctIndex = 2
-        });
-
-        allQuestions.Add(new Module6QuestionData
-        {
-            question = "The ground is wet and people are carrying umbrellas.",
-            choices = new string[]
-            {
-            "It is sunny",
-            "It has rained",
-            "It is windy",
-            "It is night"
-            },
-            correctIndex = 1
-        });
-
-        allQuestions.Add(new Module6QuestionData
-        {
-            question = "Ben is wearing a swimsuit and playing in the water with a beach ball.",
-            choices = new string[]
-            {
-            "He is at school",
-            "He is at the beach",
-            "He is in a hospital",
-            "He is in a library"
-            },
-            correctIndex = 1
-        });
-
-        allQuestions.Add(new Module6QuestionData
-        {
-            question = "Sara is carrying many shopping bags and walking out of a store.",
-            choices = new string[]
-            {
-            "She is studying",
-            "She is shopping",
-            "She is cooking",
-            "She is sleeping"
-            },
-            correctIndex = 1
-        });
-
-        allQuestions.Add(new Module6QuestionData
-        {
-            question = "The lights are off and the children are lying in their beds with their eyes closed.",
-            choices = new string[]
-            {
-            "They are eating",
-            "They are playing",
-            "They are sleeping",
-            "They are studying"
-            },
-            correctIndex = 2
-        });
-    }
-
-    void PickRandomQuestions()
-    {
-        List<Module6QuestionData> temp = new List<Module6QuestionData>(allQuestions);
-
-        int questionCount = Mathf.Min(10, temp.Count);
-
-        for (int i = 0; i < questionCount; i++)
-        {
-            int rand = Random.Range(0, temp.Count);
-            selectedQuestions.Add(temp[rand]);
-            temp.RemoveAt(rand);
+            questions.Add(new Module6Question(
+                q.QuestionText,
+                q.ChoiceA,
+                q.ChoiceB,
+                q.ChoiceC,
+                q.ChoiceD,
+                q.CorrectAnswer
+            ));
         }
     }
 
     void LoadQuestion()
     {
-        if (currentQuestion >= selectedQuestions.Count)
-        {
-            Debug.LogError("No more questions!");
-            return;
-        }
-
         hasAnswered = false;
 
-        Module6QuestionData q = selectedQuestions[currentQuestion];
+        Module6Question q = questions[currentQuestion];
 
-        questionText.text = q.question;
+        questionText.text = q.questionText;
 
-        textA.text = q.choices[0];
-        textB.text = q.choices[1];
-        textC.text = q.choices[2];
-        textD.text = q.choices[3];
+        shuffledChoices = q.choices.OrderBy(x => Random.value).ToList();
 
-        ResetButtons();
+        for (int i = 0; i < answerButtons.Length; i++)
+        {
+            answerTexts[i].text = shuffledChoices[i];
 
-        progressBar.fillAmount = (float)(currentQuestion) / selectedQuestions.Count;
-        levelText.text = "Question " + (currentQuestion + 1) + "/" + selectedQuestions.Count;
+            int index = i;
+            answerButtons[i].onClick.RemoveAllListeners();
+            answerButtons[i].onClick.AddListener(() => SelectAnswer(shuffledChoices[index]));
 
+            answerButtons[i].interactable = true;
+            answerButtons[i].GetComponent<Image>().color = normalColor;
+        }
 
-
-
+        UpdateProgress();
     }
 
-    void CheckAnswer(int index)
+    void SelectAnswer(string selectedAnswer)
     {
-
-
         if (hasAnswered) return;
+
         hasAnswered = true;
 
-        Module6QuestionData q = selectedQuestions[currentQuestion];
+        Module6Question q = questions[currentQuestion];
 
-        // 👉 dim lahat (overlay gray)
-        SetAllOverlayColor(new Color(0, 0, 0, 0.4f));
-
-        if (index == q.correctIndex)
+        for (int i = 0; i < answerButtons.Length; i++)
         {
+            Button btn = answerButtons[i];
+            TMP_Text txt = answerTexts[i];
+
+            btn.interactable = false;
+
+            string choice = shuffledChoices[i];
+
+            btn.GetComponent<Image>().color = dimColor;
+            txt.color = Color.gray;
+
+            if (choice == q.correctAnswer)
+            {
+                btn.GetComponent<Image>().color = Color.green;
+                txt.color = Color.white;
+            }
+
+            if (choice == selectedAnswer && choice != q.correctAnswer)
+            {
+                btn.GetComponent<Image>().color = Color.red;
+                txt.color = Color.white;
+            }
+        }
+
+        if (selectedAnswer == q.correctAnswer)
             score++;
-            GetOverlay(index).color = new Color(0, 1, 0, 0.6f); // green
-        }
-        else
-        {
-            GetOverlay(index).color = new Color(1, 0, 0, 0.6f); // red
-            GetOverlay(q.correctIndex).color = new Color(0, 1, 0, 0.6f); // green
-        }
 
-        DisableAllButtons();
-        Invoke(nameof(NextQuestion), 1.5f);
+        Invoke(nameof(NextQuestion), nextDelay);
     }
 
-    public void NextQuestion()
+    void NextQuestion()
     {
         currentQuestion++;
 
-        if (currentQuestion >= selectedQuestions.Count)
+        if (currentQuestion >= questions.Count)
         {
-            Debug.Log("GAME COMPLETE");
-            PlayerPrefs.SetInt("FinalScore", score);
-            PlayerPrefs.SetInt("TotalQ", selectedQuestions.Count);
-            PlayerPrefs.SetString("LastScene", "Module6Game");
-
-            SceneManager.LoadScene("ResultScene");
+            FinishGame();
             return;
         }
 
         LoadQuestion();
     }
 
-    void DisableAllButtons()
+    void UpdateProgress()
     {
-        buttonA.interactable = false;
-        buttonB.interactable = false;
-        buttonC.interactable = false;
-        buttonD.interactable = false;
-    }
-    void ResetButtons()
-    {
-        buttonA.interactable = true;
-        buttonB.interactable = true;
-        buttonC.interactable = true;
-        buttonD.interactable = true;
-
-        SetAllOverlayColor(new Color(0, 0, 0, 0)); // transparent
+        progressText.text = (currentQuestion + 1) + "/" + questions.Count;
+        progressBar.value = (float)currentQuestion / questions.Count;
     }
 
-    Button GetButton(int index)
+    void FinishGame()
     {
-        switch (index)
-        {
-            case 0: return buttonA;
-            case 1: return buttonB;
-            case 2: return buttonC;
-            case 3: return buttonD;
-        }
-        return null;
+        int total = questions.Count;
+
+        int stars = 0;
+        int passed = 0;
+
+        if (score >= 9) { stars = 3; passed = 1; }
+        else if (score >= 7) { stars = 2; passed = 1; }
+        else if (score >= 6) { stars = 1; passed = 1; }
+
+        int moduleID = PlayerPrefs.GetInt("SelectedModuleID", 6);
+
+        StartCoroutine(SaveAndExit(moduleID, total, stars, passed));
+    }
+
+    IEnumerator SaveAndExit(int moduleID, int total, int stars, int passed)
+    {
+        DatabaseManager.Instance.SaveProgressBetter(1, moduleID, score, passed, stars);
+
+        int coins = DatabaseManager.Instance.GiveCoins(moduleID, score, passed);
+
+        PlayerPrefs.SetInt("FinalScore", score);
+        PlayerPrefs.SetInt("TotalQ", total);
+        PlayerPrefs.SetInt("Stars", stars);
+        PlayerPrefs.SetInt("Passed", passed);
+        PlayerPrefs.SetInt("CoinsEarned", coins);
+
+        SceneManager.LoadScene("ResultScene");
+        yield return null;
     }
 
     public void StartTimer()
     {
-        timer = 30f;
+        timer = totalGameTime;
         isTimerRunning = true;
     }
 
-    public void StopTimer()
+    void Update()
     {
-        isTimerRunning = false;
-    }
+        if (!isTimerRunning) return;
 
-    public void ResetTimer()
-    {
-        timer = 30f;
+        timer -= Time.deltaTime;
+
+        if (timer <= 0)
+        {
+            timer = 0;
+            TimeUp();
+        }
+
         UpdateTimerUI();
     }
 
     void UpdateTimerUI()
     {
-        if (timerText != null)
-        {
-            int minutes = Mathf.FloorToInt(timer / 60f);
-            int seconds = Mathf.FloorToInt(timer % 60f);
+        int minutes = Mathf.FloorToInt(timer / 60f);
+        int seconds = Mathf.FloorToInt(timer % 60f);
 
-            timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
-
-            if (timer <= 5)
-                timerText.color = Color.red;
-            else
-                timerText.color = Color.black;
-        }
+        timerText.text = $"{minutes:00}:{seconds:00}";
+        timerText.color = timer <= 5 ? Color.red : Color.black;
     }
 
     void TimeUp()
     {
         isTimerRunning = false;
-
-        if (hasAnswered) return;
-        hasAnswered = true;
-
-        Module6QuestionData q = selectedQuestions[currentQuestion];
-
-        SetAllOverlayColor(new Color(0, 0, 0, 0.4f));
-        GetOverlay(q.correctIndex).color = new Color(0, 1, 0, 0.6f);
-
-        DisableAllButtons();
-        Invoke(nameof(NextQuestion), 1.5f);
-    }
-
-    void SetAllButtonsColor(Color color)
-    {
-        buttonA.GetComponent<Image>().color = color;
-        buttonB.GetComponent<Image>().color = color;
-        buttonC.GetComponent<Image>().color = color;
-        buttonD.GetComponent<Image>().color = color;
-    }
-
-    void SetAllOverlayColor(Color color)
-    {
-        overlayA.color = color;
-        overlayB.color = color;
-        overlayC.color = color;
-        overlayD.color = color;
-    }
-
-    void EndGameDueToTime()
-    {
-        isTimerRunning = false;
-
-        PlayerPrefs.SetInt("FinalScore", score);
-        PlayerPrefs.SetInt("TotalQ", selectedQuestions.Count);
-        PlayerPrefs.SetString("LastScene", "Module6Game");
-
-        SceneManager.LoadScene("ResultScene");
+        Invoke(nameof(NextQuestion), nextDelay);
     }
 
     IEnumerator StartGameWithDelay()
-{
-    getReadyText.SetActive(true);
+    {
+        getReadyText.SetActive(true);
+        TMP_Text txt = getReadyText.GetComponent<TMP_Text>();
 
-    TextMeshProUGUI txt = getReadyText.GetComponent<TextMeshProUGUI>();
+        txt.text = "3"; yield return new WaitForSeconds(1);
+        txt.text = "2"; yield return new WaitForSeconds(1);
+        txt.text = "1"; yield return new WaitForSeconds(1);
+        txt.text = "GO!"; yield return new WaitForSeconds(0.8f);
 
-    txt.text = "3";
-    yield return new WaitForSeconds(1f);
+        getReadyText.SetActive(false);
 
-    txt.text = "2";
-    yield return new WaitForSeconds(1f);
+        gameUI.SetActive(true);
 
-    txt.text = "1";
-    yield return new WaitForSeconds(1f);
-
-    txt.text = "GO!";
-    yield return new WaitForSeconds(0.8f);
-
-    getReadyText.SetActive(false);
-
-    gameUI.SetActive(true); // 🔥 SHOW ulit
-
-    isTimerRunning = true;
-    UpdateTimerUI();
-    LoadQuestion();
+        StartTimer();
+        LoadQuestion();
+    }
 }
+
+[System.Serializable]
+public class Module6Question
+{
+    public string questionText;
+    public string[] choices;
+    public string correctAnswer;
+
+    public Module6Question(string q, string a, string b, string c, string d, string correct)
+    {
+        questionText = q;
+        choices = new string[] { a, b, c, d };
+        correctAnswer = correct;
+    }
 }
