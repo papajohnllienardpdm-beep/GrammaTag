@@ -40,19 +40,32 @@ public class BlendGameManager : MonoBehaviour
 
     public TextMeshProUGUI questionText; // 🔥 NEW
 
+    [Header("TIMER")]
+public TextMeshProUGUI timerText;
+public float gameDuration = 300f; // 5 minutes
+
+private float timer;
+private bool isTimerRunning = false;
+
     IEnumerator Start()
-    {
-        while (DatabaseManager.Instance == null || !DatabaseManager.Instance.IsDatabaseReady())
-            yield return null;
+{
+    while (DatabaseManager.Instance == null || !DatabaseManager.Instance.IsDatabaseReady())
+        yield return null;
 
-        // ❤️ BAWAS HEART
-        DatabaseManager.Instance.DeductHeart();
+    // ❤️ BAWAS HEART
+    DatabaseManager.Instance.DeductHeart();
 
-        wordOriginalPos = draggableWord.GetComponent<RectTransform>().anchoredPosition;
+    wordOriginalPos = draggableWord.GetComponent<RectTransform>().anchoredPosition;
 
-        LoadQuestions();
-        ShowQuestion();
-    }
+    LoadQuestions();
+    ShowQuestion();
+
+    // ✅ START TIMER (ETO ANG KULANG)
+    timer = gameDuration;
+    isTimerRunning = true;
+
+    UpdateTimerUI(); // para agad makita 05:00
+}
 
     void LoadQuestions()
     {
@@ -163,6 +176,8 @@ public class BlendGameManager : MonoBehaviour
 
         // 🔥 IMPORTANT: gamitin coroutine
         StartCoroutine(SaveAndExit(moduleID, total, stars, passed));
+
+        isTimerRunning = false;
     }
 
     IEnumerator SaveAndExit(int moduleID, int total, int stars, int passed)
@@ -230,6 +245,33 @@ public class BlendGameManager : MonoBehaviour
 
         return questions[currentIndex].correctAnswer;
     }
+
+    void Update()
+{
+    if (!isTimerRunning) return;
+
+    timer -= Time.deltaTime;
+
+    if (timer <= 0)
+    {
+        timer = 0;
+        isTimerRunning = false;
+
+        EndGame(); // ⏰ AUTO END PAG NAUBOS ORAS
+    }
+
+    UpdateTimerUI();
+}
+
+void UpdateTimerUI()
+{
+    int minutes = Mathf.FloorToInt(timer / 60);
+    int seconds = Mathf.FloorToInt(timer % 60);
+
+    timerText.text = $"{minutes:00}:{seconds:00}";
+}
+
+    
 }
 
 [System.Serializable]
