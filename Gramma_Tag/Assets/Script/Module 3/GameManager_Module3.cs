@@ -1,38 +1,28 @@
-﻿using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using TMPro;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using System.Collections;
 
 public class GameManager_Module3 : MonoBehaviour
 {
     public static GameManager_Module3 instance;
 
     public TextMeshProUGUI timerText;
+
     [Header("Game Timer")]
-    public float gameDuration = 300f; // 5 minutes default
+    public float gameDuration = 300f;
 
     private float timer;
     private bool isTimerRunning = false;
 
-    public enum SubtopicType
-    {
-        BeginningCH,
-        EndingCH,
-        BeginningSH,
-        EndingSH
-    }
-
-    public SubtopicType currentSubtopic;
 
     public Image basketImage;
     public Sprite chSprite;
     public Sprite shSprite;
-
     public TextMeshProUGUI basketLabel;
-
-    int lastIndex = -1;
-
 
     [Header("Tutorial Mode")]
     public bool isTutorial = false;
@@ -40,53 +30,62 @@ public class GameManager_Module3 : MonoBehaviour
 
     private int tutorialScore = 0;
 
-    public TextMeshProUGUI tutorialText; // instruction text
-
+    public TextMeshProUGUI tutorialText;
     public GameObject getReadyText;
-
-
-    void Awake()
-    {
-        Debug.Log("GameManager Loaded: " + gameObject.name);
-    }
 
     public WordSpawner spawner;
 
-    public TextMeshProUGUI scoreText;
     public TextMeshProUGUI progressText;
     public Image progressBar;
 
     int current = 0;
     int score = 0;
 
+    // 🔥 ROUNDS
+    private List<Module3Round> rounds = new List<Module3Round>();
+    private int currentRoundIndex = 0;
+    private int spawnIndexInRound = 0;
+
+    private bool roundAnswered = false;
+    private List<string> currentRoundWords = new List<string>();
+
     public bool hasActiveWord = false;
+    public bool isTransitioning = false;
+    private bool isSpawning = false;
 
     void Start()
     {
-        if (hasActiveWord) return;
+        StartCoroutine(WaitForDB());
+    }
+
+    IEnumerator WaitForDB()
+    {
+        while (DatabaseManager.Instance == null || !DatabaseManager.Instance.IsDatabaseReady())
+            yield return null;
+
+        DatabaseManager.Instance.DeductHeart();
+
+        LoadRoundsFromDB();
+        UpdateTargetLabel(); // 🔥 ADD THIS
 
         if (spawner == null)
             spawner = FindObjectOfType<WordSpawner>();
 
-        SetupBasket();
+        
 
         if (isTutorial)
         {
-            // ✅ TUTORIAL FLOW
             if (timerText != null)
                 timerText.gameObject.SetActive(false);
 
-            SpawnNext(); // diretso laro
+            SpawnNext();
         }
         else
         {
-            // ✅ GAME FLOW
             timer = gameDuration;
 
             if (getReadyText != null)
-            {
-                StartCoroutine(StartGameWithDelay()); // 🔥 once lang
-            }
+                StartCoroutine(StartGameWithDelay());
             else
             {
                 StartTimer();
@@ -95,24 +94,33 @@ public class GameManager_Module3 : MonoBehaviour
         }
 
         UpdateScoreUI();
-        UpdateTutorialText();
     }
 
-    void SetupBasket()
+    void LoadRoundsFromDB()
     {
-        if (basketLabel == null) return;
+        rounds.Clear();
 
-        if (currentSubtopic == SubtopicType.BeginningCH || currentSubtopic == SubtopicType.EndingCH)
+        int moduleID = PlayerPrefs.GetInt("SelectedModuleID", 1);
+
+        var dbQuestions = DatabaseManager.Instance
+            .GetQuestionsByModule(moduleID)
+            .OrderBy(x => Random.value)
+            .Take(10)
+            .ToList();
+
+        foreach (var q in dbQuestions)
         {
-            basketImage.sprite = chSprite;
-            basketLabel.text = "CH"; // ✅ IMPORTANT
-        }
-        else
-        {
-            basketImage.sprite = shSprite;
-            basketLabel.text = "SH"; // ✅ IMPORTANT
+            rounds.Add(new Module3Round(
+                q.QuestionText,
+                q.ChoiceA,
+                q.ChoiceB,
+                q.ChoiceC,
+                q.CorrectAnswer
+            ));
         }
     }
+
+   
 
     void Update()
     {
@@ -130,31 +138,28 @@ public class GameManager_Module3 : MonoBehaviour
             UpdateTimerUI();
         }
     }
+
+    // ✅ ANSWER LOGIC
     public void Answer(bool correct)
     {
         hasActiveWord = false;
 
-        // 🔥 TUTORIAL MODE
+        // 🔥 TUTORIAL
         if (isTutorial)
         {
             if (!correct)
             {
-                Debug.Log("WRONG → RESET");
-
-                ResetTutorial(); // 🔥 reset to 0
+                ResetTutorial();
                 SpawnNext();
-
                 return;
             }
 
-            // ✅ tama
             tutorialScore++;
             UpdateScoreUI();
             UpdateTutorialText();
 
             if (tutorialScore >= tutorialTarget)
             {
-                Debug.Log("TUTORIAL COMPLETE");
                 SceneManager.LoadScene("Module3_GameScene");
                 return;
             }
@@ -163,52 +168,149 @@ public class GameManager_Module3 : MonoBehaviour
             return;
         }
 
-
-
-        // 🔽 NORMAL GAME
-        if (current >= 10) return;
+        if (roundAnswered) return;
 
         if (correct)
         {
             score++;
+            roundAnswered = true;
+            isTransitioning = true;
+            StartCoroutine(NextRoundDelay());
+            return;
         }
 
-        current++;
-        UpdateScoreUI();
-
+        // ❌ WRONG = IGNORE
         SpawnNext();
-
-        Debug.Log("ANSWER: " + correct);
     }
 
-    void SpawnNext()
+    public void MissCorrect()
     {
-        if (hasActiveWord) return;
+        if (roundAnswered || isTransitioning) return;
 
-        if (!isTutorial && current >= 10)
+        roundAnswered = true;
+        isTransitioning = true;
+        StartCoroutine(NextRoundDelay());
+    }
+
+    IEnumerator NextRoundDelay()
+    {
+        yield return new WaitForSeconds(0.5f);
+        NextRound();
+    }
+
+    void NextRound()
+    {
+        current++;
+        currentRoundIndex++;
+
+        spawnIndexInRound = 0;
+        roundAnswered = false;
+        isTransitioning = false;
+        hasActiveWord = false;
+
+        UpdateTargetLabel(); // 🔥 ADD THIS
+
+        UpdateScoreUI();
+        SpawnNext();
+    }
+
+    public void SpawnNext()
+    {
+        if (hasActiveWord || roundAnswered || isTransitioning || isSpawning) return;
+
+        isSpawning = true;
+
+        if (!isTutorial && currentRoundIndex >= rounds.Count)
         {
-            PlayerPrefs.SetInt("FinalScore", score);
-            PlayerPrefs.SetInt("TotalQ", 10);
-            PlayerPrefs.SetString("LastScene", SceneManager.GetActiveScene().name);
-            PlayerPrefs.Save();
-
-            SceneManager.LoadScene("ResultScene");
-            return; // 🔥 VERY IMPORTANT
+            FinishGame();
+            return;
         }
 
-        int index;
-
-        do
+        if (!roundAnswered && spawnIndexInRound >= 3)
         {
-            index = Random.Range(0, spawner.words.Length);
+            MissCorrect();
+            isSpawning = false;
+            return;
         }
-        while (index == lastIndex);
 
-        lastIndex = index;
-        spawner.Spawn(index);
-        hasActiveWord = true;
+        if (spawnIndexInRound == 0)
+        {
+            PrepareRoundWords();
+        }
 
+        if (spawnIndexInRound < currentRoundWords.Count)
+        {
+            string word = currentRoundWords[spawnIndexInRound];
+            spawner.SpawnWord(word);
 
+            hasActiveWord = true;
+            spawnIndexInRound++;
+        }
+
+        isSpawning = false;
+    }
+
+    void PrepareRoundWords()
+    {
+        currentRoundWords.Clear();
+
+        var round = rounds[currentRoundIndex];
+
+        currentRoundWords.Add(round.correct);
+
+        foreach (var w in round.choices)
+        {
+            if (w != round.correct)
+                currentRoundWords.Add(w);
+        }
+
+        currentRoundWords = currentRoundWords
+            .OrderBy(x => Random.value)
+            .ToList();
+    }
+
+    void FinishGame()
+    {
+        int total = rounds.Count;
+        int stars = 0;
+        int passed = 0;
+
+        if (score >= 9)
+        {
+            stars = 3;
+            passed = 1;
+        }
+        else if (score >= 7)
+        {
+            stars = 2;
+            passed = 1;
+        }
+        else if (score >= 6)
+        {
+            stars = 1;
+            passed = 1;
+        }
+
+        int moduleID = PlayerPrefs.GetInt("SelectedModuleID", 1);
+
+        StartCoroutine(SaveAndExit(moduleID, total, stars, passed));
+    }
+
+    IEnumerator SaveAndExit(int moduleID, int total, int stars, int passed)
+    {
+        DatabaseManager.Instance.SaveProgressBetter(1, moduleID, score, passed, stars);
+
+        int coins = DatabaseManager.Instance.GiveCoins(moduleID, score, passed);
+
+        PlayerPrefs.SetInt("FinalScore", score);
+        PlayerPrefs.SetInt("TotalQ", total);
+        PlayerPrefs.SetInt("Stars", stars);
+        PlayerPrefs.SetInt("Passed", passed);
+        PlayerPrefs.SetInt("CoinsEarned", coins);
+
+        SceneManager.LoadScene("ResultScene");
+
+        yield return null;
     }
 
     void UpdateScoreUI()
@@ -224,7 +326,6 @@ public class GameManager_Module3 : MonoBehaviour
             return;
         }
 
-        // normal game
         if (progressText != null)
             progressText.text = "Progress " + current + "/10";
 
@@ -232,17 +333,8 @@ public class GameManager_Module3 : MonoBehaviour
             progressBar.fillAmount = (float)current / 10f;
     }
 
-    public void StartTimer()
-    {
-        isTimerRunning = true;
-    }
-
-    public void StopTimer()
-    {
-        isTimerRunning = false;
-    }
-
-
+    public void StartTimer() => isTimerRunning = true;
+    public void StopTimer() => isTimerRunning = false;
 
     void UpdateTimerUI()
     {
@@ -251,20 +343,14 @@ public class GameManager_Module3 : MonoBehaviour
             int minutes = Mathf.FloorToInt(timer / 60);
             int seconds = Mathf.FloorToInt(timer % 60);
 
-            timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
-
-            if (timer <= 10)
-                timerText.color = Color.red;
-            else
-                timerText.color = Color.black;
+            timerText.text = $"{minutes:00}:{seconds:00}";
+            timerText.color = timer <= 10 ? Color.red : Color.black;
         }
     }
 
     void TimeUp()
     {
         isTimerRunning = false;
-
-        Debug.Log("TIME'S UP - GAME OVER");
 
         PlayerPrefs.SetInt("FinalScore", score);
         PlayerPrefs.SetInt("TotalQ", current);
@@ -276,18 +362,21 @@ public class GameManager_Module3 : MonoBehaviour
 
     public bool IsCorrectWord(string word)
     {
-        string basket = basketLabel.text.ToLower();
+        if (string.IsNullOrEmpty(word)) return false;
 
-        Debug.Log("WORD: " + word);
-        Debug.Log("BASKET: " + basket);
+        string cleanWord = word.Trim().ToLower();
+        string correct = rounds[currentRoundIndex].correct.Trim().ToLower();
 
-        if (currentSubtopic == SubtopicType.BeginningCH || currentSubtopic == SubtopicType.BeginningSH)
+        return cleanWord == correct;
+    }
+
+    void UpdateTargetLabel()
+    {
+        if (isTutorial) return; // ❗ wag galawin tutorial
+
+        if (basketLabel != null && currentRoundIndex < rounds.Count)
         {
-            return word.StartsWith(basket);
-        }
-        else
-        {
-            return word.EndsWith(basket);
+            basketLabel.text = rounds[currentRoundIndex].target;
         }
     }
 
@@ -297,35 +386,17 @@ public class GameManager_Module3 : MonoBehaviour
 
         if (tutorialScore == 0)
             tutorialText.text = "Catch a word that starts with " + basketLabel.text;
-
         else if (tutorialScore == 1)
             tutorialText.text = "Good! Catch another one!";
-
         else if (tutorialScore == 2)
             tutorialText.text = "Great! One more!";
     }
 
-    void ShowWrongFeedback()
-    {
-        if (tutorialText != null)
-        {
-            tutorialText.text = "Oops! Try again!";
-
-            CancelInvoke(nameof(UpdateTutorialText));
-            Invoke(nameof(UpdateTutorialText), 1.5f);
-        }
-    }
-
-
-
     public void ResetTutorial()
     {
         tutorialScore = 0;
-
-        UpdateScoreUI();        // 🔥 IMPORTANT (ito ang kulang)
+        UpdateScoreUI();
         UpdateTutorialText();
-
-        ShowWrongFeedback();
     }
 
     public void ShowAvoidFeedback()
@@ -333,38 +404,43 @@ public class GameManager_Module3 : MonoBehaviour
         if (tutorialText != null)
         {
             tutorialText.text = "Good! Avoid wrong words!";
-
-            CancelInvoke(nameof(UpdateTutorialText));
             Invoke(nameof(UpdateTutorialText), 1.2f);
         }
     }
 
     IEnumerator StartGameWithDelay()
     {
-        if (getReadyText == null)
-        {
-            StartTimer(); // 🔥 fallback
-            SpawnNext();
-            yield break;
-        }
-
         getReadyText.SetActive(true);
 
-        TextMeshProUGUI txt = getReadyText.GetComponent<TextMeshProUGUI>();
+        var txt = getReadyText.GetComponent<TextMeshProUGUI>();
 
         txt.text = "3";
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(1);
 
         txt.text = "2";
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(1);
 
         txt.text = "1";
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(1);
 
         getReadyText.SetActive(false);
 
-        StartTimer();      // 🔥 START TIMER HERE
-        UpdateTimerUI();   // 🔥 UPDATE UI
+        StartTimer();
         SpawnNext();
+    }
+}
+
+[System.Serializable]
+public class Module3Round
+{
+    public string target;
+    public string[] choices;
+    public string correct;
+
+    public Module3Round(string t, string a, string b, string c, string correct)
+    {
+        target = t;
+        choices = new string[] { a, b, c };
+        this.correct = correct;
     }
 }

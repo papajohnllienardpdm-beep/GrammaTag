@@ -9,26 +9,25 @@ public class WordSpawner : MonoBehaviour
     public RectTransform gameArea;
     public RectTransform catchPoint;
 
-    public string[] words = { "ship", "chair", "shoe", "chicken", "shark", "cheese", "shop", "chalk", "shell", "chop" };
-    public string[] answers = { "SH", "CH", "SH", "CH", "SH", "CH", "SH", "CH", "SH", "CH" };
 
-    public void Spawn(int index)
+
+    public void SpawnWord(string word)
     {
         GameObject obj = Instantiate(wordPrefab, spawnPoint.position, Quaternion.identity, spawnPoint.parent);
 
-        FallingWord fw = obj.GetComponent<FallingWord>();
-        fw.wordTMP.text = words[index];
+        var fw = obj.GetComponent<FallingWord>();
 
+        if (fw == null)
+        {
+            Debug.LogError("FallingWord script missing on prefab!");
+            return;
+        }
 
-
-        fw.wordText = words[index];
+        fw.wordTMP.text = word;
+        fw.wordText = word;
         fw.gameManager = gameManager;
 
-        // 👇 ADD THIS
-
-
         fw.gameArea = gameArea;
-
         fw.catchPoint = catchPoint;
     }
 }
