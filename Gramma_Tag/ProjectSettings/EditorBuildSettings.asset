@@ -30,6 +30,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Module 2/Module2_GameScene.unity
     guid: 86f071d323af8cb40b652b93aafb7e37
   - enabled: 1
+    path: Assets/Scenes/Module 2/Module2_TutorialScene.unity
+    guid: ab60ca5bd99c88445b947a37a8cac8bc
+  - enabled: 1
     path: Assets/Scenes/Module 6/wala to.unity
     guid: 6442666ebaa3aed469e04f2b2931b33b
   - enabled: 1
