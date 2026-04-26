@@ -18032,7 +18032,7 @@ MonoBehaviour:
   - {fileID: 32900000, guid: f107829b691c7e64fb40349da0063290, type: 3}
   - {fileID: 32900000, guid: f107829b691c7e64fb40349da0063290, type: 3}
   nextScenes:
-  - Module2_GameScene
+  - Module2_TutorialScene
   - Module2_GameScene
   - Module3_TutorialScene
   - Module3_GameScene

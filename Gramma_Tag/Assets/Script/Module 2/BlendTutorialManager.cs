@@ -63,13 +63,13 @@ public class BlendTutorialManager : MonoBehaviour
         tutorialStep = 0;
 
         instructionText.text = "Welcome! Let's learn about beginning sounds!";
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(5f);
 
         instructionText.text = "Look at the word in the middle.";
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(5f);
 
         instructionText.text = "Choose the word that starts the same sound.";
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(5f);
 
         instructionText.text = "Drag it to your answer!";
     }
@@ -123,12 +123,12 @@ public class BlendTutorialManager : MonoBehaviour
 
         if (answer == correct)
         {
-            instructionText.text = "Great job! 🎉 That word starts with the correct sound!";
+            instructionText.text = "Great job! That word starts with the correct sound!";
             Invoke("NextQuestion", 1.2f);
         }
         else
         {
-            instructionText.text = "Good try! 😊 Let's look at the first sound again.";
+            instructionText.text = "Good try! Let's look at the first sound again.";
             Invoke("RestartTutorial", 1.5f);
         }
     }
@@ -153,8 +153,8 @@ public class BlendTutorialManager : MonoBehaviour
 
     void EndTutorial()
     {
-        instructionText.text = "Awesome! 🎉 You're ready to play!";
-        Invoke("GoToGame", 2f);
+        instructionText.text = "Awesome! You're ready to play!";
+        Invoke("GoToGame", 0.7f);
     }
 
     void GoToGame()
