@@ -41,31 +41,44 @@ public class BlendGameManager : MonoBehaviour
     public TextMeshProUGUI questionText; // 🔥 NEW
 
     [Header("TIMER")]
-public TextMeshProUGUI timerText;
-public float gameDuration = 300f; // 5 minutes
+    public TextMeshProUGUI timerText;
+    public float gameDuration = 300f; // 5 minutes
 
-private float timer;
-private bool isTimerRunning = false;
+    private float timer;
+    private bool isTimerRunning = false;
+    [Header("COUNTDOWN")]
+    public TextMeshProUGUI countdownText;
+    public GameObject gameplayUI; // optional (para itago muna UI)
 
     IEnumerator Start()
-{
-    while (DatabaseManager.Instance == null || !DatabaseManager.Instance.IsDatabaseReady())
-        yield return null;
+    {
+        while (DatabaseManager.Instance == null || !DatabaseManager.Instance.IsDatabaseReady())
+            yield return null;
 
-    // ❤️ BAWAS HEART
-    DatabaseManager.Instance.DeductHeart();
+        DatabaseManager.Instance.DeductHeart();
 
-    wordOriginalPos = draggableWord.GetComponent<RectTransform>().anchoredPosition;
+        wordOriginalPos = draggableWord.GetComponent<RectTransform>().anchoredPosition;
 
-    LoadQuestions();
-    ShowQuestion();
+        LoadQuestions();
 
-    // ✅ START TIMER (ETO ANG KULANG)
-    timer = gameDuration;
-    isTimerRunning = true;
+        // ❗ HIDE GAME UI muna
+        if (gameplayUI != null)
+            gameplayUI.SetActive(false);
 
-    UpdateTimerUI(); // para agad makita 05:00
-}
+        // ❗ START COUNTDOWN
+        yield return StartCoroutine(StartCountdown());
+
+        // ❗ SHOW GAME
+        if (gameplayUI != null)
+            gameplayUI.SetActive(true);
+
+        ShowQuestion();
+
+        // ✅ START TIMER AFTER COUNTDOWN
+        timer = gameDuration;
+        isTimerRunning = true;
+        UpdateTimerUI();
+    }
 
     void LoadQuestions()
     {
@@ -247,31 +260,48 @@ private bool isTimerRunning = false;
     }
 
     void Update()
-{
-    if (!isTimerRunning) return;
-
-    timer -= Time.deltaTime;
-
-    if (timer <= 0)
     {
-        timer = 0;
-        isTimerRunning = false;
+        if (!isTimerRunning) return;
 
-        EndGame(); // ⏰ AUTO END PAG NAUBOS ORAS
+        timer -= Time.deltaTime;
+
+        if (timer <= 0)
+        {
+            timer = 0;
+            isTimerRunning = false;
+
+            EndGame(); // ⏰ AUTO END PAG NAUBOS ORAS
+        }
+
+        UpdateTimerUI();
     }
 
-    UpdateTimerUI();
-}
+    void UpdateTimerUI()
+    {
+        int minutes = Mathf.FloorToInt(timer / 60);
+        int seconds = Mathf.FloorToInt(timer % 60);
 
-void UpdateTimerUI()
-{
-    int minutes = Mathf.FloorToInt(timer / 60);
-    int seconds = Mathf.FloorToInt(timer % 60);
+        timerText.text = $"{minutes:00}:{seconds:00}";
+    }
+    IEnumerator StartCountdown()
+    {
+        countdownText.gameObject.SetActive(true);
 
-    timerText.text = $"{minutes:00}:{seconds:00}";
-}
+        countdownText.text = "3";
+        yield return new WaitForSeconds(1f);
 
-    
+        countdownText.text = "2";
+        yield return new WaitForSeconds(1f);
+
+        countdownText.text = "1";
+        yield return new WaitForSeconds(1f);
+
+        countdownText.text = "GO!";
+        yield return new WaitForSeconds(1f);
+
+        countdownText.gameObject.SetActive(false);
+    }
+
 }
 
 [System.Serializable]
@@ -289,4 +319,6 @@ public class Question
         choiceB = b;
         correctAnswer = correct;
     }
+
+
 }
