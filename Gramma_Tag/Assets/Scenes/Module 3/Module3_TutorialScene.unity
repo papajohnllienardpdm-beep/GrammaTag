@@ -1223,28 +1223,6 @@ MonoBehaviour:
   gameManager: {fileID: 1438014229}
   gameArea: {fileID: 2108573589}
   catchPoint: {fileID: 820524661}
-  words:
-  - ship
-  - chair
-  - shoe
-  - chicken
-  - shark
-  - cheese
-  - shop
-  - chalk
-  - shell
-  - chop
-  answers:
-  - SH
-  - CH
-  - SH
-  - CH
-  - SH
-  - CH
-  - SH
-  - CH
-  - SH
-  - CH
 --- !u!4 &594856659
 Transform:
   m_ObjectHideFlags: 0
@@ -2445,7 +2423,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   timerText: {fileID: 379256211}
   gameDuration: 300
-  currentSubtopic: 0
   basketImage: {fileID: 1683025118}
   chSprite: {fileID: 21300000, guid: c6fbc905321ec834ea399fb5eee42b79, type: 3}
   shSprite: {fileID: 21300000, guid: 201b0bb46fec85d45813e25b719feb7d, type: 3}
@@ -2455,10 +2432,10 @@ MonoBehaviour:
   tutorialText: {fileID: 1973803652}
   getReadyText: {fileID: 0}
   spawner: {fileID: 594856658}
-  scoreText: {fileID: 0}
   progressText: {fileID: 1553115414}
   progressBar: {fileID: 20706882}
   hasActiveWord: 0
+  isTransitioning: 0
 --- !u!4 &1438014230
 Transform:
   m_ObjectHideFlags: 0
@@ -4010,8 +3987,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Catch 3 correct words to start!
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 09626e80693e50a4ea752e5cf93e114e, type: 2}
+  m_sharedMaterial: {fileID: 8977684842885629325, guid: 09626e80693e50a4ea752e5cf93e114e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
