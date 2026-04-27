@@ -16,6 +16,15 @@ public class VideoBackHandler : MonoBehaviour
             videoPlayer.Pause();
         }
 
+        // 🔥 ADD MO ITO (music balik)
+        if (AudioManager.Instance != null)
+        {
+            if (!AudioManager.Instance.musicSource.isPlaying)
+            {
+                AudioManager.Instance.musicSource.Play();
+            }
+        }
+
         // 📱 Exit fullscreen
         if (fullscreenToggle != null)
         {

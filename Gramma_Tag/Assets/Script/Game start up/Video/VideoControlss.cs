@@ -30,9 +30,21 @@ public class VideoControlss : MonoBehaviour
         videoPlayer.SetTargetAudioSource(0, audioSource);
 
         videoPlayer.prepareCompleted += OnVideoPrepared;
+
+        // 🔥 ADD MO ITO
+        videoPlayer.loopPointReached += OnVideoFinished;
+
         videoPlayer.Prepare();
 
         timeText.text = "00:00 / 00:00";
+    }
+
+    void OnVideoFinished(VideoPlayer vp)
+    {
+        isPlaying = false;
+        UpdatePlayPauseIcon();
+
+        HandleMusic(false); // 🔥 resume music
     }
 
     // 🔥 AUTO PLAY PAG BUKAS NG PANEL
@@ -102,11 +114,13 @@ public class VideoControlss : MonoBehaviour
         {
             videoPlayer.Play();
             isPlaying = true;
+            HandleMusic(true); // 🔥 pause music
         }
         else
         {
             videoPlayer.Pause();
             isPlaying = false;
+            HandleMusic(false); // 🔥 play music
         }
 
         UpdatePlayPauseIcon();
@@ -179,13 +193,32 @@ public class VideoControlss : MonoBehaviour
 
     void StartPlayback()
     {
-        // 👉 FULLSCREEN
         fullscreenToggle.EnterFullscreen();
 
-        // 👉 PLAY VIDEO
         videoPlayer.Play();
         isPlaying = true;
 
+        HandleMusic(true); // 🔥 pause music
+
         UpdatePlayPauseIcon();
+    }
+
+    void HandleMusic(bool videoIsPlaying)
+    {
+        if (AudioManager.Instance == null) return;
+
+        if (videoIsPlaying)
+        {
+            // ⏸ Pause music
+            AudioManager.Instance.musicSource.Pause();
+        }
+        else
+        {
+            // ▶ Resume music
+            if (!AudioManager.Instance.musicSource.isPlaying)
+            {
+                AudioManager.Instance.musicSource.Play();
+            }
+        }
     }
 }
