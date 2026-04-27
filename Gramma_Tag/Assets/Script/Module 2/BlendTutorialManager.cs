@@ -32,6 +32,8 @@ public class BlendTutorialManager : MonoBehaviour
 
     private int tutorialStep = 0;
 
+    private bool hasTouchedWord = false;
+
     void Awake()
     {
         var gm = FindObjectOfType<GameManager>();
@@ -46,7 +48,7 @@ public class BlendTutorialManager : MonoBehaviour
         SetupQuestions();
         ShowQuestion();
 
-        StartCoroutine(TutorialIntro());
+      
     }
 
     void SetupQuestions()
@@ -58,62 +60,44 @@ public class BlendTutorialManager : MonoBehaviour
         questions.Add(new Question("pl", "play", "appl", "play"));
     }
 
-    IEnumerator TutorialIntro()
+   
+
+   void ShowQuestion()
+{
+    if (currentIndex >= questions.Count)
     {
-        tutorialStep = 0;
-
-        instructionText.text = "Welcome! Let's learn about beginning sounds!";
-        yield return new WaitForSeconds(5f);
-
-        instructionText.text = "Look at the word in the middle.";
-        yield return new WaitForSeconds(5f);
-
-        instructionText.text = "Choose the word that starts the same sound.";
-        yield return new WaitForSeconds(5f);
-
-        instructionText.text = "Drag it to your answer!";
+        EndTutorial();
+        return;
     }
 
-    void ShowQuestion()
+    Question q = questions[currentIndex];
+
+    // ✅ FIRST INSTRUCTION
+    hasTouchedWord = false;
+    instructionText.text = "Tap and hold the word first.";
+
+    // random swap
+    if (Random.value > 0.5f)
     {
-        if (currentIndex >= questions.Count)
-        {
-            EndTutorial();
-            return;
-        }
+        choiceAText.text = q.choiceA;
+        choiceBText.text = q.choiceB;
 
-        Question q = questions[currentIndex];
-
-        // 🧠 MAS TEACHING STYLE
-        if (currentIndex == 0)
-            instructionText.text = "Listen: 'bl' sound. Which word starts with 'bl'?";
-        else if (currentIndex == 1)
-            instructionText.text = "Now try 'tr' sound. Find the correct word!";
-        else
-            instructionText.text = "Last one! Look carefully at the starting sound.";
-
-        // random swap
-        if (Random.value > 0.5f)
-        {
-            choiceAText.text = q.choiceA;
-            choiceBText.text = q.choiceB;
-
-            choiceAZone.answerText = q.choiceA;
-            choiceBZone.answerText = q.choiceB;
-        }
-        else
-        {
-            choiceAText.text = q.choiceB;
-            choiceBText.text = q.choiceA;
-
-            choiceAZone.answerText = q.choiceB;
-            choiceBZone.answerText = q.choiceA;
-        }
-
-        // progress
-        progressText.text = $"Tutorial {currentIndex + 1} / {questions.Count}";
-        progressBarFill.fillAmount = (float)currentIndex / questions.Count;
+        choiceAZone.answerText = q.choiceA;
+        choiceBZone.answerText = q.choiceB;
     }
+    else
+    {
+        choiceAText.text = q.choiceB;
+        choiceBText.text = q.choiceA;
+
+        choiceAZone.answerText = q.choiceB;
+        choiceBZone.answerText = q.choiceA;
+    }
+
+    // progress
+    progressText.text = $"Tutorial {currentIndex + 1} / {questions.Count}";
+    progressBarFill.fillAmount = (float)currentIndex / questions.Count;
+}
 
     public void CheckAnswer(string answer)
     {
@@ -140,6 +124,8 @@ public class BlendTutorialManager : MonoBehaviour
         draggableWord.ResetPosition(wordOriginalParent, originalPos);
 
         ShowQuestion();
+
+        hasTouchedWord = false;
     }
 
     void NextQuestion()
@@ -149,6 +135,8 @@ public class BlendTutorialManager : MonoBehaviour
         draggableWord.ResetPosition(wordOriginalParent, originalPos);
 
         ShowQuestion();
+
+        hasTouchedWord = false;
     }
 
     void EndTutorial()
@@ -171,4 +159,13 @@ public class BlendTutorialManager : MonoBehaviour
     {
         return wordOriginalParent;
     }
+
+    public void OnWordTouched()
+{
+    if (!hasTouchedWord)
+    {
+        hasTouchedWord = true;
+        instructionText.text = "Good! Now drag it to the correct answer.";
+    }
+}
 }

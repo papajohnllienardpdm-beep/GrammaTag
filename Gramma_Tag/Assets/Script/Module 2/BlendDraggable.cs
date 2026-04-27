@@ -11,6 +11,8 @@ public class BlendDraggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
     private Transform originalParent;
     private bool isLocked = false;
 
+    public BlendTutorialManager tutorialManager; // ADD THIS
+
     void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
@@ -18,18 +20,22 @@ public class BlendDraggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
         canvas = GetComponentInParent<Canvas>();
     }
 
-    public void OnBeginDrag(PointerEventData eventData)
+   public void OnBeginDrag(PointerEventData eventData)
+{
+    if (isLocked) return;
+
+    startPosition = rectTransform.anchoredPosition;
+    originalParent = transform.parent;
+
+    transform.SetParent(canvas.transform, true);
+    canvasGroup.blocksRaycasts = false;
+
+    // ✅ NEW: notify tutorial na hinawakan na
+    if (tutorialManager != null)
     {
-        if (isLocked) return;
-
-        startPosition = rectTransform.anchoredPosition;
-        originalParent = transform.parent;
-
-        // bring to front
-        transform.SetParent(canvas.transform, true);
-
-        canvasGroup.blocksRaycasts = false;
+        tutorialManager.OnWordTouched();
     }
+}
 
     public void OnDrag(PointerEventData eventData)
     {
