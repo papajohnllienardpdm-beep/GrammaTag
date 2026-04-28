@@ -98,7 +98,7 @@ public class BlendTutorialManager : MonoBehaviour
 
         // ✅ progress (starts at 0)
         progressBar.value = currentIndex;
-        progressText.text = $"Tutorial {currentIndex + 1} / {questions.Count}";
+        progressText.text = $"Progress: {currentIndex} / {questions.Count}";
     }
 
     public void CheckAnswer(string answer)
