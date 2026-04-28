@@ -55,6 +55,11 @@ public class BlendGameManager : MonoBehaviour
     public TextMeshProUGUI countdownText;
     public GameObject gameplayUI;
 
+
+    [Header("SFX")]
+    public AudioClip correctSFX;
+    public AudioClip wrongSFX;
+
     IEnumerator Start()
     {
         while (DatabaseManager.Instance == null || !DatabaseManager.Instance.IsDatabaseReady())
@@ -223,9 +228,12 @@ public class BlendGameManager : MonoBehaviour
 
         feedbackImage.sprite = correctSprite;
 
-        // ✅ SET TEXT
         if (feedbackText != null)
             feedbackText.text = correctMessage;
+
+        // 🔊 PLAY CORRECT SOUND
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX(correctSFX);
 
         feedbackOverlay.SetActive(true);
 
@@ -236,9 +244,12 @@ public class BlendGameManager : MonoBehaviour
     {
         feedbackImage.sprite = wrongSprite;
 
-        // ✅ SET TEXT
         if (feedbackText != null)
             feedbackText.text = wrongMessage;
+
+        // 🔊 PLAY WRONG SOUND
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX(wrongSFX);
 
         feedbackOverlay.SetActive(true);
 

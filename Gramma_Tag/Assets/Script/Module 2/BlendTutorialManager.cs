@@ -23,6 +23,10 @@ public class BlendTutorialManager : MonoBehaviour
     public BlendDraggable draggableWord;
     public Transform wordOriginalParent;
 
+    [Header("SFX")]
+    public AudioClip correctSFX;
+    public AudioClip wrongSFX;
+
     private Vector2 originalPos;
 
     private List<Question> questions = new List<Question>();
@@ -110,11 +114,21 @@ public class BlendTutorialManager : MonoBehaviour
         if (answer == correct)
         {
             instructionText.text = "Great job! That word starts with the correct sound!";
+
+            // 🔊 PLAY CORRECT SOUND
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(correctSFX);
+
             Invoke("NextQuestion", 1.2f);
         }
         else
         {
             instructionText.text = "Good try! Let's look at the first sound again.";
+
+            // 🔊 PLAY WRONG SOUND
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(wrongSFX);
+
             Invoke("RestartTutorial", 1.5f);
         }
     }

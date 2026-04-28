@@ -7,11 +7,13 @@ public class BlendDraggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
     private CanvasGroup canvasGroup;
     private Canvas canvas;
 
+    public Transform dragLayer; // ✅ NEW
+
     private Vector2 startPosition;
     private Transform originalParent;
     private bool isLocked = false;
 
-    public BlendTutorialManager tutorialManager; // ADD THIS
+    public BlendTutorialManager tutorialManager;
 
     void Awake()
     {
@@ -20,22 +22,27 @@ public class BlendDraggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
         canvas = GetComponentInParent<Canvas>();
     }
 
-   public void OnBeginDrag(PointerEventData eventData)
-{
-    if (isLocked) return;
-
-    startPosition = rectTransform.anchoredPosition;
-    originalParent = transform.parent;
-
-    transform.SetParent(canvas.transform, true);
-    canvasGroup.blocksRaycasts = false;
-
-    // ✅ NEW: notify tutorial na hinawakan na
-    if (tutorialManager != null)
+    public void OnBeginDrag(PointerEventData eventData)
     {
-        tutorialManager.OnWordTouched();
+        if (isLocked) return;
+
+        startPosition = rectTransform.anchoredPosition;
+        originalParent = transform.parent;
+
+        // ✅ FIXED: use drag layer instead of canvas root
+        if (dragLayer != null)
+        {
+            transform.SetParent(dragLayer, true);
+            rectTransform.SetAsLastSibling();
+        }
+
+        canvasGroup.blocksRaycasts = false;
+
+        if (tutorialManager != null)
+        {
+            tutorialManager.OnWordTouched();
+        }
     }
-}
 
     public void OnDrag(PointerEventData eventData)
     {
@@ -50,8 +57,7 @@ public class BlendDraggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
 
         canvasGroup.blocksRaycasts = true;
 
-        // if not dropped properly, return to start
-        if (transform.parent == canvas.transform)
+        if (transform.parent == dragLayer)
         {
             transform.SetParent(originalParent, true);
             rectTransform.anchoredPosition = startPosition;
