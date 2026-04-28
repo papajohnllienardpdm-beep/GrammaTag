@@ -12,8 +12,7 @@ public class Module6TutorialManager : MonoBehaviour
     public Image overlayC;
     public Image overlayD;
 
-    public Image progressBar;
-
+    public Slider progressBar;
 
     [Header("Buttons")]
     public Button buttonA, buttonB, buttonC, buttonD;
@@ -23,17 +22,18 @@ public class Module6TutorialManager : MonoBehaviour
     public TextMeshProUGUI questionText;
     public TextMeshProUGUI progressText;
 
-    private List<Module6QuestionData> questions = new List<Module6QuestionData>();
+    public TextMeshProUGUI instructionText;
 
+    [Header("SFX")]
+    public AudioClip correctSFX;
+    public AudioClip wrongSFX;
+
+    private List<Module6QuestionData> questions = new List<Module6QuestionData>();
 
     private bool hasAnswered = false;
 
-    public TextMeshProUGUI instructionText;
-
     int currentQuestionIndex = -1;
-    int correctStreak = 0; // 🔥 bilang ng sunod-sunod na tama
-
-
+    int correctStreak = 0;
 
     void Start()
     {
@@ -44,11 +44,12 @@ public class Module6TutorialManager : MonoBehaviour
 
         CreateTutorialQuestions();
 
+        // ✅ SLIDER SETUP
+        progressBar.maxValue = 3;
+        progressBar.value = 0;
 
         LoadQuestion();
     }
-
-
 
     void CreateTutorialQuestions()
     {
@@ -115,25 +116,19 @@ public class Module6TutorialManager : MonoBehaviour
         textC.text = q.choices[2];
         textD.text = q.choices[3];
 
-        progressText.text = "Tutorial " + (correctStreak + 1) + "/3";
-
-        progressBar.fillAmount = (float)(correctStreak) / 3f;
+        // ✅ FIXED PROGRESS
+        progressText.text = "Tutorial " + correctStreak + " / 3";
+        progressBar.value = correctStreak;
 
         EnableAllButtons();
         SetAllOverlayColor(new Color(0, 0, 0, 0));
 
         if (correctStreak == 0)
-        {
             instructionText.text = "Read the sentence and choose the correct answer.";
-        }
         else if (correctStreak == 1)
-        {
             instructionText.text = "Good! Try another one.";
-        }
         else if (correctStreak == 2)
-        {
             instructionText.text = "Last one! Get this right.";
-        }
     }
 
     void CheckAnswer(int index)
@@ -149,12 +144,18 @@ public class Module6TutorialManager : MonoBehaviour
         {
             GetOverlay(index).color = new Color(0, 1, 0, 0.6f);
 
-            instructionText.text = "Correct!"; // ✅ DITO
+            instructionText.text = "Correct!";
 
             correctStreak++;
 
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(correctSFX);
+
             if (correctStreak >= 3)
             {
+                progressBar.value = 3;
+                progressText.text = "Tutorial 3 / 3";
+
                 Invoke(nameof(GoToGame), 1f);
                 return;
             }
@@ -166,9 +167,15 @@ public class Module6TutorialManager : MonoBehaviour
             GetOverlay(index).color = new Color(1, 0, 0, 0.6f);
             GetOverlay(q.correctIndex).color = new Color(0, 1, 0, 0.6f);
 
-            instructionText.text = "Oops! Try again from the start."; // ❌ DITO
+            instructionText.text = "Oops! Try again from the start.";
 
             correctStreak = 0;
+
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(wrongSFX);
+
+            progressBar.value = 0;
+            progressText.text = "Tutorial 0 / 3";
 
             Invoke(nameof(LoadQuestion), 1.5f);
         }
@@ -176,13 +183,9 @@ public class Module6TutorialManager : MonoBehaviour
         DisableAllButtons();
     }
 
-
-
     void GoToGame()
     {
-
-
-        SceneManager.LoadScene("Module6Final"); // 🔥 IMPORTANT: name ng actual game scene mo
+        SceneManager.LoadScene("Module6Final");
     }
 
     Image GetOverlay(int index)
@@ -220,6 +223,5 @@ public class Module6TutorialManager : MonoBehaviour
         buttonC.interactable = true;
         buttonD.interactable = true;
     }
-
 
 }
