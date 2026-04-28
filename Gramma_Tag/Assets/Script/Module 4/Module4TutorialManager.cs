@@ -15,6 +15,10 @@ public class Module4TutorialManager : MonoBehaviour
     public Slider progressBar;
     public TMP_Text tutorialText;
 
+    [Header("SFX")]
+    public AudioClip correctSFX;
+    public AudioClip wrongSFX;
+
     private int correctStreak = 0;
     private bool answered = false;
 
@@ -36,6 +40,10 @@ public class Module4TutorialManager : MonoBehaviour
         ShuffleQuestions();
 
         tutorialText.text = "Read the sentence and choose the correct answer.";
+
+        // ✅ IMPORTANT FOR SLIDER
+        progressBar.maxValue = 3;
+        progressBar.value = 0;
 
         LoadQuestion();
         UpdateProgress();
@@ -136,11 +144,23 @@ public class Module4TutorialManager : MonoBehaviour
         {
             correctStreak++;
             tutorialText.text = "Correct!";
+
+            // 🔊 PLAY CORRECT SFX
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(correctSFX);
+
+            UpdateProgress();
         }
         else
         {
             correctStreak = 0;
             tutorialText.text = "Oops! Try again from the start.";
+
+            // 🔊 PLAY WRONG SFX
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(wrongSFX);
+
+            UpdateProgress(); // para reset agad UI
         }
 
         Invoke(nameof(NextStep), nextDelay);
@@ -150,7 +170,8 @@ public class Module4TutorialManager : MonoBehaviour
     {
         if (correctStreak >= 3)
         {
-            SceneManager.LoadScene("Module4Game");
+            // ✅ para makita 3/3 + sound
+            Invoke(nameof(GoToGame), 0.8f);
             return;
         }
 
@@ -166,10 +187,18 @@ public class Module4TutorialManager : MonoBehaviour
         LoadQuestion();
     }
 
+    void GoToGame()
+    {
+        SceneManager.LoadScene("Module4Game");
+    }
+
     void UpdateProgress()
     {
-        progressText.text = "Tutorial " + (correctStreak + 1) + "/3";
-        progressBar.value = (float)correctStreak / 3f;
+        // ✅ FIXED TEXT (start 0/3)
+        progressText.text = "Tutorial " + correctStreak + " / 3";
+
+        // ✅ FIXED SLIDER (0 to 3)
+        progressBar.value = correctStreak;
 
         if (correctStreak == 0)
         {
