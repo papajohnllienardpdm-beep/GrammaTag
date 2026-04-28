@@ -57,9 +57,17 @@ public class BlendDraggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
 
         canvasGroup.blocksRaycasts = true;
 
-        if (transform.parent == dragLayer)
+        // ❌ HUWAG NA IBALIK SA originalParent
+        // ✅ manatili sa dragLayer para hindi matabunan
+
+        if (transform.parent == dragLayer || transform.parent == canvas.transform)
         {
-            transform.SetParent(originalParent, true);
+            if (dragLayer != null)
+            {
+                transform.SetParent(dragLayer, true);
+                rectTransform.SetAsLastSibling();
+            }
+
             rectTransform.anchoredPosition = startPosition;
         }
     }
@@ -75,7 +83,16 @@ public class BlendDraggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
 
     public void ResetPosition(Transform originalParent, Vector2 originalPos)
     {
-        transform.SetParent(originalParent, true);
+        if (dragLayer != null)
+        {
+            transform.SetParent(dragLayer, true);
+            rectTransform.SetAsLastSibling();
+        }
+        else
+        {
+            transform.SetParent(originalParent, true);
+        }
+
         rectTransform.anchoredPosition = originalPos;
 
         isLocked = false;

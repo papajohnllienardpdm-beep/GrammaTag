@@ -80,7 +80,10 @@ public class BlendTutorialManager : MonoBehaviour
 
         // instruction reset
         hasTouchedWord = false;
-        instructionText.text = "Tap and hold the word first.";
+        if (!hasTouchedWord)
+        {
+            instructionText.text = "Tap and hold the word first.";
+        }
 
         // random swap
         if (Random.value > 0.5f)
