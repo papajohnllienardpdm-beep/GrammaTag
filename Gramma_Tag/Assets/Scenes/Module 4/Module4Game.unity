@@ -166,7 +166,9 @@ MonoBehaviour:
   - {fileID: 847588655}
   - {fileID: 1337264083}
   progressText: {fileID: 555955385}
-  progressBar: {fileID: 1848179159}
+  progressBar: {fileID: 1102148378}
+  correctSFX: {fileID: 8300000, guid: f63bfcbadf943d9499de87f0132ee881, type: 3}
+  wrongSFX: {fileID: 8300000, guid: a7080d4a15658834183ab5a9b7bf81c2, type: 3}
   nextDelay: 1.5
   getReadyText: {fileID: 249683244}
   gameUI: {fileID: 1977315076}
@@ -930,7 +932,7 @@ RectTransform:
   m_Father: {fileID: 1848179156}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -4626,7 +4628,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1848179156
 RectTransform:
   m_ObjectHideFlags: 0

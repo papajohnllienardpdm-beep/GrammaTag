@@ -29,6 +29,10 @@ public class Module4GameManager : MonoBehaviour
     public TMP_Text progressText;
     public Slider progressBar;
 
+    [Header("SFX")]
+    public AudioClip correctSFX;
+    public AudioClip wrongSFX;
+
     private List<Module4Question> questions = new List<Module4Question>();
     private int totalQuestions = 10;
 
@@ -49,7 +53,7 @@ public class Module4GameManager : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(WaitForDB()); // ✅ FIXED
+        StartCoroutine(WaitForDB());
     }
 
     IEnumerator WaitForDB()
@@ -60,6 +64,10 @@ public class Module4GameManager : MonoBehaviour
         DatabaseManager.Instance.DeductHeart();
 
         LoadQuestionsFromDB();
+
+        // ✅ setup slider
+        progressBar.maxValue = totalQuestions;
+        progressBar.value = 0;
 
         timer = gameDuration;
 
@@ -160,7 +168,17 @@ public class Module4GameManager : MonoBehaviour
         }
 
         if (selectedAnswer == q.correctAnswer)
+        {
             score++;
+
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(correctSFX);
+        }
+        else
+        {
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(wrongSFX);
+        }
 
         Invoke(nameof(NextQuestion), nextDelay);
     }
@@ -171,6 +189,10 @@ public class Module4GameManager : MonoBehaviour
 
         if (currentQuestionIndex >= questions.Count)
         {
+            // ✅ full progress
+            progressBar.value = questions.Count;
+            progressText.text = questions.Count + "/" + questions.Count;
+
             FinishGame();
             return;
         }
@@ -180,8 +202,8 @@ public class Module4GameManager : MonoBehaviour
 
     void UpdateProgress()
     {
-        progressText.text = (currentQuestionIndex + 1) + "/" + questions.Count;
-        progressBar.value = (float)currentQuestionIndex / questions.Count;
+        progressText.text = currentQuestionIndex + "/" + questions.Count;
+        progressBar.value = currentQuestionIndex;
     }
 
     void FinishGame()
