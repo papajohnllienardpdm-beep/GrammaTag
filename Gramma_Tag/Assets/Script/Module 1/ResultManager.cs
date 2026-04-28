@@ -23,7 +23,7 @@ public class ResultManager : MonoBehaviour
         coinsText.text = "+" + coins + " Coins";
 
 
-        scoreText.text = "Score: " + score + "/" + total;
+        scoreText.text = "Score: " +score+ "/" +total;
 
         // 🔥 COMPUTE STARS
         int stars = GetStars(score);
