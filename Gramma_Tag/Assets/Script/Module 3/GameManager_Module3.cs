@@ -53,6 +53,9 @@ public class GameManager_Module3 : MonoBehaviour
     public bool isTransitioning = false;
     private bool isSpawning = false;
 
+    [Header("Start Delay")]
+public float startDelay = 5f;
+
     void Start()
     {
         StartCoroutine(WaitForDB());
@@ -74,12 +77,12 @@ public class GameManager_Module3 : MonoBehaviour
         
 
         if (isTutorial)
-        {
-            if (timerText != null)
-                timerText.gameObject.SetActive(false);
+{
+    if (timerText != null)
+        timerText.gameObject.SetActive(false);
 
-            SpawnNext();
-        }
+    StartCoroutine(StartWithDelay()); // 👈 delay muna
+}
         else
         {
             timer = gameDuration;
@@ -428,6 +431,13 @@ public class GameManager_Module3 : MonoBehaviour
         StartTimer();
         SpawnNext();
     }
+
+    IEnumerator StartWithDelay()
+{
+    yield return new WaitForSeconds(startDelay);
+
+    SpawnNext();
+}
 }
 
 [System.Serializable]
@@ -443,4 +453,6 @@ public class Module3Round
         choices = new string[] { a, b, c };
         this.correct = correct;
     }
+
+    
 }
