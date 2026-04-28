@@ -11,13 +11,11 @@ public class Module6Manager : MonoBehaviour
 {
 
 
-    // COLORS
     Color normalColor = Color.white;
     Color dimColor = new Color(0.7f, 0.7f, 0.7f);
     Color correctColor = Color.green;
     Color wrongColor = Color.red;
 
-    // TIMER
     [Header("UI - Timer")]
     public TMP_Text timerText;
 
@@ -27,31 +25,30 @@ public class Module6Manager : MonoBehaviour
     private float timer;
     private bool isTimerRunning = false;
 
-    // QUESTION UI
     [Header("UI - Question")]
     public TMP_Text questionText;
 
-    // ANSWERS
     [Header("UI - Answers")]
     public Button[] answerButtons;
     public TMP_Text[] answerTexts;
 
-    // PROGRESS
     [Header("UI - Progress")]
     public TMP_Text progressText;
     public Slider progressBar;
 
-    // OVERLAY (optional)
+    // ✅ NEW SFX
+    [Header("SFX")]
+    public AudioClip correctSFX;
+    public AudioClip wrongSFX;
+
     public Image overlayA;
     public Image overlayB;
     public Image overlayC;
     public Image overlayD;
 
-    // START UI
     public GameObject getReadyText;
     public GameObject gameUI;
 
-    // DATA
     private List<Module6Question> questions = new List<Module6Question>();
     private List<string> shuffledChoices;
 
@@ -72,7 +69,6 @@ public class Module6Manager : MonoBehaviour
         while (DatabaseManager.Instance == null || !DatabaseManager.Instance.IsDatabaseReady())
             yield return null;
 
-        // ❤️ bawas heart
         DatabaseManager.Instance.DeductHeart();
 
         LoadQuestionsFromDB();
@@ -175,8 +171,19 @@ public class Module6Manager : MonoBehaviour
             }
         }
 
+        // ✅ WITH SFX
         if (selectedAnswer == q.correctAnswer)
+        {
             score++;
+
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(correctSFX);
+        }
+        else
+        {
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(wrongSFX);
+        }
 
         Invoke(nameof(NextQuestion), nextDelay);
     }
