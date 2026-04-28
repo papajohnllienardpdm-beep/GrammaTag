@@ -20,7 +20,7 @@ public class BlendGameManager : MonoBehaviour
     private int currentIndex = 0;
     private int score = 0;
 
-    private int totalQuestions = 10; // 🔥 LIMIT
+    private int totalQuestions = 10;
 
     public TextMeshProUGUI choiceAText;
     public TextMeshProUGUI choiceBText;
@@ -28,27 +28,32 @@ public class BlendGameManager : MonoBehaviour
     public BlendDropZone choiceAZone;
     public BlendDropZone choiceBZone;
 
+    // ✅ CHANGED: Slider instead of Image
+    public Slider progressBar;
 
-
-    public Image progressBarFill;
     public Image feedbackImage;
-
     public Sprite correctSprite;
     public Sprite wrongSprite;
 
     public GameObject feedbackOverlay;
 
-    public TextMeshProUGUI questionText; // 🔥 NEW
+    [Header("FEEDBACK TEXT")]
+    public TextMeshProUGUI feedbackText; // 🔥 drag mo yung "Feedback Text"
+    [TextArea] public string correctMessage;
+    [TextArea] public string wrongMessage;
+
+    public TextMeshProUGUI questionText;
 
     [Header("TIMER")]
     public TextMeshProUGUI timerText;
-    public float gameDuration = 300f; // 5 minutes
+    public float gameDuration = 300f;
 
     private float timer;
     private bool isTimerRunning = false;
+
     [Header("COUNTDOWN")]
     public TextMeshProUGUI countdownText;
-    public GameObject gameplayUI; // optional (para itago muna UI)
+    public GameObject gameplayUI;
 
     IEnumerator Start()
     {
@@ -61,20 +66,20 @@ public class BlendGameManager : MonoBehaviour
 
         LoadQuestions();
 
-        // ❗ HIDE GAME UI muna
+        // ✅ setup progress bar
+        progressBar.maxValue = questions.Count;
+        progressBar.value = 0;
+
         if (gameplayUI != null)
             gameplayUI.SetActive(false);
 
-        // ❗ START COUNTDOWN
         yield return StartCoroutine(StartCountdown());
 
-        // ❗ SHOW GAME
         if (gameplayUI != null)
             gameplayUI.SetActive(true);
 
         ShowQuestion();
 
-        // ✅ START TIMER AFTER COUNTDOWN
         timer = gameDuration;
         isTimerRunning = true;
         UpdateTimerUI();
@@ -86,14 +91,18 @@ public class BlendGameManager : MonoBehaviour
 
         int moduleID = 1;
         Debug.Log("🎯 GAME RECEIVED MODULE ID: " + moduleID);
+
         var dbQuestions = DatabaseManager.Instance.GetQuestionsByModule(moduleID);
 
-        dbQuestions = dbQuestions.OrderBy(x => Random.value).Take(totalQuestions).ToList();
+        dbQuestions = dbQuestions
+            .OrderBy(x => Random.value)
+            .Take(totalQuestions)
+            .ToList();
 
         foreach (var q in dbQuestions)
         {
             questions.Add(new Question(
-                q.QuestionText,   // 🔥 WORD
+                q.QuestionText,
                 q.ChoiceA,
                 q.ChoiceB,
                 q.CorrectAnswer
@@ -103,19 +112,21 @@ public class BlendGameManager : MonoBehaviour
 
     void ShowQuestion()
     {
+        // ✅ kapag tapos na lahat
         if (currentIndex >= questions.Count)
         {
+            // 🔥 force full progress
+            progressBar.value = questions.Count;
+            progressText.text = $"Question {questions.Count} / {questions.Count}";
+
             EndGame();
             return;
         }
 
         Question q = questions[currentIndex];
 
-        // 🔥 SHOW QUESTION TEXT (ITO ANG FIX)
         if (questionText != null)
             questionText.text = q.word;
-        else
-            Debug.LogError("❌ questionText not assigned!");
 
         // random swap
         if (Random.value > 0.5f)
@@ -135,22 +146,16 @@ public class BlendGameManager : MonoBehaviour
             choiceBZone.answerText = q.choiceA;
         }
 
-        progressText.text = $"Question {currentIndex + 1} / {questions.Count}";
-        progressBarFill.fillAmount = (float)currentIndex / questions.Count;
+        // ✅ PROGRESS (starts at 0)
+        progressBar.value = currentIndex;
+        progressText.text = $"Question {currentIndex} / {questions.Count}";
     }
-
 
     void NextQuestion()
     {
         feedbackOverlay.SetActive(false);
 
         currentIndex++;
-
-        if (currentIndex >= questions.Count)
-        {
-            EndGame();
-            return;
-        }
 
         draggableWord.ResetPosition(wordOriginalParent, wordOriginalPos);
 
@@ -187,7 +192,6 @@ public class BlendGameManager : MonoBehaviour
 
         int moduleID = 1;
 
-        // 🔥 IMPORTANT: gamitin coroutine
         StartCoroutine(SaveAndExit(moduleID, total, stars, passed));
 
         isTimerRunning = false;
@@ -195,17 +199,13 @@ public class BlendGameManager : MonoBehaviour
 
     IEnumerator SaveAndExit(int moduleID, int total, int stars, int passed)
     {
-        // 🔥 WAIT hanggang ready DB
         while (DatabaseManager.Instance == null || !DatabaseManager.Instance.IsDatabaseReady())
             yield return null;
 
-        // ✅ SAVE
         DatabaseManager.Instance.SaveProgressBetter(1, moduleID, score, passed, stars);
 
-        // ✅ COINS
         int coinsEarned = DatabaseManager.Instance.GiveCoins(moduleID, score, passed);
 
-        // ✅ SAVE RESULT DATA
         PlayerPrefs.SetInt("FinalScore", score);
         PlayerPrefs.SetInt("TotalQ", total);
         PlayerPrefs.SetInt("Stars", stars);
@@ -214,7 +214,6 @@ public class BlendGameManager : MonoBehaviour
 
         PlayerPrefs.SetString("LastScene", SceneManager.GetActiveScene().name);
 
-        // 👉 LOAD RESULT
         SceneManager.LoadScene("ResultScene");
     }
 
@@ -224,6 +223,10 @@ public class BlendGameManager : MonoBehaviour
 
         feedbackImage.sprite = correctSprite;
 
+        // ✅ SET TEXT
+        if (feedbackText != null)
+            feedbackText.text = correctMessage;
+
         feedbackOverlay.SetActive(true);
 
         Invoke("NextQuestion", 1.5f);
@@ -232,6 +235,10 @@ public class BlendGameManager : MonoBehaviour
     public void WrongAnswer()
     {
         feedbackImage.sprite = wrongSprite;
+
+        // ✅ SET TEXT
+        if (feedbackText != null)
+            feedbackText.text = wrongMessage;
 
         feedbackOverlay.SetActive(true);
 
@@ -246,7 +253,7 @@ public class BlendGameManager : MonoBehaviour
     public string GetCurrentCorrectWord()
     {
         if (currentIndex >= questions.Count)
-            return ""; // or null
+            return "";
 
         return questions[currentIndex].correctAnswer;
     }
@@ -270,7 +277,7 @@ public class BlendGameManager : MonoBehaviour
             timer = 0;
             isTimerRunning = false;
 
-            EndGame(); // ⏰ AUTO END PAG NAUBOS ORAS
+            EndGame();
         }
 
         UpdateTimerUI();
@@ -283,6 +290,7 @@ public class BlendGameManager : MonoBehaviour
 
         timerText.text = $"{minutes:00}:{seconds:00}";
     }
+
     IEnumerator StartCountdown()
     {
         countdownText.gameObject.SetActive(true);
@@ -301,13 +309,12 @@ public class BlendGameManager : MonoBehaviour
 
         countdownText.gameObject.SetActive(false);
     }
-
 }
 
 [System.Serializable]
 public class Question
 {
-    public string word; // 🔥 ito yung QuestionText
+    public string word;
     public string choiceA;
     public string choiceB;
     public string correctAnswer;
@@ -319,6 +326,4 @@ public class Question
         choiceB = b;
         correctAnswer = correct;
     }
-
-
 }
