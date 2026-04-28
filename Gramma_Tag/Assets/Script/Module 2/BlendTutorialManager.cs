@@ -15,7 +15,7 @@ public class BlendTutorialManager : MonoBehaviour
     public TextMeshProUGUI choiceBText;
 
     public TextMeshProUGUI progressText;
-    public Image progressBarFill;
+    public Slider progressBar;
 
     public BlendDropZone choiceAZone;
     public BlendDropZone choiceBZone;
@@ -23,14 +23,10 @@ public class BlendTutorialManager : MonoBehaviour
     public BlendDraggable draggableWord;
     public Transform wordOriginalParent;
 
-
-
     private Vector2 originalPos;
 
     private List<Question> questions = new List<Question>();
     private int currentIndex = 0;
-
-    private int tutorialStep = 0;
 
     private bool hasTouchedWord = false;
 
@@ -46,9 +42,12 @@ public class BlendTutorialManager : MonoBehaviour
         originalPos = draggableWord.GetComponent<RectTransform>().anchoredPosition;
 
         SetupQuestions();
-        ShowQuestion();
 
-      
+        // ✅ set max once
+        progressBar.maxValue = questions.Count;
+        progressBar.value = 0;
+
+        ShowQuestion();
     }
 
     void SetupQuestions()
@@ -60,44 +59,47 @@ public class BlendTutorialManager : MonoBehaviour
         questions.Add(new Question("pl", "play", "appl", "play"));
     }
 
-   
-
-   void ShowQuestion()
-{
-    if (currentIndex >= questions.Count)
+    void ShowQuestion()
     {
-        EndTutorial();
-        return;
+        // ✅ if tapos na lahat
+        if (currentIndex >= questions.Count)
+        {
+            // 🔥 force full progress
+            progressBar.value = questions.Count;
+            progressText.text = $"Tutorial {questions.Count} / {questions.Count}";
+
+            EndTutorial();
+            return;
+        }
+
+        Question q = questions[currentIndex];
+
+        // instruction reset
+        hasTouchedWord = false;
+        instructionText.text = "Tap and hold the word first.";
+
+        // random swap
+        if (Random.value > 0.5f)
+        {
+            choiceAText.text = q.choiceA;
+            choiceBText.text = q.choiceB;
+
+            choiceAZone.answerText = q.choiceA;
+            choiceBZone.answerText = q.choiceB;
+        }
+        else
+        {
+            choiceAText.text = q.choiceB;
+            choiceBText.text = q.choiceA;
+
+            choiceAZone.answerText = q.choiceB;
+            choiceBZone.answerText = q.choiceA;
+        }
+
+        // ✅ progress (starts at 0)
+        progressBar.value = currentIndex;
+        progressText.text = $"Tutorial {currentIndex + 1} / {questions.Count}";
     }
-
-    Question q = questions[currentIndex];
-
-    // ✅ FIRST INSTRUCTION
-    hasTouchedWord = false;
-    instructionText.text = "Tap and hold the word first.";
-
-    // random swap
-    if (Random.value > 0.5f)
-    {
-        choiceAText.text = q.choiceA;
-        choiceBText.text = q.choiceB;
-
-        choiceAZone.answerText = q.choiceA;
-        choiceBZone.answerText = q.choiceB;
-    }
-    else
-    {
-        choiceAText.text = q.choiceB;
-        choiceBText.text = q.choiceA;
-
-        choiceAZone.answerText = q.choiceB;
-        choiceBZone.answerText = q.choiceA;
-    }
-
-    // progress
-    progressText.text = $"Tutorial {currentIndex + 1} / {questions.Count}";
-    progressBarFill.fillAmount = (float)currentIndex / questions.Count;
-}
 
     public void CheckAnswer(string answer)
     {
@@ -117,9 +119,9 @@ public class BlendTutorialManager : MonoBehaviour
         }
     }
 
-    void RestartTutorial()
+    void NextQuestion()
     {
-        currentIndex = 0;
+        currentIndex++;
 
         draggableWord.ResetPosition(wordOriginalParent, originalPos);
 
@@ -128,11 +130,14 @@ public class BlendTutorialManager : MonoBehaviour
         hasTouchedWord = false;
     }
 
-    void NextQuestion()
+    void RestartTutorial()
     {
-        currentIndex++;
+        currentIndex = 0;
 
         draggableWord.ResetPosition(wordOriginalParent, originalPos);
+
+        // reset progress
+        progressBar.value = 0;
 
         ShowQuestion();
 
@@ -161,11 +166,11 @@ public class BlendTutorialManager : MonoBehaviour
     }
 
     public void OnWordTouched()
-{
-    if (!hasTouchedWord)
     {
-        hasTouchedWord = true;
-        instructionText.text = "Good! Now drag it to the correct answer.";
+        if (!hasTouchedWord)
+        {
+            hasTouchedWord = true;
+            instructionText.text = "Good! Now drag it to the correct answer.";
+        }
     }
-}
 }
