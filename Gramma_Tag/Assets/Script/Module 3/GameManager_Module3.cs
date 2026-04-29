@@ -36,7 +36,11 @@ public class GameManager_Module3 : MonoBehaviour
     public WordSpawner spawner;
 
     public TextMeshProUGUI progressText;
-    public Image progressBar;
+    public Slider progressBar;
+
+    [Header("SFX")]
+    public AudioClip correctSFX;
+    public AudioClip wrongSFX;
 
     int current = 0;
     int score = 0;
@@ -69,20 +73,30 @@ public float startDelay = 5f;
         DatabaseManager.Instance.DeductHeart();
 
         LoadRoundsFromDB();
-        UpdateTargetLabel(); // 🔥 ADD THIS
+        UpdateTargetLabel();
+
+        // ✅ SLIDER SETUP (CORRECT PLACE)
+        if (isTutorial)
+        {
+            progressBar.maxValue = tutorialTarget;
+            progressBar.value = 0;
+        }
+        else
+        {
+            progressBar.maxValue = 10;
+            progressBar.value = 0;
+        }
 
         if (spawner == null)
             spawner = FindObjectOfType<WordSpawner>();
 
-        
-
         if (isTutorial)
-{
-    if (timerText != null)
-        timerText.gameObject.SetActive(false);
+        {
+            if (timerText != null)
+                timerText.gameObject.SetActive(false);
 
-    StartCoroutine(StartWithDelay()); // 👈 delay muna
-}
+            StartCoroutine(StartWithDelay());
+        }
         else
         {
             timer = gameDuration;
@@ -152,12 +166,21 @@ public float startDelay = 5f;
         {
             if (!correct)
             {
+                // 🔊 WRONG SFX
+                if (AudioManager.Instance != null)
+                    AudioManager.Instance.PlaySFX(wrongSFX);
+
                 ResetTutorial();
                 SpawnNext();
                 return;
             }
 
             tutorialScore++;
+
+            // 🔊 CORRECT SFX
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(correctSFX);
+
             UpdateScoreUI();
             UpdateTutorialText();
 
@@ -176,11 +199,19 @@ public float startDelay = 5f;
         if (correct)
         {
             score++;
+            // 🔊 CORRECT SFX
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(correctSFX);
+
             roundAnswered = true;
             isTransitioning = true;
             StartCoroutine(NextRoundDelay());
             return;
         }
+
+        // 🔊 WRONG SFX
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX(wrongSFX);
 
         // ❌ WRONG = IGNORE
         SpawnNext();
@@ -294,6 +325,13 @@ public float startDelay = 5f;
             passed = 1;
         }
 
+        // ✅ 👉 ADD THIS HERE (IMPORTANT)
+        if (progressBar != null)
+            progressBar.value = progressBar.maxValue;
+
+        if (progressText != null)
+            progressText.text = progressBar.maxValue + " / " + progressBar.maxValue;
+
         int moduleID = PlayerPrefs.GetInt("SelectedModuleID", 1);
 
         StartCoroutine(SaveAndExit(moduleID, total, stars, passed));
@@ -324,16 +362,16 @@ public float startDelay = 5f;
                 progressText.text = tutorialScore + " / " + tutorialTarget;
 
             if (progressBar != null)
-                progressBar.fillAmount = (float)tutorialScore / tutorialTarget;
+                progressBar.value = tutorialScore;
 
             return;
         }
 
         if (progressText != null)
-            progressText.text = "Progress " + current + "/10";
+            progressText.text = current + " / 10";
 
         if (progressBar != null)
-            progressBar.fillAmount = (float)current / 10f;
+            progressBar.value = current;
     }
 
     public void StartTimer() => isTimerRunning = true;
