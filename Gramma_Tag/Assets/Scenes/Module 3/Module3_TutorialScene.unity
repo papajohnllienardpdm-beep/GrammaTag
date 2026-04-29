@@ -1293,7 +1293,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5d8db80c67c4f14c9f8e000e8a80389, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wordPrefab: {fileID: 8140099915237566958, guid: 313f2d01f1b19e64ab8e74ce8bb99718, type: 3}
+  wordPrefab: {fileID: 6824822382469583234, guid: 9023d23f67a76f445b9ce6fa99f3a75c, type: 3}
   spawnPoint: {fileID: 1752245790}
   gameManager: {fileID: 1438014229}
   gameArea: {fileID: 2108573589}
@@ -2825,8 +2825,7 @@ MonoBehaviour:
   correctSFX: {fileID: 8300000, guid: f63bfcbadf943d9499de87f0132ee881, type: 3}
   wrongSFX: {fileID: 8300000, guid: a7080d4a15658834183ab5a9b7bf81c2, type: 3}
   hasActiveWord: 0
-  isTransitioning: 0
-  startDelay: 5
+  startDelay: 3
 --- !u!4 &1438014230
 Transform:
   m_ObjectHideFlags: 0

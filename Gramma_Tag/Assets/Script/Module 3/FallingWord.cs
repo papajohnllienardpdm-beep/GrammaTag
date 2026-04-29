@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class FallingWord : MonoBehaviour
@@ -17,11 +18,42 @@ public class FallingWord : MonoBehaviour
 
     public TextMeshProUGUI wordTMP;
 
+
+    [Header("Cloud Variations")]
+    public Image cloudImage;        // 👈 reference sa Cloud Image
+    public CloudData[] cloudVariants;
+    public RectTransform textRect; // 👈 para ma-resize text box
+    public RectTransform cloudRect; // 👈 para ma-resize cloud
+
     void Start()
     {
         rt = GetComponent<RectTransform>();
+
         float randomX = Random.Range(-200f, 200f);
         rt.anchoredPosition = new Vector2(randomX, 700f);
+
+        // 🎨 RANDOM CLOUD
+        if (cloudVariants != null && cloudVariants.Length > 0)
+        {
+            int index = Random.Range(0, cloudVariants.Length);
+            CloudData data = cloudVariants[index];
+
+            // 🖼️ SET SPRITE
+            if (cloudImage != null)
+                cloudImage.sprite = data.sprite;
+
+            // 📦 SET CLOUD SIZE
+            if (cloudRect != null)
+                cloudRect.sizeDelta = data.cloudSize;
+
+            // 🔤 SET TEXT SIZE
+            if (wordTMP != null)
+                wordTMP.fontSize = data.fontSize;
+
+            // 📐 SET TEXT BOX SIZE
+            if (textRect != null)
+                textRect.sizeDelta = data.textSize;
+        }
     }
 
     void Update()
@@ -97,4 +129,17 @@ public class FallingWord : MonoBehaviour
         }
     }
 
+}
+
+[System.Serializable]
+public class CloudData
+{
+    public Sprite sprite;
+
+    [Header("Cloud Size")]
+    public Vector2 cloudSize; // width, height
+
+    [Header("Text Settings")]
+    public int fontSize;
+    public Vector2 textSize; // width, height
 }
