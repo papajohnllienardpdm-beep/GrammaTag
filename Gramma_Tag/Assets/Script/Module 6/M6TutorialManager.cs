@@ -35,6 +35,17 @@ public class Module6TutorialManager : MonoBehaviour
     int currentQuestionIndex = -1;
     int correctStreak = 0;
 
+    [Header("Question Images")]
+    public Image imageA;
+    public Image imageB;
+    public Image imageC;
+    public Image imageD;
+
+    [Header("Tutorial Sprites")]
+    public ImageSet mariaSet;
+    public ImageSet rainSet;
+    public ImageSet sleepSet;
+
     void Start()
     {
         buttonA.onClick.AddListener(() => CheckAnswer(0));
@@ -53,43 +64,49 @@ public class Module6TutorialManager : MonoBehaviour
 
     void CreateTutorialQuestions()
     {
+        // ✅ Maria
         questions.Add(new Module6QuestionData
         {
             question = "Maria wore her uniform and packed her bag.",
             choices = new string[]
             {
-                "She will sleep",
-                "She will go to school",
-                "She will eat",
-                "She will watch TV"
+            "She will sleep",
+            "She will go to school",
+            "She will eat",
+            "She will watch TV"
             },
-            correctIndex = 1
+            correctIndex = 1,
+            images = mariaSet
         });
 
+        // ✅ Rain
         questions.Add(new Module6QuestionData
         {
             question = "Dark clouds filled the sky.",
             choices = new string[]
             {
-                "It is sunny",
-                "It will rain",
-                "It is night",
-                "It is windy"
+            "It is sunny",
+            "It will rain",
+            "It is night",
+            "It is windy"
             },
-            correctIndex = 1
+            correctIndex = 1,
+            images = rainSet
         });
 
+        // ✅ Sleep
         questions.Add(new Module6QuestionData
         {
             question = "Kids are lying in bed with eyes closed.",
             choices = new string[]
             {
-                "They are eating",
-                "They are playing",
-                "They are sleeping",
-                "They are running"
+            "They are eating",
+            "They are playing",
+            "They are sleeping",
+            "They are running"
             },
-            correctIndex = 2
+            correctIndex = 2,
+            images = sleepSet
         });
     }
 
@@ -106,6 +123,11 @@ public class Module6TutorialManager : MonoBehaviour
         currentQuestionIndex = newIndex;
 
         var q = questions[currentQuestionIndex];
+
+        imageA.sprite = q.images.imageA;
+        imageB.sprite = q.images.imageB;
+        imageC.sprite = q.images.imageC;
+        imageD.sprite = q.images.imageD;
 
         hasAnswered = false;
 

@@ -59,6 +59,21 @@ public class Module6Manager : MonoBehaviour
     public float nextDelay = 1.5f;
     private int totalQuestions = 10;
 
+    [Header("Question Images")]
+    public Image imageA;
+    public Image imageB;
+    public Image imageC;
+    public Image imageD;
+
+    [System.Serializable]
+    public class QuestionImageSet
+    {
+        public int quizID;
+        public ImageSet images;
+    }
+
+    public List<QuestionImageSet> questionImages;
+
     void Start()
     {
         StartCoroutine(WaitForDB());
@@ -103,13 +118,14 @@ public class Module6Manager : MonoBehaviour
         foreach (var q in dbQuestions)
         {
             questions.Add(new Module6Question(
-                q.QuestionText,
-                q.ChoiceA,
-                q.ChoiceB,
-                q.ChoiceC,
-                q.ChoiceD,
-                q.CorrectAnswer
-            ));
+   q.QuizID, // ✅ FIXED
+    q.QuestionText,
+    q.ChoiceA,
+    q.ChoiceB,
+    q.ChoiceC,
+    q.ChoiceD,
+    q.CorrectAnswer
+));
         }
     }
 
@@ -118,6 +134,8 @@ public class Module6Manager : MonoBehaviour
         hasAnswered = false;
 
         Module6Question q = questions[currentQuestion];
+
+        ApplyImages(q.quizID);
 
         questionText.text = q.questionText;
 
@@ -292,17 +310,54 @@ public class Module6Manager : MonoBehaviour
         StartTimer();
         LoadQuestion();
     }
+
+    void ApplyImages(int quizID)
+    {
+        QuestionImageSet set = questionImages.Find(x => x.quizID == quizID);
+
+        if (set != null)
+        {
+            imageA.sprite = set.images.imageA;
+            imageB.sprite = set.images.imageB;
+            imageC.sprite = set.images.imageC;
+            imageD.sprite = set.images.imageD;
+
+            // OPTIONAL: make sure visible
+            imageA.enabled = true;
+            imageB.enabled = true;
+            imageC.enabled = true;
+            imageD.enabled = true;
+        }
+        else
+        {
+            Debug.LogWarning("No images found for quizID: " + quizID);
+
+            // ✅ CLEAR IMAGES (FIX)
+            imageA.sprite = null;
+            imageB.sprite = null;
+            imageC.sprite = null;
+            imageD.sprite = null;
+
+            // OPTIONAL: hide
+            imageA.enabled = false;
+            imageB.enabled = false;
+            imageC.enabled = false;
+            imageD.enabled = false;
+        }
+    }
 }
 
 [System.Serializable]
 public class Module6Question
 {
+    public int quizID; // ✅ IMPORTANT
     public string questionText;
     public string[] choices;
     public string correctAnswer;
 
-    public Module6Question(string q, string a, string b, string c, string d, string correct)
+    public Module6Question(int id, string q, string a, string b, string c, string d, string correct)
     {
+        quizID = id;
         questionText = q;
         choices = new string[] { a, b, c, d };
         correctAnswer = correct;
