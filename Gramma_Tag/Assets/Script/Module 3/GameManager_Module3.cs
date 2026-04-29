@@ -14,10 +14,8 @@ public class GameManager_Module3 : MonoBehaviour
 
     [Header("Game Timer")]
     public float gameDuration = 300f;
-
     private float timer;
     private bool isTimerRunning = false;
-
 
     public Image basketImage;
     public Sprite chSprite;
@@ -27,12 +25,10 @@ public class GameManager_Module3 : MonoBehaviour
     [Header("Tutorial Mode")]
     public bool isTutorial = false;
     public int tutorialTarget = 3;
-
     private int tutorialScore = 0;
 
     public TextMeshProUGUI tutorialText;
     public GameObject getReadyText;
-
     public WordSpawner spawner;
 
     public TextMeshProUGUI progressText;
@@ -42,23 +38,26 @@ public class GameManager_Module3 : MonoBehaviour
     public AudioClip correctSFX;
     public AudioClip wrongSFX;
 
-    int current = 0;
-    int score = 0;
+    int current = 0; // total catches (correct + wrong)
+    int score = 0;   // correct answers
+
+    int wrong = 0;   // ❗ ADD
+    int totalTarget = 10; // ❗ ADD
 
     // 🔥 ROUNDS
     private List<Module3Round> rounds = new List<Module3Round>();
     private int currentRoundIndex = 0;
     private int spawnIndexInRound = 0;
+   
 
-    private bool roundAnswered = false;
     private List<string> currentRoundWords = new List<string>();
 
     public bool hasActiveWord = false;
-    public bool isTransitioning = false;
+   
     private bool isSpawning = false;
 
     [Header("Start Delay")]
-public float startDelay = 5f;
+    public float startDelay = 5f;
 
     void Start()
     {
@@ -75,7 +74,7 @@ public float startDelay = 5f;
         LoadRoundsFromDB();
         UpdateTargetLabel();
 
-        // ✅ SLIDER SETUP (CORRECT PLACE)
+        // ✅ SLIDER SETUP
         if (isTutorial)
         {
             progressBar.maxValue = tutorialTarget;
@@ -83,7 +82,7 @@ public float startDelay = 5f;
         }
         else
         {
-            progressBar.maxValue = 10;
+            progressBar.maxValue = totalTarget;
             progressBar.value = 0;
         }
 
@@ -137,8 +136,6 @@ public float startDelay = 5f;
         }
     }
 
-   
-
     void Update()
     {
         if (isTimerRunning)
@@ -166,10 +163,7 @@ public float startDelay = 5f;
         {
             if (!correct)
             {
-                // 🔊 WRONG SFX
-                if (AudioManager.Instance != null)
-                    AudioManager.Instance.PlaySFX(wrongSFX);
-
+                AudioManager.Instance?.PlaySFX(wrongSFX);
                 ResetTutorial();
                 SpawnNext();
                 return;
@@ -177,9 +171,7 @@ public float startDelay = 5f;
 
             tutorialScore++;
 
-            // 🔊 CORRECT SFX
-            if (AudioManager.Instance != null)
-                AudioManager.Instance.PlaySFX(correctSFX);
+            AudioManager.Instance?.PlaySFX(correctSFX);
 
             UpdateScoreUI();
             UpdateTutorialText();
@@ -194,77 +186,63 @@ public float startDelay = 5f;
             return;
         }
 
-        if (roundAnswered) return;
+        // ❗ DO NOT TOUCH tutorial above this
 
+        // ✅ NEW LOGIC
         if (correct)
         {
             score++;
-            // 🔊 CORRECT SFX
-            if (AudioManager.Instance != null)
-                AudioManager.Instance.PlaySFX(correctSFX);
-
-            roundAnswered = true;
-            isTransitioning = true;
-            StartCoroutine(NextRoundDelay());
-            return;
+        }
+        else
+        {
+            wrong++;
         }
 
-        // 🔊 WRONG SFX
+        // 🔊 SFX
         if (AudioManager.Instance != null)
-            AudioManager.Instance.PlaySFX(wrongSFX);
+        {
+            AudioManager.Instance.PlaySFX(correct ? correctSFX : wrongSFX);
+        }
 
-        // ❌ WRONG = IGNORE
-        SpawnNext();
-    }
-
-    public void MissCorrect()
-    {
-        if (roundAnswered || isTransitioning) return;
-
-        roundAnswered = true;
-        isTransitioning = true;
-        StartCoroutine(NextRoundDelay());
-    }
-
-    IEnumerator NextRoundDelay()
-    {
-        yield return new WaitForSeconds(0.5f);
-        NextRound();
-    }
-
-    void NextRound()
-    {
+        // ✅ ADD TOTAL PROGRESS
         current++;
-        currentRoundIndex++;
-
-        spawnIndexInRound = 0;
-        roundAnswered = false;
-        isTransitioning = false;
-        hasActiveWord = false;
-
-        UpdateTargetLabel(); // 🔥 ADD THIS
 
         UpdateScoreUI();
-        SpawnNext();
-    }
 
-    public void SpawnNext()
-    {
-        if (hasActiveWord || roundAnswered || isTransitioning || isSpawning) return;
-
-        isSpawning = true;
-
-        if (!isTutorial && currentRoundIndex >= rounds.Count)
+        // ✅ END GAME CHECK
+        if (current >= totalTarget)
         {
             FinishGame();
             return;
         }
 
-        if (!roundAnswered && spawnIndexInRound >= 3)
+        // ❗ CONTINUE SPAWNING
+        hasActiveWord = false;
+        SpawnNext();
+    }
+
+   
+
+    
+
+    public void SpawnNext()
+    {
+        if (hasActiveWord || isSpawning) return;
+
+        isSpawning = true;
+
+        // ✅ END GAME CHECK
+        if (current >= totalTarget)
         {
-            MissCorrect();
+            FinishGame();
             isSpawning = false;
             return;
+        }
+
+        // LOOP ROUNDS
+        if (currentRoundIndex >= rounds.Count)
+        {
+            currentRoundIndex = 0;
         }
 
         if (spawnIndexInRound == 0)
@@ -279,6 +257,17 @@ public float startDelay = 5f;
 
             hasActiveWord = true;
             spawnIndexInRound++;
+        }
+        else
+        {
+            currentRoundIndex++;
+            spawnIndexInRound = 0;
+
+            UpdateTargetLabel(); // 🔥 important
+
+            isSpawning = false;
+            SpawnNext();
+            return;
         }
 
         isSpawning = false;
@@ -325,7 +314,6 @@ public float startDelay = 5f;
             passed = 1;
         }
 
-        // ✅ 👉 ADD THIS HERE (IMPORTANT)
         if (progressBar != null)
             progressBar.value = progressBar.maxValue;
 
@@ -350,7 +338,6 @@ public float startDelay = 5f;
         PlayerPrefs.SetInt("CoinsEarned", coins);
 
         SceneManager.LoadScene("ResultScene");
-
         yield return null;
     }
 
@@ -368,7 +355,7 @@ public float startDelay = 5f;
         }
 
         if (progressText != null)
-            progressText.text = current + " / 10";
+            progressText.text = current + " / " + totalTarget;
 
         if (progressBar != null)
             progressBar.value = current;
@@ -396,6 +383,7 @@ public float startDelay = 5f;
         PlayerPrefs.SetInt("FinalScore", score);
         PlayerPrefs.SetInt("TotalQ", current);
         PlayerPrefs.SetString("LastScene", SceneManager.GetActiveScene().name);
+
         PlayerPrefs.Save();
 
         SceneManager.LoadScene("ResultScene");
@@ -413,7 +401,7 @@ public float startDelay = 5f;
 
     void UpdateTargetLabel()
     {
-        if (isTutorial) return; // ❗ wag galawin tutorial
+        if (isTutorial) return;
 
         if (basketLabel != null && currentRoundIndex < rounds.Count)
         {
@@ -452,7 +440,6 @@ public float startDelay = 5f;
     IEnumerator StartGameWithDelay()
     {
         getReadyText.SetActive(true);
-
         var txt = getReadyText.GetComponent<TextMeshProUGUI>();
 
         txt.text = "3";
@@ -471,11 +458,10 @@ public float startDelay = 5f;
     }
 
     IEnumerator StartWithDelay()
-{
-    yield return new WaitForSeconds(startDelay);
-
-    SpawnNext();
-}
+    {
+        yield return new WaitForSeconds(startDelay);
+        SpawnNext();
+    }
 }
 
 [System.Serializable]
@@ -491,6 +477,4 @@ public class Module3Round
         choices = new string[] { a, b, c };
         this.correct = correct;
     }
-
-    
 }

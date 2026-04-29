@@ -28,11 +28,7 @@ public class FallingWord : MonoBehaviour
     {
         if (answered) return;
 
-        if (gameManager != null && gameManager.isTransitioning)
-        {
-            Destroy(gameObject);
-            return;
-        }
+        
 
         rt.anchoredPosition += Vector2.down * fallSpeed * Time.deltaTime;
 
@@ -49,10 +45,10 @@ public class FallingWord : MonoBehaviour
         {
             Destroy(gameObject);
 
-            if (gameManager != null && !gameManager.isTransitioning)
+            if (gameManager != null)
             {
                 gameManager.hasActiveWord = false;
-                gameManager.SpawnNext(); // 🔥 ALWAYS CONTINUE
+                gameManager.SpawnNext();
             }
 
             return;
