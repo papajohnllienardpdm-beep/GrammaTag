@@ -11,8 +11,7 @@ public class MainMenuUIManager : MonoBehaviour
     public GameObject settingsPanel;
 
     public TextMeshProUGUI nameText;
-    public TextMeshProUGUI coinsText;
-    public TextMeshProUGUI heartsText;
+
 
     IEnumerator Start()
     {
@@ -30,9 +29,8 @@ public class MainMenuUIManager : MonoBehaviour
             return;
         }
 
-        nameText.text = DatabaseManager.Instance.GetPlayerName();
-        coinsText.text = DatabaseManager.Instance.GetCoins().ToString();
-        
+        string playerName = DatabaseManager.Instance.GetPlayerName();
+        nameText.text = $"Hi, {playerName}!";
     }
 
     public void ShowHome()
