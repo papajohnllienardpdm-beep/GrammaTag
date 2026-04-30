@@ -14,6 +14,7 @@ public class CertificateUIManager : MonoBehaviour
         public TextMeshProUGUI moduleNameText;
         public TextMeshProUGUI scoreText;
         public Image starImage;
+        public GameObject imageLock; // 🔥 ADD THIS
     }
 
     public CertificateSlot[] slots;
@@ -46,6 +47,10 @@ public class CertificateUIManager : MonoBehaviour
             if (data == null)
             {
                 Debug.LogWarning("No data for ModuleID: " + slot.moduleID);
+
+                if (slot.imageLock != null)
+                    slot.imageLock.SetActive(true);
+
                 continue;
             }
 
@@ -60,6 +65,15 @@ public class CertificateUIManager : MonoBehaviour
             // 🔥 STAR IMAGE
             if (slot.starImage != null)
                 slot.starImage.sprite = GetStarSprite(data.Score);
+
+            // 🔒 LOCK SYSTEM
+            if (slot.imageLock != null)
+            {
+                if (data.Stars > 0)
+                    slot.imageLock.SetActive(false);
+                else
+                    slot.imageLock.SetActive(true);
+            }
         }
     }
 
