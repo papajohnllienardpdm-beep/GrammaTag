@@ -167,29 +167,24 @@ public class Module6Manager : MonoBehaviour
         for (int i = 0; i < answerButtons.Length; i++)
         {
             Button btn = answerButtons[i];
-            TMP_Text txt = answerTexts[i];
 
             btn.interactable = false;
 
             string choice = shuffledChoices[i];
 
             btn.GetComponent<Image>().color = dimColor;
-            txt.color = Color.gray;
 
             if (choice == q.correctAnswer)
             {
-                btn.GetComponent<Image>().color = Color.green;
-                txt.color = Color.white;
+                btn.GetComponent<Image>().color = correctColor;
             }
 
             if (choice == selectedAnswer && choice != q.correctAnswer)
             {
-                btn.GetComponent<Image>().color = Color.red;
-                txt.color = Color.white;
+                btn.GetComponent<Image>().color = wrongColor;
             }
         }
 
-        // ✅ WITH SFX
         if (selectedAnswer == q.correctAnswer)
         {
             score++;
