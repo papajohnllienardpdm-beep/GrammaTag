@@ -381,7 +381,7 @@ public class GameManager_Module3 : MonoBehaviour
         isTimerRunning = false;
 
         PlayerPrefs.SetInt("FinalScore", score);
-        PlayerPrefs.SetInt("TotalQ", current);
+         PlayerPrefs.SetInt("TotalQ", totalTarget); // ✅ FIXED (always /10)
         PlayerPrefs.SetString("LastScene", SceneManager.GetActiveScene().name);
 
         PlayerPrefs.Save();
