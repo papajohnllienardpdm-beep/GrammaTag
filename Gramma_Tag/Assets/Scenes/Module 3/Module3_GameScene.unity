@@ -3210,7 +3210,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timerText: {fileID: 379256211}
-  gameDuration: 300
+  gameDuration: 15
   basketImage: {fileID: 1683025118}
   chSprite: {fileID: 21300000, guid: c6fbc905321ec834ea399fb5eee42b79, type: 3}
   shSprite: {fileID: 21300000, guid: 201b0bb46fec85d45813e25b719feb7d, type: 3}
@@ -3225,7 +3225,6 @@ MonoBehaviour:
   correctSFX: {fileID: 8300000, guid: f63bfcbadf943d9499de87f0132ee881, type: 3}
   wrongSFX: {fileID: 8300000, guid: a7080d4a15658834183ab5a9b7bf81c2, type: 3}
   hasActiveWord: 0
-  isTransitioning: 0
   startDelay: 5
 --- !u!4 &1438014230
 Transform:
