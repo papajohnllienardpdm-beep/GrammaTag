@@ -265,10 +265,13 @@ public class Module4GameManager : MonoBehaviour
     }
 
     void TimeUp()
-    {
-        isTimerRunning = false;
-        Invoke(nameof(NextQuestion), nextDelay);
-    }
+{
+    isTimerRunning = false;
+
+    CancelInvoke(); // optional safety
+
+    FinishGame(); // 🔥 diretso result na
+}
 
     IEnumerator StartGameWithDelay()
     {

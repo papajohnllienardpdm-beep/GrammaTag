@@ -283,10 +283,13 @@ public class Module6Manager : MonoBehaviour
     }
 
     void TimeUp()
-    {
-        isTimerRunning = false;
-        Invoke(nameof(NextQuestion), nextDelay);
-    }
+{
+    isTimerRunning = false;
+
+    CancelInvoke(); // para walang pending invoke
+
+    FinishGame(); // 🔥 diretso result scene
+}
 
     IEnumerator StartGameWithDelay()
     {
