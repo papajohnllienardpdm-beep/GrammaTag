@@ -24,6 +24,12 @@ public class VideoManager : MonoBehaviour
     public GameObject noLivesPanel;
     public TextMeshProUGUI timerText;
 
+    [Header("No Lives Animation")]
+    public float popupDuration = 0.25f;
+    public AnimationCurve popupCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+
+    private Coroutine popupAnim;
+
     private int currentIndex = -1;
 
     void Start()
@@ -109,6 +115,10 @@ public class VideoManager : MonoBehaviour
     void ShowNoLivesPopup()
     {
         noLivesPanel.SetActive(true);
+
+        if (popupAnim != null) StopCoroutine(popupAnim);
+        popupAnim = StartCoroutine(ScalePopup(Vector3.zero, Vector3.one));
+
         StartCoroutine(UpdateTimerUI());
     }
 
@@ -130,7 +140,8 @@ public class VideoManager : MonoBehaviour
         {
             Debug.Log("❤️ Heart detected → auto continue");
 
-            noLivesPanel.SetActive(false);
+            if (popupAnim != null) StopCoroutine(popupAnim);
+            popupAnim = StartCoroutine(ClosePopupAnim());
 
             HeartSystem.Instance.UseHeart(1);
             StartCoroutine(LoadSceneAfterOrientation());
@@ -139,9 +150,9 @@ public class VideoManager : MonoBehaviour
 
     public void CloseNoLivesPopup()
     {
-        noLivesPanel.SetActive(false);
+        if (popupAnim != null) StopCoroutine(popupAnim);
+        popupAnim = StartCoroutine(ClosePopupAnim());
 
-        // 🔊 RESTORE AUDIO
         if (AudioManager.Instance != null)
             AudioManager.Instance.RestoreAll();
 
@@ -189,6 +200,31 @@ public class VideoManager : MonoBehaviour
         videoPanel.SetActive(false);
         mainMenu?.SetActive(true);
         gamePanel.SetActive(true);
+    }
+
+
+    IEnumerator ScalePopup(Vector3 from, Vector3 to)
+    {
+        float time = 0f;
+
+        while (time < popupDuration)
+        {
+            float t = time / popupDuration;
+            float curveValue = popupCurve.Evaluate(t);
+
+            noLivesPanel.transform.localScale = Vector3.LerpUnclamped(from, to, curveValue);
+
+            time += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        noLivesPanel.transform.localScale = to;
+    }
+
+    IEnumerator ClosePopupAnim()
+    {
+        yield return ScalePopup(Vector3.one, Vector3.zero);
+        noLivesPanel.SetActive(false);
     }
 
 }
