@@ -3210,7 +3210,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timerText: {fileID: 379256211}
-  gameDuration: 15
+  gameDuration: 300
   basketImage: {fileID: 1683025118}
   chSprite: {fileID: 21300000, guid: c6fbc905321ec834ea399fb5eee42b79, type: 3}
   shSprite: {fileID: 21300000, guid: 201b0bb46fec85d45813e25b719feb7d, type: 3}
