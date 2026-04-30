@@ -433,19 +433,25 @@ public class DatabaseManager : MonoBehaviour
             {
                 if (existing.Count == 0)
                 {
-                    // FIRST TIME PASS
                     reward = 200;
                 }
                 else
                 {
-                    // REPEAT PASS
                     reward = 50;
                 }
             }
             else
             {
-                // FAIL
                 reward = 20;
+            }
+
+            // 🔥 DOUBLE COIN HERE
+            if (IsPowerUpActive("DoubleCoin"))
+            {
+                reward *= 2;
+                Debug.Log("💰 DOUBLE COIN APPLIED!");
+
+                DeactivatePowerUp("DoubleCoin");
             }
 
             user.Coins += reward;
