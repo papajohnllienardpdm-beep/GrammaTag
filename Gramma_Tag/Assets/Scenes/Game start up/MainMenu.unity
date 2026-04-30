@@ -49328,6 +49328,56 @@ MonoBehaviour:
     scoreText: {fileID: 143649663}
     starImage: {fileID: 239764432}
     imageLock: {fileID: 1523982547}
+  - moduleID: 3
+    moduleNameText: {fileID: 2068860359}
+    scoreText: {fileID: 1013280243}
+    starImage: {fileID: 782056943}
+    imageLock: {fileID: 897663621}
+  - moduleID: 4
+    moduleNameText: {fileID: 2028672289}
+    scoreText: {fileID: 110606953}
+    starImage: {fileID: 237901193}
+    imageLock: {fileID: 358583368}
+  - moduleID: 5
+    moduleNameText: {fileID: 762822656}
+    scoreText: {fileID: 1896832448}
+    starImage: {fileID: 1881509947}
+    imageLock: {fileID: 927065702}
+  - moduleID: 6
+    moduleNameText: {fileID: 1064502940}
+    scoreText: {fileID: 60583694}
+    starImage: {fileID: 382030545}
+    imageLock: {fileID: 750999062}
+  - moduleID: 7
+    moduleNameText: {fileID: 1384174475}
+    scoreText: {fileID: 1929932400}
+    starImage: {fileID: 1853483534}
+    imageLock: {fileID: 1934511908}
+  - moduleID: 8
+    moduleNameText: {fileID: 910257522}
+    scoreText: {fileID: 921882185}
+    starImage: {fileID: 667217665}
+    imageLock: {fileID: 191889862}
+  - moduleID: 9
+    moduleNameText: {fileID: 2044403363}
+    scoreText: {fileID: 149993675}
+    starImage: {fileID: 1626481933}
+    imageLock: {fileID: 876757741}
+  - moduleID: 10
+    moduleNameText: {fileID: 2099688346}
+    scoreText: {fileID: 910508920}
+    starImage: {fileID: 870260474}
+    imageLock: {fileID: 698755724}
+  - moduleID: 11
+    moduleNameText: {fileID: 794515895}
+    scoreText: {fileID: 1774235515}
+    starImage: {fileID: 460043988}
+    imageLock: {fileID: 589354410}
+  - moduleID: 12
+    moduleNameText: {fileID: 711508772}
+    scoreText: {fileID: 818715084}
+    starImage: {fileID: 1768847893}
+    imageLock: {fileID: 172146671}
   zeroStar: {fileID: 21300000, guid: 5ed53b2c40918a8439cfe2f8db24e5ea, type: 3}
   oneStar: {fileID: 21300000, guid: 0f694c11f6cea02469797497a9aa2066, type: 3}
   twoStar: {fileID: 21300000, guid: 8a3d2213fe328084ba721073f3151b06, type: 3}
