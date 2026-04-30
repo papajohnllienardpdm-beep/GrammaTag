@@ -145,25 +145,21 @@ public class Module4GameManager : MonoBehaviour
         for (int i = 0; i < answerButtons.Length; i++)
         {
             Button btn = answerButtons[i];
-            TMP_Text txt = answerTexts[i];
 
             btn.interactable = false;
 
             string choice = currentShuffledChoices[i];
 
             btn.GetComponent<Image>().color = dimColor;
-            txt.color = Color.gray;
 
             if (choice == q.correctAnswer)
             {
                 btn.GetComponent<Image>().color = Color.green;
-                txt.color = Color.white;
             }
 
             if (choice == selectedAnswer && choice != q.correctAnswer)
             {
                 btn.GetComponent<Image>().color = Color.red;
-                txt.color = Color.white;
             }
         }
 
