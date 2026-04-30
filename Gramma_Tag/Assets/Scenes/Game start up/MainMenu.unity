@@ -18354,6 +18354,31 @@ MonoBehaviour:
   orientationManager: {fileID: 2005622389}
   noLivesPanel: {fileID: 1348785057}
   timerText: {fileID: 529921210}
+  popupDuration: 0.25
+  popupCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &368344746
 GameObject:
   m_ObjectHideFlags: 0
@@ -36714,7 +36739,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 826861597}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 368142711}
+        m_TargetAssemblyTypeName: VideoManager, Assembly-CSharp
+        m_MethodName: PlayVideo
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 4
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &826861597
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -40298,7 +40335,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 899541970}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 368142711}
+        m_TargetAssemblyTypeName: VideoManager, Assembly-CSharp
+        m_MethodName: PlayVideo
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 5
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &899541970
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -57678,8 +57727,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1278761297}
   m_HandleRect: {fileID: 1278761296}
   m_Direction: 2
-  m_Value: 0.9999999
-  m_Size: 0.34438896
+  m_Value: 1
+  m_Size: 0.35660365
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

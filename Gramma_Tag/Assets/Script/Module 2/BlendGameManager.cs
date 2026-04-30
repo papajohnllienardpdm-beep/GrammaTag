@@ -94,10 +94,12 @@ public class BlendGameManager : MonoBehaviour
     {
         questions.Clear();
 
-        int moduleID = 1;
+        int moduleID = PlayerPrefs.GetInt("SelectedModuleID", 1);
         Debug.Log("🎯 GAME RECEIVED MODULE ID: " + moduleID);
 
         var dbQuestions = DatabaseManager.Instance.GetQuestionsByModule(moduleID);
+
+        Debug.Log("📦 QUESTIONS COUNT: " + dbQuestions.Count);
 
         dbQuestions = dbQuestions
             .OrderBy(x => Random.value)
