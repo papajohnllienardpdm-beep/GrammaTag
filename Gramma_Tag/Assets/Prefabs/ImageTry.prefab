@@ -322,5 +322,9 @@ MonoBehaviour:
     cloudSize: {x: 450, y: 450}
     fontSize: 62
     textSize: {x: 600, y: 150}
-  textRect: {fileID: 0}
+  - sprite: {fileID: 21300000, guid: 9ff0f056f6075e9468390cb19c8118cd, type: 3}
+    cloudSize: {x: 450, y: 450}
+    fontSize: 62
+    textSize: {x: 600, y: 150}
+  textRect: {fileID: 7219826478362259057}
   cloudRect: {fileID: 3016512576033982005}
