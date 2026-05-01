@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -544,6 +545,26 @@ public class DatabaseManager : MonoBehaviour
               ORDER BY m.ModuleID ASC",
                 userID
             );
+        }
+    }
+
+
+    public User GetUserData()
+    {
+        lock (dbLock)
+        {
+            return db.Table<User>().FirstOrDefault();
+        }
+    }
+
+    public Achievement GetAchievement(int userID, int moduleID)
+    {
+        lock (dbLock)
+        {
+            return db.Query<Achievement>(
+                "SELECT * FROM Achievement WHERE UserID = ? AND ModuleID = ?",
+                userID, moduleID
+            ).FirstOrDefault();
         }
     }
 

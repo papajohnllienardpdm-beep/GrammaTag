@@ -15518,6 +15518,11 @@ MonoBehaviour:
   moduleID: 2
   lockPanel: {fileID: 1750766588}
   buttonCertificate: {fileID: 291251468}
+  nameText: {fileID: 1160797168}
+  dateText: {fileID: 1689919127}
+  genderImage: {fileID: 546639298}
+  boySprite: {fileID: 21300000, guid: a46b5c64533be92418f73b99b45438f5, type: 3}
+  girlSprite: {fileID: 21300000, guid: e80de57ef458217419113cac2cd23428, type: 3}
 --- !u!1 &294187760
 GameObject:
   m_ObjectHideFlags: 0
@@ -49902,7 +49907,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1125497227
 RectTransform:
   m_ObjectHideFlags: 0
@@ -77508,7 +77513,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1750766589
 RectTransform:
   m_ObjectHideFlags: 0
@@ -82364,7 +82369,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1857151601
 RectTransform:
   m_ObjectHideFlags: 0
