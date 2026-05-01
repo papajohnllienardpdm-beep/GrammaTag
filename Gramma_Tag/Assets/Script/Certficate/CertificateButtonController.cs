@@ -77,7 +77,16 @@ public class CertificateButtonController : MonoBehaviour
 
         if (achievement != null)
         {
-            dateText.text = achievement.dateEarned;
+            System.DateTime parsedDate;
+
+            if (System.DateTime.TryParse(achievement.dateEarned, out parsedDate))
+            {
+                dateText.text = parsedDate.ToString("MMMM dd, yyyy");
+            }
+            else
+            {
+                dateText.text = "Invalid Date";
+            }
         }
         else
         {
