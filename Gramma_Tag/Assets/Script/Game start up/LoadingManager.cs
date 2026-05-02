@@ -14,18 +14,52 @@ public class LoadingManager : MonoBehaviour
 
     private bool hasUser = false;
 
-    void Start()
+    IEnumerator Start()
     {
-        // 🔥 CHECK KUNG MAY USER SA DATABASE
-        if (DatabaseManager.Instance != null && DatabaseManager.Instance.HasUser())
+        Debug.Log("⏳ Waiting for DB...");
+
+        float timer = 0f;
+        float timeout = 5f;
+
+        while (
+            (DatabaseManager.Instance == null || !DatabaseManager.Instance.IsDatabaseReady())
+            && timer < timeout
+        )
         {
-            hasUser = true;
-            termsPanel.SetActive(false); // ❌ HIDE TERMS
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        if (DatabaseManager.Instance == null || !DatabaseManager.Instance.IsDatabaseReady())
+        {
+            Debug.LogError("❌ DB FAILED TO LOAD (TIMEOUT)");
         }
         else
         {
+            Debug.Log("✅ DATABASE READY SA LOADING");
+        }
+
+        bool hasDBUser = DatabaseManager.Instance != null && DatabaseManager.Instance.HasUser();
+        bool hasLogged = PlayerPrefs.GetInt("HAS_LOGGED_IN", 0) == 1;
+
+        if (hasDBUser && hasLogged)
+        {
+            Debug.Log("✅ EXISTING USER → SKIP TERMS");
+
+            hasUser = true;
+
+            // ❌ siguradong walang terms pag may user
+            termsPanel.SetActive(false);
+        }
+        else
+        {
+            Debug.Log("🆕 NEW USER → SHOW TERMS LATER");
+
             hasUser = false;
-            termsPanel.SetActive(false); // start hidden, lalabas later
+
+            // ❗ wag muna ipakita agad
+            // lalabas lang sa 50% (LoadScene logic mo)
+            termsPanel.SetActive(false);
         }
 
         StartCoroutine(LoadScene());

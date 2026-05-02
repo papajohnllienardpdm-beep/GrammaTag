@@ -46,28 +46,31 @@ public class LoginManager : MonoBehaviour
 
         int age = int.Parse(ageDropdown.options[ageDropdown.value].text);
 
-        DatabaseManager.Instance.InsertUser
-        (
+        StartCoroutine(WaitAndSaveUser(age));
+    }
+
+    IEnumerator WaitAndSaveUser(int age)
+    {
+        // 🔥 WAIT UNTIL DATABASE IS READY
+        yield return new WaitUntil(() =>
+            DatabaseManager.Instance != null &&
+            DatabaseManager.Instance.IsDatabaseReady()
+        );
+
+        Debug.Log("✅ DB READY SA LOGIN");
+
+        DatabaseManager.Instance.InsertUser(
             firstNameInput.text,
             lastNameInput.text,
             age,
             playerSex
         );
 
-        // 👉 SAVE GENDER TEMP (for cutscene)
         PlayerPrefs.SetString("SelectedGender", playerSex);
-        PlayerPrefs.Save();
-
-        StartCoroutine(LoadSceneDelayed());
-    }
-
-    IEnumerator LoadSceneDelayed()
-    {
-        yield return new WaitForSeconds(0.3f);
-
-        PlayerPrefs.SetString("SelectedGender", playerSex); // 👈 ADD THIS
         PlayerPrefs.Save();
 
         SceneManager.LoadScene("CutScene1");
     }
+
+    
 }
