@@ -21,6 +21,14 @@ public class CertificateButtonController : MonoBehaviour
     public Sprite boySprite;
     public Sprite girlSprite;
 
+    [Header("VIEWER PANEL")]
+    public GameObject certificateViewerPanel;
+
+    [Header("VIEWER UI")]
+    public TextMeshProUGUI viewerNameText;
+    public TextMeshProUGUI viewerDateText;
+    public Image viewerGenderImage;
+
     IEnumerator Start()
     {
         // wait for DB
@@ -53,21 +61,27 @@ public class CertificateButtonController : MonoBehaviour
         if (user != null)
         {
             // FULL NAME
-            nameText.text = user.FirstName + " " + user.LastName;
+            string fullName = user.FirstName + " " + user.LastName;
+
+            nameText.text = fullName;
+            viewerNameText.text = fullName;
 
             // GENDER IMAGE
             if (user.Gender == "Boy")
             {
                 genderImage.sprite = boySprite;
+                viewerGenderImage.sprite = boySprite;
             }
             else
             {
                 genderImage.sprite = girlSprite;
+                viewerGenderImage.sprite = girlSprite;
             }
         }
         else
         {
             nameText.text = "Player";
+            viewerNameText.text = "Player";
         }
 
         // =========================
@@ -75,22 +89,35 @@ public class CertificateButtonController : MonoBehaviour
         // =========================
         Achievement achievement = db.GetAchievement(userID, moduleID);
 
+        string formattedDate = "Not Completed";
+
         if (achievement != null)
         {
             System.DateTime parsedDate;
 
             if (System.DateTime.TryParse(achievement.dateEarned, out parsedDate))
             {
-                dateText.text = parsedDate.ToString("MMMM dd, yyyy");
-            }
-            else
-            {
-                dateText.text = "Invalid Date";
+                formattedDate = parsedDate.ToString("MMMM d, yyyy");
             }
         }
-        else
-        {
-            dateText.text = "Not Completed";
-        }
+
+        dateText.text = formattedDate;
+        viewerDateText.text = formattedDate;
+    }
+
+    public void OpenCertificate()
+    {
+        certificateViewerPanel.SetActive(true);
+
+        // force landscape
+        Screen.orientation = ScreenOrientation.LandscapeLeft;
+    }
+
+    public void CloseCertificate()
+    {
+        certificateViewerPanel.SetActive(false);
+
+        // back to portrait
+        Screen.orientation = ScreenOrientation.Portrait;
     }
 }
