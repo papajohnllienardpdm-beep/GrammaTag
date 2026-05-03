@@ -281,7 +281,7 @@ public class DatabaseManager : MonoBehaviour
 
     public bool IsDatabaseReady()
     {
-        return isReady;
+        return isReady && db != null;
     }
 
 
@@ -300,6 +300,12 @@ public class DatabaseManager : MonoBehaviour
 
     public void UpdateHearts(int hearts, DateTime lastTime)
     {
+        if (db == null)
+        {
+            Debug.LogWarning("⚠️ UpdateHearts skipped: DB is null");
+            return;
+        }
+
         lock (dbLock)
         {
             var user = db.Table<User>().FirstOrDefault();

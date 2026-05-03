@@ -175,13 +175,7 @@ public class HeartSystem : MonoBehaviour
         }
     }
 
-    void OnApplicationQuit()
-    {
-        if (DatabaseManager.Instance != null && DatabaseManager.Instance.IsDatabaseReady())
-        {
-            DatabaseManager.Instance.UpdateHearts(currentHearts, lastHeartTime);
-        }
-    }
+    
 
     public void ReloadFromDatabase()
     {
