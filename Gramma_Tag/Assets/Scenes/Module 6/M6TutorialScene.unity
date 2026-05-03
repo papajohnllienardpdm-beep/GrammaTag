@@ -4387,20 +4387,20 @@ MonoBehaviour:
   imageC: {fileID: 251086539}
   imageD: {fileID: 1202833386}
   mariaSet:
-    imageA: {fileID: 21300000, guid: d880d63062cec764aaaba6546c7f028a, type: 3}
-    imageB: {fileID: 21300000, guid: 943c9266e66ce514085591a1990543d5, type: 3}
-    imageC: {fileID: 21300000, guid: 33283c91bcd3a4a488b4fff1622bad35, type: 3}
-    imageD: {fileID: 0}
+    imageA: {fileID: 21300000, guid: b0796341b64a5c348b14d70a5d2e9d4d, type: 3}
+    imageB: {fileID: 21300000, guid: 35ea75c511f5c234c9a347f0e15b779e, type: 3}
+    imageC: {fileID: 21300000, guid: 1ce2c92efca709c4eb289cefd08680ba, type: 3}
+    imageD: {fileID: 21300000, guid: 14e205df81f72124487d8612bc02c60e, type: 3}
   rainSet:
-    imageA: {fileID: 21300000, guid: d880d63062cec764aaaba6546c7f028a, type: 3}
-    imageB: {fileID: 21300000, guid: 943c9266e66ce514085591a1990543d5, type: 3}
-    imageC: {fileID: 0}
-    imageD: {fileID: 0}
+    imageA: {fileID: 21300000, guid: 74e41a7e377301a47b5fc4a437b5c407, type: 3}
+    imageB: {fileID: 21300000, guid: f3e0f21a9d85dcc4da939d8e885d98c7, type: 3}
+    imageC: {fileID: 21300000, guid: 33fe480801b53984182af916b929ce86, type: 3}
+    imageD: {fileID: 21300000, guid: 40733d1291b85c146b0799d169f37e60, type: 3}
   sleepSet:
-    imageA: {fileID: 21300000, guid: d880d63062cec764aaaba6546c7f028a, type: 3}
-    imageB: {fileID: 0}
-    imageC: {fileID: 0}
-    imageD: {fileID: 0}
+    imageA: {fileID: 21300000, guid: ebc6c4a0569cba740aeff2a6f11adb31, type: 3}
+    imageB: {fileID: 21300000, guid: 0420f03d752441c4a8509770b5835393, type: 3}
+    imageC: {fileID: 21300000, guid: b83ee7189b5fb55418ea7f42b58ae8c5, type: 3}
+    imageD: {fileID: 21300000, guid: dd7f607a0ff11e24980653f3a644d5c6, type: 3}
 --- !u!114 &1534024915
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4415,6 +4415,31 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   settingsPanel: {fileID: 931996247}
   mainMenuSceneName: MainMenu
+  animationDuration: 0.25
+  scaleCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &1565750834
 GameObject:
   m_ObjectHideFlags: 0
