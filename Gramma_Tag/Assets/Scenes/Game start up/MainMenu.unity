@@ -6338,6 +6338,9 @@ MonoBehaviour:
   viewerNameText: {fileID: 0}
   viewerDateText: {fileID: 0}
   viewerGenderImage: {fileID: 0}
+  certificateToCapture: {fileID: 0}
+  dlButton: {fileID: 0}
+  backButton: {fileID: 0}
 --- !u!114 &101361386
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16366,6 +16369,9 @@ MonoBehaviour:
   viewerNameText: {fileID: 1290986757}
   viewerDateText: {fileID: 1916692684}
   viewerGenderImage: {fileID: 1325672372}
+  certificateToCapture: {fileID: 1776356015}
+  dlButton: {fileID: 2146710547}
+  backButton: {fileID: 1658417654}
 --- !u!1 &291435514
 GameObject:
   m_ObjectHideFlags: 0
@@ -16912,6 +16918,9 @@ MonoBehaviour:
   viewerNameText: {fileID: 0}
   viewerDateText: {fileID: 0}
   viewerGenderImage: {fileID: 0}
+  certificateToCapture: {fileID: 0}
+  dlButton: {fileID: 0}
+  backButton: {fileID: 0}
 --- !u!114 &295205326
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18008,6 +18017,9 @@ MonoBehaviour:
   viewerNameText: {fileID: 0}
   viewerDateText: {fileID: 0}
   viewerGenderImage: {fileID: 0}
+  certificateToCapture: {fileID: 0}
+  dlButton: {fileID: 0}
+  backButton: {fileID: 0}
 --- !u!114 &320896174
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27602,7 +27614,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -23.413513, y: 16.379883}
+  m_AnchoredPosition: {x: -23.413605, y: 16.379883}
   m_SizeDelta: {x: -271.695, y: -170.778}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &515566507
@@ -51079,6 +51091,9 @@ MonoBehaviour:
   viewerNameText: {fileID: 0}
   viewerDateText: {fileID: 0}
   viewerGenderImage: {fileID: 0}
+  certificateToCapture: {fileID: 0}
+  dlButton: {fileID: 0}
+  backButton: {fileID: 0}
 --- !u!114 &1021048770
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -54769,7 +54784,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 3.4052734, y: -23.667053}
+  m_AnchoredPosition: {x: 3.4052734, y: -23.666748}
   m_SizeDelta: {x: -2.5101318, y: -465.2246}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1107792422
@@ -55448,7 +55463,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.65478516, y: -0.123046875}
+  m_AnchoredPosition: {x: -0.6549072, y: -0.123046875}
   m_SizeDelta: {x: 493.2351, y: 1018.69995}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1119898428
@@ -58594,6 +58609,9 @@ MonoBehaviour:
   viewerNameText: {fileID: 0}
   viewerDateText: {fileID: 0}
   viewerGenderImage: {fileID: 0}
+  certificateToCapture: {fileID: 0}
+  dlButton: {fileID: 0}
+  backButton: {fileID: 0}
 --- !u!114 &1184101362
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -65302,7 +65320,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1278761296}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.1722621
+  m_Size: 0.35660365
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -74454,7 +74472,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -40.00244, y: 0.025390625}
+  m_AnchoredPosition: {x: -40.002502, y: 0.025390625}
   m_SizeDelta: {x: 2010.242, y: 915.228}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1510379446
@@ -95718,6 +95736,9 @@ MonoBehaviour:
   viewerNameText: {fileID: 0}
   viewerDateText: {fileID: 0}
   viewerGenderImage: {fileID: 0}
+  certificateToCapture: {fileID: 0}
+  dlButton: {fileID: 0}
+  backButton: {fileID: 0}
 --- !u!114 &1939783398
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -106607,7 +106628,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2146710550}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 291251471}
+        m_TargetAssemblyTypeName: CertificateButtonController, Assembly-CSharp
+        m_MethodName: DownloadCertificate
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2146710550
 MonoBehaviour:
   m_ObjectHideFlags: 0

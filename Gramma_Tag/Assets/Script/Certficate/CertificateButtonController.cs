@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.IO;
 public class CertificateButtonController : MonoBehaviour
 {
     [Header("MODULE SETTINGS")]
@@ -28,6 +29,12 @@ public class CertificateButtonController : MonoBehaviour
     public TextMeshProUGUI viewerNameText;
     public TextMeshProUGUI viewerDateText;
     public Image viewerGenderImage;
+
+    [Header("DOWNLOAD")]
+    public RectTransform certificateToCapture;
+
+    public GameObject dlButton;
+    public GameObject backButton;
 
     IEnumerator Start()
     {
@@ -119,5 +126,65 @@ public class CertificateButtonController : MonoBehaviour
 
         // back to portrait
         Screen.orientation = ScreenOrientation.Portrait;
+    }
+
+    public void DownloadCertificate()
+    {
+        StartCoroutine(CaptureAndSave());
+    }
+
+    IEnumerator CaptureAndSave()
+    {
+        // 🔽 hide buttons
+        dlButton.SetActive(false);
+        backButton.SetActive(false);
+
+        // 🔥 WAIT para sigurado naka-landscape na
+        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForEndOfFrame();
+
+        // capture
+        Texture2D screenTex = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
+        screenTex.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
+        screenTex.Apply();
+
+        Texture2D finalTex = screenTex;
+
+        // 🔥 FIX: kung portrait pa rin, i-rotate natin
+        if (screenTex.height > screenTex.width)
+        {
+            finalTex = RotateTexture(screenTex);
+        }
+
+        byte[] bytes = finalTex.EncodeToPNG();
+
+#if UNITY_ANDROID && !UNITY_EDITOR
+    NativeGallery.SaveImageToGallery(bytes, "GrammaTag", "certificate.png");
+    Debug.Log("✅ Saved to Gallery");
+#else
+        string path = Path.Combine(Application.persistentDataPath, "certificate.png");
+        File.WriteAllBytes(path, bytes);
+        Debug.Log("Saved locally: " + path);
+#endif
+
+        // 🔼 show buttons
+        dlButton.SetActive(true);
+        backButton.SetActive(true);
+    }
+
+    Texture2D RotateTexture(Texture2D original)
+    {
+        Texture2D rotated = new Texture2D(original.height, original.width);
+
+        for (int i = 0; i < original.width; i++)
+        {
+            for (int j = 0; j < original.height; j++)
+            {
+                rotated.SetPixel(j, original.width - i - 1, original.GetPixel(i, j));
+            }
+        }
+
+        rotated.Apply();
+        return rotated;
     }
 }
