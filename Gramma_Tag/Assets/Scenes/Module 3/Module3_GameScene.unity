@@ -1436,7 +1436,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5d8db80c67c4f14c9f8e000e8a80389, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wordPrefab: {fileID: 8140099915237566958, guid: 313f2d01f1b19e64ab8e74ce8bb99718, type: 3}
+  wordPrefab: {fileID: 6824822382469583234, guid: 9023d23f67a76f445b9ce6fa99f3a75c, type: 3}
   spawnPoint: {fileID: 1752245790}
   gameManager: {fileID: 1438014229}
   gameArea: {fileID: 2108573589}
@@ -3805,7 +3805,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 25}
+  m_AnchoredPosition: {x: 0, y: 125}
   m_SizeDelta: {x: 324, y: 450}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1635225704
@@ -4164,7 +4164,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: c6fbc905321ec834ea399fb5eee42b79, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1f87e982df619b34a85cfd070ed0579c, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
