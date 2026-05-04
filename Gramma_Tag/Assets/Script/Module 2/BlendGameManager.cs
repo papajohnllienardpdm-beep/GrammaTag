@@ -62,16 +62,21 @@ public class BlendGameManager : MonoBehaviour
 
     IEnumerator Start()
     {
+        // wait DB
         while (DatabaseManager.Instance == null || !DatabaseManager.Instance.IsDatabaseReady())
             yield return null;
 
-        DatabaseManager.Instance.DeductHeart();
+        // wait HeartSystem
+        while (HeartSystem.Instance == null)
+            yield return null;
+
+        // 🔥 DITO LANG BABAWAS NG HEART
+        HeartSystem.Instance.UseHeartSafe(1);
 
         wordOriginalPos = draggableWord.GetComponent<RectTransform>().anchoredPosition;
 
         LoadQuestions();
 
-        // ✅ setup progress bar
         progressBar.maxValue = questions.Count;
         progressBar.value = 0;
 
@@ -171,6 +176,17 @@ public class BlendGameManager : MonoBehaviour
 
     void EndGame()
     {
+
+        // 🔥 RESET HEART SESSION
+        PlayerPrefs.SetInt("HEART_USED_THIS_SESSION", 0);
+        PlayerPrefs.Save();
+
+        if (HeartSystem.Instance != null)
+        {
+            HeartSystem.Instance.ResetSession();
+        }
+
+
         int total = questions.Count;
 
         int stars = 0;

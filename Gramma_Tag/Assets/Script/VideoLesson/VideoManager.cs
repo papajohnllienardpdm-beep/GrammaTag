@@ -107,7 +107,7 @@ public class VideoManager : MonoBehaviour
         }
         else
         {
-            HeartSystem.Instance.UseHeart(1);
+            
             StartCoroutine(LoadSceneAfterOrientation());
         }
     }
@@ -143,7 +143,7 @@ public class VideoManager : MonoBehaviour
             if (popupAnim != null) StopCoroutine(popupAnim);
             popupAnim = StartCoroutine(ClosePopupAnim());
 
-            HeartSystem.Instance.UseHeart(1);
+            
             StartCoroutine(LoadSceneAfterOrientation());
         }
     }

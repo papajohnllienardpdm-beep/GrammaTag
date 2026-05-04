@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class HeartSystem : MonoBehaviour
 {
@@ -22,6 +23,8 @@ public class HeartSystem : MonoBehaviour
     private DateTime lastHeartTime;
 
     public Action OnHeartUpdated;
+
+    private bool sessionHeartUsed = false;
 
     void Awake()
     {
@@ -175,7 +178,7 @@ public class HeartSystem : MonoBehaviour
         }
     }
 
-    
+
 
     public void ReloadFromDatabase()
     {
@@ -188,5 +191,63 @@ public class HeartSystem : MonoBehaviour
         UpdateUI();
 
         OnHeartUpdated?.Invoke();
+    }
+
+    public void UseHeartSafe(int amount = 1)
+    {
+        // 🔥 IN-MEMORY LOCK (FAST - FIX SA ANDROID DOUBLE CALL)
+        if (sessionHeartUsed)
+        {
+            Debug.Log("❤️ Already used (memory lock) → skip");
+            return;
+        }
+
+        // 🔥 PLAYERPREFS LOCK (PERSISTENCE)
+        if (PlayerPrefs.GetInt("HEART_USED_THIS_SESSION", 0) == 1)
+        {
+            Debug.Log("❤️ Already used (prefs) → skip");
+            sessionHeartUsed = true;
+            return;
+        }
+
+        // 🔥 SET BOTH LOCKS
+        sessionHeartUsed = true;
+
+        PlayerPrefs.SetInt("HEART_USED_THIS_SESSION", 1);
+        PlayerPrefs.Save();
+
+        if (currentHearts <= 0)
+        {
+            Debug.Log("No hearts left!");
+            return;
+        }
+
+        currentHearts -= amount;
+
+        if (currentHearts < 0)
+            currentHearts = 0;
+
+        lastHeartTime = DateTime.Now;
+
+        if (DatabaseManager.Instance != null && DatabaseManager.Instance.IsDatabaseReady())
+        {
+            DatabaseManager.Instance.DeductHeartSafe(amount);
+        }
+
+        UpdateUI();
+        OnHeartUpdated?.Invoke();
+
+        Debug.Log("❤️ Heart deducted ONCE (ANDROID SAFE)");
+    }
+
+
+    public DateTime GetLastHeartTime()
+    {
+        return lastHeartTime;
+    }
+
+    public void ResetSession()
+    {
+        sessionHeartUsed = false;
     }
 }

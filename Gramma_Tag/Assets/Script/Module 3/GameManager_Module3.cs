@@ -66,10 +66,19 @@ public class GameManager_Module3 : MonoBehaviour
 
     IEnumerator WaitForDB()
     {
+        // wait DB
         while (DatabaseManager.Instance == null || !DatabaseManager.Instance.IsDatabaseReady())
             yield return null;
 
-        DatabaseManager.Instance.DeductHeart();
+        // wait HeartSystem
+        while (HeartSystem.Instance == null)
+            yield return null;
+
+        // 🔥 deduct heart ONLY sa game (hindi tutorial)
+        if (!isTutorial)
+        {
+            HeartSystem.Instance.UseHeartSafe(1);
+        }
 
         LoadRoundsFromDB();
         UpdateTargetLabel();
@@ -294,6 +303,15 @@ public class GameManager_Module3 : MonoBehaviour
 
     void FinishGame()
     {
+        // 🔥 RESET HEART SESSION
+        PlayerPrefs.SetInt("HEART_USED_THIS_SESSION", 0);
+        PlayerPrefs.Save();
+
+        if (HeartSystem.Instance != null)
+        {
+            HeartSystem.Instance.ResetSession();
+        }
+
         int total = rounds.Count;
         int stars = 0;
         int passed = 0;
@@ -378,7 +396,19 @@ public class GameManager_Module3 : MonoBehaviour
 
     void TimeUp()
     {
+        
+
         isTimerRunning = false;
+
+
+        // 🔥 RESET HEART SESSION (TIMEOUT)
+        if (HeartSystem.Instance != null)
+        {
+            HeartSystem.Instance.ResetSession();
+        }
+
+        PlayerPrefs.SetInt("HEART_USED_THIS_SESSION", 0);
+        PlayerPrefs.Save();
 
         PlayerPrefs.SetInt("FinalScore", score);
          PlayerPrefs.SetInt("TotalQ", totalTarget); // ✅ FIXED (always /10)

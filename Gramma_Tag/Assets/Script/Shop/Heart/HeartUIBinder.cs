@@ -16,19 +16,20 @@ public class HeartUIBinder : MonoBehaviour
 
     System.Collections.IEnumerator Setup()
     {
-        // hintayin HeartSystem
+        // wait HeartSystem
         yield return new WaitUntil(() => HeartSystem.Instance != null);
 
-        // 🔥 CONNECT UI
+        // wait DB ready (important)
+        yield return new WaitUntil(() => DatabaseManager.Instance != null && DatabaseManager.Instance.IsDatabaseReady());
+
+        // 🔥 CONNECT UI ONLY (no reload)
         HeartSystem.Instance.heartsText = heartsText;
         HeartSystem.Instance.timerText = timerText;
 
-        // 🔥 FORCE RELOAD FROM DB
-        HeartSystem.Instance.ReloadFromDatabase();
-
-        // 🔥 SUBSCRIBE SA UPDATE
+        // 🔥 SUBSCRIBE
         HeartSystem.Instance.OnHeartUpdated += UpdateUI;
 
+        // 🔥 INITIAL UPDATE
         UpdateUI();
     }
 

@@ -44,9 +44,9 @@ public class SettingsPanelController : MonoBehaviour
         if (HeartSystem.Instance != null && DatabaseManager.Instance != null)
         {
             DatabaseManager.Instance.UpdateHearts(
-                HeartSystem.Instance.currentHearts,
-                DateTime.Now
-            );
+            HeartSystem.Instance.currentHearts,
+            HeartSystem.Instance.GetLastHeartTime()
+);
         }
 
         SceneManager.LoadScene(mainMenuSceneName);
@@ -75,4 +75,6 @@ public class SettingsPanelController : MonoBehaviour
         yield return ScalePanel(Vector3.one, Vector3.zero);
         settingsPanel.SetActive(false);
     }
+
+
 }

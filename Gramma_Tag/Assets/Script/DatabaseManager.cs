@@ -481,24 +481,32 @@ public class DatabaseManager : MonoBehaviour
     }
 
     // ❤️ Bawas heart pag pasok sa game
-    public void DeductHeart()
+    //dsadjhasgkjdhsajsaldksa
+    public void DeductHeartSafe(int amount)
     {
+        if (db == null)
+        {
+            Debug.LogWarning("⚠️ DB not ready, DeductHeart skipped");
+            return;
+        }
+
         lock (dbLock)
         {
             var user = db.Table<User>().FirstOrDefault();
 
-            if (user != null && user.Hearts > 0)
-            {
-                user.Hearts -= 1;
-                user.lastHeartTime = DateTime.Now.ToString();
-                db.Update(user);
+            if (user == null) return;
 
-                Debug.Log("Heart deducted! Remaining: " + user.Hearts);
-            }
-            else
-            {
-                Debug.Log("No hearts left!");
-            }
+            int newHearts = user.Hearts - amount;
+
+            if (newHearts < 0)
+                newHearts = 0;
+
+            user.Hearts = newHearts;
+            user.lastHeartTime = DateTime.Now.ToString();
+
+            db.Update(user);
+
+            Debug.Log("❤️ Hearts after deduction: " + user.Hearts);
         }
     }
 
