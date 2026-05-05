@@ -10,7 +10,10 @@ public class SubtopicUIHandler : MonoBehaviour
     {
         public int moduleID;
         public TextMeshProUGUI moduleNameText;
-        public TextMeshProUGUI difficultyText;
+        public TextMeshProUGUI videoLengthLabelText; // UI text
+
+        [TextArea]
+        public string videoLengthValue; // input sa Inspector
     }
 
     public SubtopicData[] subtopics;
@@ -52,8 +55,8 @@ public class SubtopicUIHandler : MonoBehaviour
                 if (sub.moduleNameText != null)
                     sub.moduleNameText.text = data.ModuleName;
 
-                if (sub.difficultyText != null)
-                    sub.difficultyText.text = data.Difficulty;
+                if (sub.videoLengthLabelText != null)
+                    sub.videoLengthLabelText.text = sub.videoLengthValue;
             }
             else
             {

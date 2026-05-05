@@ -21995,18 +21995,18 @@ MonoBehaviour:
   mainMenu: {fileID: 1287367913}
   videoPlayer: {fileID: 516238237}
   videos:
-  - {fileID: 32900000, guid: 002292ec0b78762459fd8fc520132ba4, type: 3}
-  - {fileID: 32900000, guid: 66556098678443140877389b12fb6544, type: 3}
-  - {fileID: 32900000, guid: 3e8af6b24f128fa4287b72970176e097, type: 3}
-  - {fileID: 32900000, guid: 0030ac8b56e1c3b41b046a43d9e2befc, type: 3}
-  - {fileID: 32900000, guid: bf75f4960d1365b40922b9536c299478, type: 3}
-  - {fileID: 32900000, guid: f107829b691c7e64fb40349da0063290, type: 3}
-  - {fileID: 32900000, guid: f107829b691c7e64fb40349da0063290, type: 3}
-  - {fileID: 32900000, guid: f107829b691c7e64fb40349da0063290, type: 3}
-  - {fileID: 32900000, guid: f107829b691c7e64fb40349da0063290, type: 3}
-  - {fileID: 32900000, guid: f107829b691c7e64fb40349da0063290, type: 3}
-  - {fileID: 32900000, guid: f107829b691c7e64fb40349da0063290, type: 3}
-  - {fileID: 32900000, guid: f107829b691c7e64fb40349da0063290, type: 3}
+  - {fileID: 32900000, guid: 84a94ea29040a9d4a825845f39937cd1, type: 3}
+  - {fileID: 32900000, guid: 8ab742eb1e2b125438872b9436557856, type: 3}
+  - {fileID: 32900000, guid: 73a09f41a8c347b4d91c7f1c5a3b94b7, type: 3}
+  - {fileID: 32900000, guid: f7b98dc8b91155242b776503826dc588, type: 3}
+  - {fileID: 32900000, guid: 8f7f9fd11608fba468dfd854cc076c13, type: 3}
+  - {fileID: 32900000, guid: d6744eaa8157e204b87204b736388c71, type: 3}
+  - {fileID: 32900000, guid: 73a09f41a8c347b4d91c7f1c5a3b94b7, type: 3}
+  - {fileID: 32900000, guid: f7b98dc8b91155242b776503826dc588, type: 3}
+  - {fileID: 32900000, guid: 8f7f9fd11608fba468dfd854cc076c13, type: 3}
+  - {fileID: 32900000, guid: d6744eaa8157e204b87204b736388c71, type: 3}
+  - {fileID: 32900000, guid: 73a09f41a8c347b4d91c7f1c5a3b94b7, type: 3}
+  - {fileID: 32900000, guid: f7b98dc8b91155242b776503826dc588, type: 3}
   nextScenes:
   - Module2_TutorialScene
   - Module2_GameScene
@@ -30504,7 +30504,7 @@ VideoPlayer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 514387353}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: b4a44a24a7bdc1a4999b673e937a86a1, type: 3}
+  m_VideoClip: {fileID: 32900000, guid: 58a52c472e9ec0f49885ad3e02007647, type: 3}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 0}
@@ -42381,16 +42381,20 @@ MonoBehaviour:
   subtopics:
   - moduleID: 7
     moduleNameText: {fileID: 368344748}
-    difficultyText: {fileID: 1514372288}
+    videoLengthLabelText: {fileID: 1514372288}
+    videoLengthValue: 2 minutes
   - moduleID: 8
     moduleNameText: {fileID: 354782150}
-    difficultyText: {fileID: 66767859}
+    videoLengthLabelText: {fileID: 66767859}
+    videoLengthValue: 2 minutes
   - moduleID: 9
     moduleNameText: {fileID: 1025161188}
-    difficultyText: {fileID: 1480562558}
+    videoLengthLabelText: {fileID: 1480562558}
+    videoLengthValue: 2 minutes
   - moduleID: 10
     moduleNameText: {fileID: 2042655149}
-    difficultyText: {fileID: 861270688}
+    videoLengthLabelText: {fileID: 861270688}
+    videoLengthValue: 2 minutes
 --- !u!114 &751728177
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59492,16 +59496,20 @@ MonoBehaviour:
   subtopics:
   - moduleID: 3
     moduleNameText: {fileID: 1510379448}
-    difficultyText: {fileID: 1442802096}
+    videoLengthLabelText: {fileID: 1442802096}
+    videoLengthValue: 2 minutes
   - moduleID: 4
     moduleNameText: {fileID: 300192916}
-    difficultyText: {fileID: 540070067}
+    videoLengthLabelText: {fileID: 540070067}
+    videoLengthValue: 2 minutes
   - moduleID: 5
     moduleNameText: {fileID: 169049943}
-    difficultyText: {fileID: 4652458}
+    videoLengthLabelText: {fileID: 4652458}
+    videoLengthValue: 2 minutes
   - moduleID: 6
     moduleNameText: {fileID: 1218424364}
-    difficultyText: {fileID: 1451248628}
+    videoLengthLabelText: {fileID: 1451248628}
+    videoLengthValue: 2 minutes
 --- !u!114 &1079564551
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -61573,7 +61581,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1119898427
 RectTransform:
   m_ObjectHideFlags: 0
@@ -77087,10 +77095,12 @@ MonoBehaviour:
   subtopics:
   - moduleID: 1
     moduleNameText: {fileID: 692203078}
-    difficultyText: {fileID: 921679701}
+    videoLengthLabelText: {fileID: 921679701}
+    videoLengthValue: 2 minutes
   - moduleID: 2
     moduleNameText: {fileID: 1125725543}
-    difficultyText: {fileID: 1824538283}
+    videoLengthLabelText: {fileID: 1824538283}
+    videoLengthValue: 2 minutes
 --- !u!114 &1425231658
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -117226,10 +117236,12 @@ MonoBehaviour:
   subtopics:
   - moduleID: 11
     moduleNameText: {fileID: 1471786864}
-    difficultyText: {fileID: 1885786900}
+    videoLengthLabelText: {fileID: 1885786900}
+    videoLengthValue: 2 minutes
   - moduleID: 12
     moduleNameText: {fileID: 2035306568}
-    difficultyText: {fileID: 1504654291}
+    videoLengthLabelText: {fileID: 1504654291}
+    videoLengthValue: 2 minutes
 --- !u!114 &2132951760
 MonoBehaviour:
   m_ObjectHideFlags: 0
