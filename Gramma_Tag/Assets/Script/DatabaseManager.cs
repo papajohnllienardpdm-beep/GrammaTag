@@ -534,12 +534,12 @@ public class DatabaseManager : MonoBehaviour
                 }
                 else
                 {
-                    reward = 50;
+                    reward = 20;
                 }
             }
             else
             {
-                reward = 20;
+                reward = 50;
             }
 
             // 🔥 DOUBLE COIN HERE
