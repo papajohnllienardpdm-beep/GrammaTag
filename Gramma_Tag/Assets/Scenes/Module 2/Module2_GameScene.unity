@@ -259,8 +259,8 @@ MonoBehaviour:
   wrongSprite: {fileID: 21300000, guid: c5d00752cafc607449481dc41387db91, type: 3}
   feedbackOverlay: {fileID: 1263062698}
   feedbackText: {fileID: 1322559208}
-  correctMessage: Correct
-  wrongMessage: Nice Try
+  correctMessage: Correct!
+  wrongMessage: Nice try!
   questionText: {fileID: 361830762}
   timerText: {fileID: 1571178150}
   gameDuration: 300
@@ -1068,7 +1068,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Initail Blend
+  m_text: Initail Consonant Blend
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 09626e80693e50a4ea752e5cf93e114e, type: 2}
   m_sharedMaterial: {fileID: 8977684842885629325, guid: 09626e80693e50a4ea752e5cf93e114e, type: 2}
@@ -1107,7 +1107,7 @@ MonoBehaviour:
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
-  m_lineSpacing: 0
+  m_lineSpacing: 29.57
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
@@ -1161,8 +1161,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 4, y: 7}
-  m_SizeDelta: {x: 500, y: 350}
+  m_AnchoredPosition: {x: 4, y: 21.1101}
+  m_SizeDelta: {x: 500, y: 378.2209}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &373596553
 GameObject:
