@@ -51,8 +51,13 @@ public class FallingWord : MonoBehaviour
                 wordTMP.fontSize = data.fontSize;
 
             // 📐 SET TEXT BOX SIZE
+            // 📐 SET TEXT BOX SIZE
             if (textRect != null)
                 textRect.sizeDelta = data.textSize;
+
+            // 📍 SET TEXT POSITION
+            if (textRect != null)
+                textRect.anchoredPosition = data.textPosition;
         }
     }
 
@@ -142,4 +147,7 @@ public class CloudData
     [Header("Text Settings")]
     public int fontSize;
     public Vector2 textSize; // width, height
+
+    [Header("Text Position")]
+    public Vector2 textPosition; // 👈 NEW
 }
