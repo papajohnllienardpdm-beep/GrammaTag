@@ -17634,8 +17634,8 @@ MonoBehaviour:
   nameText: {fileID: 1160797168}
   dateText: {fileID: 1689919127}
   genderImage: {fileID: 546639298}
-  boySprite: {fileID: 21300000, guid: a46b5c64533be92418f73b99b45438f5, type: 3}
-  girlSprite: {fileID: 21300000, guid: e80de57ef458217419113cac2cd23428, type: 3}
+  boySprite: {fileID: 21300000, guid: a6ad2526695083345bfb98c218171780, type: 3}
+  girlSprite: {fileID: 21300000, guid: 0868a002e3d6f1a438eb4728542c93ff, type: 3}
   certificateViewerPanel: {fileID: 1253799558}
   viewerNameText: {fileID: 1290986757}
   viewerDateText: {fileID: 1916692684}
@@ -18868,7 +18868,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -693, y: -2}
-  m_SizeDelta: {x: 450, y: 500}
+  m_SizeDelta: {x: 450, y: 550}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &306354473
 MonoBehaviour:
@@ -20043,7 +20043,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -693, y: -2}
-  m_SizeDelta: {x: 450, y: 500}
+  m_SizeDelta: {x: 450, y: 550}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &338561614
 MonoBehaviour:
@@ -30583,7 +30583,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -23.413574, y: 16.379883}
+  m_AnchoredPosition: {x: -23.413513, y: 16.379883}
   m_SizeDelta: {x: -271.695, y: -170.778}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &515566507
@@ -56937,8 +56937,8 @@ MonoBehaviour:
   nameText: {fileID: 121161596}
   dateText: {fileID: 888860756}
   genderImage: {fileID: 142457985}
-  boySprite: {fileID: 21300000, guid: a46b5c64533be92418f73b99b45438f5, type: 3}
-  girlSprite: {fileID: 21300000, guid: e80de57ef458217419113cac2cd23428, type: 3}
+  boySprite: {fileID: 21300000, guid: a6ad2526695083345bfb98c218171780, type: 3}
+  girlSprite: {fileID: 21300000, guid: 0868a002e3d6f1a438eb4728542c93ff, type: 3}
   certificateViewerPanel: {fileID: 88028691}
   viewerNameText: {fileID: 1631190313}
   viewerDateText: {fileID: 1182632950}
@@ -60919,7 +60919,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 3.4052734, y: -23.666992}
+  m_AnchoredPosition: {x: 3.4052734, y: -23.666931}
   m_SizeDelta: {x: -2.5101318, y: -465.2246}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1107792422
@@ -65173,8 +65173,8 @@ MonoBehaviour:
   nameText: {fileID: 846839297}
   dateText: {fileID: 219505957}
   genderImage: {fileID: 1599922647}
-  boySprite: {fileID: 21300000, guid: a46b5c64533be92418f73b99b45438f5, type: 3}
-  girlSprite: {fileID: 21300000, guid: e80de57ef458217419113cac2cd23428, type: 3}
+  boySprite: {fileID: 21300000, guid: a6ad2526695083345bfb98c218171780, type: 3}
+  girlSprite: {fileID: 21300000, guid: 0868a002e3d6f1a438eb4728542c93ff, type: 3}
   certificateViewerPanel: {fileID: 1612808028}
   viewerNameText: {fileID: 691501636}
   viewerDateText: {fileID: 746462798}
@@ -66094,7 +66094,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -693, y: -2}
-  m_SizeDelta: {x: 450, y: 500}
+  m_SizeDelta: {x: 450, y: 550}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1213304249
 MonoBehaviour:
@@ -70516,7 +70516,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -693, y: -2}
-  m_SizeDelta: {x: 450, y: 500}
+  m_SizeDelta: {x: 450, y: 550}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1325672372
 MonoBehaviour:
@@ -70538,7 +70538,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 842173f9aa9198143884825b7fe39126, type: 3}
+  m_Sprite: {fileID: 21300000, guid: a6ad2526695083345bfb98c218171780, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -72267,7 +72267,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1278761296}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.34407008
+  m_Size: 0.17236978
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -82185,7 +82185,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -40.002563, y: 0.025390625}
+  m_AnchoredPosition: {x: -40.002686, y: 0.025390625}
   m_SizeDelta: {x: 2010.242, y: 915.228}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1510379446
@@ -105466,8 +105466,8 @@ MonoBehaviour:
   nameText: {fileID: 713685321}
   dateText: {fileID: 409936685}
   genderImage: {fileID: 845937579}
-  boySprite: {fileID: 21300000, guid: a46b5c64533be92418f73b99b45438f5, type: 3}
-  girlSprite: {fileID: 21300000, guid: e80de57ef458217419113cac2cd23428, type: 3}
+  boySprite: {fileID: 21300000, guid: a6ad2526695083345bfb98c218171780, type: 3}
+  girlSprite: {fileID: 21300000, guid: 0868a002e3d6f1a438eb4728542c93ff, type: 3}
   certificateViewerPanel: {fileID: 1151931933}
   viewerNameText: {fileID: 1965698549}
   viewerDateText: {fileID: 890163612}
@@ -106024,7 +106024,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -693, y: -2}
-  m_SizeDelta: {x: 450, y: 500}
+  m_SizeDelta: {x: 450, y: 550}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1948172829
 MonoBehaviour:
@@ -108910,7 +108910,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -693, y: -2}
-  m_SizeDelta: {x: 450, y: 500}
+  m_SizeDelta: {x: 450, y: 550}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1984597168
 MonoBehaviour:
@@ -110258,7 +110258,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -693, y: -2}
-  m_SizeDelta: {x: 450, y: 500}
+  m_SizeDelta: {x: 450, y: 550}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2008618657
 MonoBehaviour:
