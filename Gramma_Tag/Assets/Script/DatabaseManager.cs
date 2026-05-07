@@ -57,33 +57,54 @@ public class DatabaseManager : MonoBehaviour
 
 
         // 🔥 FIRST INSTALL CHECK
-        bool isFirstRun = PlayerPrefs.GetInt("DB_INITIALIZED", 0) == 0;
+        // 🔥 CHECK IF USER ALREADY LOGGED IN
+        // 🔥 FORCE CHECK USER TABLE LATER
+        bool shouldResetDB = false;
 
-        if (isFirstRun)
+        // 🔥 CHECK PLAYER PREF
+        bool hasLoggedIn = PlayerPrefs.GetInt("HAS_LOGGED_IN", 0) == 1;
+
+        // 🔥 IF NO LOGIN PREF → RESET DATABASE
+        if (!hasLoggedIn)
         {
-            Debug.Log("🔥 FIRST RUN DETECTED");
+            shouldResetDB = true;
+            Debug.Log("🔥 NO LOGIN PREF → RESET DB");
+        }
 
+        // 🔥 DELETE DATABASE
+        if (shouldResetDB)
+        {
 #if UNITY_ANDROID && !UNITY_EDITOR
-    // 🔥 SAFE LANG SA ANDROID
+
     if (File.Exists(persistentPath))
     {
         try
         {
             File.Delete(persistentPath);
-            Debug.Log("🧹 OLD DB DELETED (ANDROID)");
+            Debug.Log("🧹 OLD DB DELETED");
         }
         catch (Exception e)
         {
             Debug.LogError("❌ DELETE FAILED: " + e.Message);
         }
     }
-#else
-            // ❗ UNITY EDITOR → HUWAG MAG DELETE (CAUSE NG ERROR MO)
-            Debug.Log("⚠️ UNITY EDITOR → SKIP DELETE");
-#endif
 
-            PlayerPrefs.SetInt("DB_INITIALIZED", 1);
-            PlayerPrefs.Save();
+#else
+
+            if (File.Exists(persistentPath))
+            {
+                try
+                {
+                    File.Delete(persistentPath);
+                    Debug.Log("🧹 OLD DB DELETED (EDITOR)");
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError("❌ DELETE FAILED: " + e.Message);
+                }
+            }
+
+#endif
         }
 
         // 🔥 COPY DB ONLY IF NOT EXISTS

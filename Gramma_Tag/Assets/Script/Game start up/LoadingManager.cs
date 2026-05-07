@@ -113,11 +113,7 @@ public class LoadingManager : MonoBehaviour
                 progress += Time.deltaTime * loadingSpeed;
             }
 
-            // 👉 KUNG MAY USER → DIRETSO LANG (NO STOP)
-            if (hasUser)
-            {
-                progress += Time.deltaTime * loadingSpeed;
-            }
+            
 
             loadingBar.value = Mathf.Clamp01(progress);
 
