@@ -59,23 +59,22 @@ public class DatabaseManager : MonoBehaviour
         // 🔥 FIRST INSTALL CHECK
         // 🔥 CHECK IF USER ALREADY LOGGED IN
         // 🔥 FORCE CHECK USER TABLE LATER
-        bool shouldResetDB = false;
+        // 🔥 FIRST INSTALL CHECK
+        bool firstInstall = PlayerPrefs.GetInt("FIRST_INSTALL_DONE", 0) == 0;
 
-        // 🔥 CHECK PLAYER PREF
-        bool hasLoggedIn = PlayerPrefs.GetInt("HAS_LOGGED_IN", 0) == 1;
-
-        // 🔥 IF NO LOGIN PREF → RESET DATABASE
-        if (!hasLoggedIn)
+        if (firstInstall)
         {
-            shouldResetDB = true;
-            Debug.Log("🔥 NO LOGIN PREF → RESET DB");
-        }
+            Debug.Log("🔥 FIRST INSTALL DETECTED");
 
-        // 🔥 DELETE DATABASE
-        if (shouldResetDB)
-        {
+            // 🔥 CLEAR ALL PLAYER PREFS
+            PlayerPrefs.DeleteAll();
+            PlayerPrefs.Save();
+
+            Debug.Log("🧹 PLAYER PREFS CLEARED");
+
 #if UNITY_ANDROID && !UNITY_EDITOR
 
+    // 🔥 DELETE OLD DATABASE
     if (File.Exists(persistentPath))
     {
         try
@@ -91,6 +90,7 @@ public class DatabaseManager : MonoBehaviour
 
 #else
 
+            // 🔥 UNITY EDITOR
             if (File.Exists(persistentPath))
             {
                 try
@@ -105,6 +105,10 @@ public class DatabaseManager : MonoBehaviour
             }
 
 #endif
+
+            // 🔥 MARK INSTALL COMPLETE
+            PlayerPrefs.SetInt("FIRST_INSTALL_DONE", 1);
+            PlayerPrefs.Save();
         }
 
         // 🔥 COPY DB ONLY IF NOT EXISTS
