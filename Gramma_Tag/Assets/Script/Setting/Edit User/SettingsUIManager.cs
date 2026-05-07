@@ -34,18 +34,31 @@ public class SettingsUIManager : MonoBehaviour
 
     void LoadUserData()
     {
-        if (!DatabaseManager.Instance.HasUser()) return;
+        if (!DatabaseManager.Instance.HasUser())
+            return;
 
-        var db = DatabaseManager.Instance;
+        var user = DatabaseManager.Instance.GetUserData();
 
-        string gender = db.GetUserGender();
+        if (user == null)
+            return;
 
-        firstNameInput.text = db.GetPlayerName();
-        lastNameInput.text = "";
-        genderInput.text = gender;
-        ageDropdown.value = 0;
+        // 🔥 LOAD DATABASE VALUES
+        firstNameInput.text = user.FirstName;
+        lastNameInput.text = user.LastName;
+        genderInput.text = user.Gender;
 
-        SetCharacterImage(gender);
+        // 🔥 AGE DROPDOWN
+        for (int i = 0; i < ageDropdown.options.Count; i++)
+        {
+            if (ageDropdown.options[i].text == user.Age.ToString())
+            {
+                ageDropdown.value = i;
+                break;
+            }
+        }
+
+        // 🔥 UPDATE CHARACTER IMAGE
+        SetCharacterImage(user.Gender);
     }
 
     void SetEditMode(bool enable)
