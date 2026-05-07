@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Collections;
 
 public class LoadingManager : MonoBehaviour
 {
@@ -10,13 +11,89 @@ public class LoadingManager : MonoBehaviour
     public Toggle termsToggle;
     public GameObject termsPanel;
 
+    public GameObject cardImage;
+
     public float loadingSpeed = 0.5f;
 
     private bool hasUser = false;
 
+    public void OpenTermsCard()
+    {
+        if (cardImage != null)
+        {
+            cardImage.SetActive(true);
+
+            StopCoroutine("OpenCardAnimation");
+            StartCoroutine("OpenCardAnimation");
+        }
+    }
+
+    IEnumerator OpenCardAnimation()
+    {
+        RectTransform cardRect = cardImage.GetComponent<RectTransform>();
+
+        cardRect.localScale = Vector3.zero;
+
+        float timer = 0f;
+        float duration = 0.15f;
+
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+
+            float scale = Mathf.SmoothStep(0f, 1f, timer / duration);
+
+            cardRect.localScale = new Vector3(scale, scale, scale);
+
+            yield return null;
+        }
+
+        cardRect.localScale = Vector3.one;
+    }
+
+    public void CloseTermsCard()
+    {
+        if (cardImage != null)
+        {
+            StopCoroutine("OpenCardAnimation");
+            StartCoroutine("CloseCardAnimation");
+        }
+    }
+
+    IEnumerator CloseCardAnimation()
+    {
+        RectTransform cardRect = cardImage.GetComponent<RectTransform>();
+
+        float timer = 0f;
+        float duration = 0.12f;
+
+        Vector3 startScale = Vector3.one;
+        Vector3 endScale = Vector3.zero;
+
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+
+            float t = Mathf.SmoothStep(0f, 1f, timer / duration);
+
+            cardRect.localScale = Vector3.Lerp(startScale, endScale, t);
+
+            yield return null;
+        }
+
+        cardRect.localScale = Vector3.zero;
+
+        cardImage.SetActive(false);
+    }
+
     IEnumerator Start()
     {
         Debug.Log("⏳ Waiting for DB...");
+
+        if (cardImage != null)
+        {
+            cardImage.SetActive(false);
+        }
 
         float timer = 0f;
         float timeout = 5f;
