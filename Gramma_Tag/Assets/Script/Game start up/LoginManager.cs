@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 using TMPro;
 using UnityEngine.UI; // ADD THIS
 using System.Text.RegularExpressions;
+using System.Collections;
 
 public class LoginManager : MonoBehaviour
 {
@@ -79,16 +80,73 @@ public class LoginManager : MonoBehaviour
     void ShowValidation(string message)
     {
         if (validationPanel != null)
+        {
             validationPanel.SetActive(true);
+
+            StopCoroutine("PopupAnimation");
+            StartCoroutine("PopupAnimation");
+        }
 
         if (validationText != null)
             validationText.text = message;
     }
 
+    IEnumerator PopupAnimation()
+    {
+        RectTransform panelRect = validationPanel.GetComponent<RectTransform>();
+
+        panelRect.localScale = Vector3.zero;
+
+        float timer = 0f;
+        float duration = 0.15f;
+
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+
+            float scale = Mathf.SmoothStep(0f, 1f, timer / duration);
+
+            panelRect.localScale = new Vector3(scale, scale, scale);
+
+            yield return null;
+        }
+
+        panelRect.localScale = Vector3.one;
+    }
+
     public void CloseValidation()
     {
         if (validationPanel != null)
-            validationPanel.SetActive(false);
+        {
+            StopCoroutine("PopupAnimation");
+            StartCoroutine("ClosePopupAnimation");
+        }
+    }
+
+    IEnumerator ClosePopupAnimation()
+    {
+        RectTransform panelRect = validationPanel.GetComponent<RectTransform>();
+
+        float timer = 0f;
+        float duration = 0.12f;
+
+        Vector3 startScale = Vector3.one;
+        Vector3 endScale = Vector3.zero;
+
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+
+            float t = timer / duration;
+
+            panelRect.localScale = Vector3.Lerp(startScale, endScale, Mathf.SmoothStep(0f, 1f, t));
+
+            yield return null;
+        }
+
+        panelRect.localScale = Vector3.zero;
+
+        validationPanel.SetActive(false);
     }
 
     public void StartGame()
