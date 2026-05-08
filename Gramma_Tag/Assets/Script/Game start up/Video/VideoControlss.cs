@@ -83,18 +83,26 @@ public class VideoControlss : MonoBehaviour
     {
         if (!isPrepared) return;
 
-        if (isPlaying && !isDragging)
+        // 🔥 USE ACTUAL VIDEOPLAYER STATE
+        if (videoPlayer.isPlaying && !isDragging)
         {
             updateTimer += Time.deltaTime;
 
-            if (updateTimer >= 0.2f)
+            // 🔥 MAS RESPONSIVE UPDATE
+            if (updateTimer >= 0.05f)
             {
                 updateTimer = 0f;
 
                 if (videoPlayer.length > 0)
                 {
+                    // 🔥 UPDATE SLIDER REALTIME
                     slider.value = (float)(videoPlayer.time / videoPlayer.length);
-                    timeText.text = FormatTime(videoPlayer.time) + " / " + FormatTime(videoPlayer.length);
+
+                    // 🔥 UPDATE TIME TEXT
+                    timeText.text =
+                        FormatTime(videoPlayer.time) +
+                        " / " +
+                        FormatTime(videoPlayer.length);
                 }
             }
         }
