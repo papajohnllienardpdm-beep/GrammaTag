@@ -44,6 +44,17 @@ public class BlendGameManager : MonoBehaviour
 
     public TextMeshProUGUI questionText;
 
+    [Header("UPPER QUESTION")]
+    public TextMeshProUGUI upperQuestionText;
+
+    [TextArea]
+    public string initialBlendText =
+        "What word has an initial consonant blend?";
+
+    [TextArea]
+    public string finalBlendText =
+        "What word has a final consonant blend?";
+
     [Header("TIMER")]
     public TextMeshProUGUI timerText;
     public float gameDuration = 300f;
@@ -139,6 +150,23 @@ public class BlendGameManager : MonoBehaviour
 
         if (questionText != null)
             questionText.text = q.word;
+
+        // 🔥 UPPER QUESTION LOGIC
+        if (upperQuestionText != null)
+        {
+            if (q.word.ToLower().Contains("initial consonant blend"))
+            {
+                upperQuestionText.text = initialBlendText;
+            }
+            else if (q.word.ToLower().Contains("final consonant blend"))
+            {
+                upperQuestionText.text = finalBlendText;
+            }
+            else
+            {
+                upperQuestionText.text = "";
+            }
+        }
 
         // random swap
         if (Random.value > 0.5f)
