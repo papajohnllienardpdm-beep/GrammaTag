@@ -131,6 +131,26 @@ public class HeartSystem : MonoBehaviour
         OnHeartUpdated?.Invoke();
     }
 
+    public void AddHeart(int amount = 1)
+    {
+        currentHearts += amount;
+
+        if (currentHearts > maxHearts)
+            currentHearts = maxHearts;
+
+        // 🔥 SAVE SA DATABASE
+        if (DatabaseManager.Instance != null &&
+            DatabaseManager.Instance.IsDatabaseReady())
+        {
+            DatabaseManager.Instance.UpdateHearts(currentHearts, lastHeartTime);
+        }
+
+        UpdateUI();
+        OnHeartUpdated?.Invoke();
+
+        Debug.Log("❤️ Heart Added: " + amount);
+    }
+
     void UpdateUI()
     {
         if (heartsText != null)
