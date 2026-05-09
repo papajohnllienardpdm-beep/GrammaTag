@@ -19870,8 +19870,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -20993,9 +20993,9 @@ RectTransform:
   - {fileID: 655901126}
   m_Father: {fileID: 488176040}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 237.39954, y: -417.3725}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 579.397, y: 155.301}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &351355802
@@ -23154,8 +23154,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -29705,7 +29705,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -8.658997, y: -31.259}
-  m_SizeDelta: {x: 527.098, y: 664.884}
+  m_SizeDelta: {x: 527.098, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &488176041
 MonoBehaviour:
@@ -30874,7 +30874,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -23.413605, y: 16.379883}
+  m_AnchoredPosition: {x: -23.413666, y: 16.379883}
   m_SizeDelta: {x: -271.695, y: -170.778}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &515566507
@@ -43430,7 +43430,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Shop for refills and rewards
+  m_text: More hearts, more fun!
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: aaa94fe6bbce9124997151fb4f23de97, type: 2}
   m_sharedMaterial: {fileID: -8940571865142490197, guid: aaa94fe6bbce9124997151fb4f23de97, type: 2}
@@ -50285,7 +50285,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 200
+  m_text: 800
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b2699a0f0a9bddd4686e25f93946bbd2, type: 2}
   m_sharedMaterial: {fileID: 3832770638671851912, guid: b2699a0f0a9bddd4686e25f93946bbd2, type: 2}
@@ -60122,8 +60122,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -78568,7 +78568,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 200
+  m_text: 500
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b2699a0f0a9bddd4686e25f93946bbd2, type: 2}
   m_sharedMaterial: {fileID: 3832770638671851912, guid: b2699a0f0a9bddd4686e25f93946bbd2, type: 2}
@@ -94956,9 +94956,9 @@ RectTransform:
   - {fileID: 905716758}
   m_Father: {fileID: 488176040}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 237.39954, y: -247.51149}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 579.397, y: 155.301}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1742236384
@@ -97527,7 +97527,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.0014343262, y: -699.4988}
+  m_AnchoredPosition: {x: -0.0014038086, y: -699.4988}
   m_SizeDelta: {x: 0.39990234, y: 1398.9541}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1778555615
@@ -99685,13 +99685,14 @@ GameObject:
   - component: {fileID: 1823259521}
   - component: {fileID: 1823259523}
   - component: {fileID: 1823259522}
+  - component: {fileID: 1823259524}
   m_Layer: 5
   m_Name: ShopPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1823259521
 RectTransform:
   m_ObjectHideFlags: 0
@@ -99753,6 +99754,41 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1823259520}
   m_CullTransparentMesh: 1
+--- !u!114 &1823259524
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1823259520}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e88811e062c7bfe47bd65b2901f291d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dialogueText: {fileID: 771259470}
+  dialogues:
+  - message: Shop for refills and rewards
+    typingSpeed: 0.09
+    stayDuration: 5
+    fontSize: 60
+  - message: Power up your game!
+    typingSpeed: 0.09
+    stayDuration: 5
+    fontSize: 60
+  - message: Grab more hearts!
+    typingSpeed: 0.09
+    stayDuration: 5
+    fontSize: 63
+  - message: Keep learning!
+    typingSpeed: 0.09
+    stayDuration: 5
+    fontSize: 70
+  - message: More hearts, more fun!
+    typingSpeed: 0.09
+    stayDuration: 5
+    fontSize: 60
+  loop: 1
 --- !u!1 &1824051119
 GameObject:
   m_ObjectHideFlags: 0
@@ -100080,9 +100116,9 @@ RectTransform:
   - {fileID: 1283005954}
   m_Father: {fileID: 488176040}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 237.39954, y: -77.6505}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 579.397, y: 155.301}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1831201420
@@ -113085,9 +113121,9 @@ RectTransform:
   - {fileID: 1163374295}
   m_Father: {fileID: 488176040}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 237.39954, y: -587.23346}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 579.397, y: 155.301}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2038134662
