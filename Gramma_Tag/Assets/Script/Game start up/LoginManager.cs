@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 using TMPro;
 using UnityEngine.UI; // ADD THIS
 using System.Text.RegularExpressions;
-using System.Collections;
+
 
 public class LoginManager : MonoBehaviour
 {
@@ -151,7 +151,8 @@ public class LoginManager : MonoBehaviour
 
     public void StartGame()
     {
-        if (isSaving) return; // 🔥 PREVENT DOUBLE CALL
+        if (isSaving) return;
+
         isSaving = true;
 
         if (startButton != null)
@@ -168,14 +169,24 @@ public class LoginManager : MonoBehaviour
             return;
         }
 
-        int age = int.Parse(ageDropdown.options[ageDropdown.value].text);
+        int age;
+
+        if (!int.TryParse(ageDropdown.options[ageDropdown.value].text, out age))
+        {
+            ShowValidation("Invalid age selected.");
+
+            if (startButton != null)
+                startButton.interactable = true;
+
+            isSaving = false;
+            return;
+        }
 
         StartCoroutine(WaitAndSaveUser(age));
     }
 
     IEnumerator WaitAndSaveUser(int age)
     {
-        // 🔥 WAIT UNTIL DATABASE IS READY
         yield return new WaitUntil(() =>
             DatabaseManager.Instance != null &&
             DatabaseManager.Instance.IsDatabaseReady()
@@ -184,17 +195,16 @@ public class LoginManager : MonoBehaviour
         Debug.Log("✅ DB READY SA LOGIN");
 
         DatabaseManager.Instance.InsertUser(
-            firstNameInput.text,
-            lastNameInput.text,
+            firstNameInput.text.Trim(),
+            lastNameInput.text.Trim(),
             age,
             playerSex
         );
 
-        PlayerPrefs.SetString("SelectedGender", playerSex);
-        PlayerPrefs.Save();
+        Debug.Log("✅ USER SAVED");
 
         SceneManager.LoadScene("CutScene1");
     }
 
-    
+
 }

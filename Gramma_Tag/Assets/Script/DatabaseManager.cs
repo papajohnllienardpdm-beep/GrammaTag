@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using UnityEditor;
+
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -41,123 +41,104 @@ public class DatabaseManager : MonoBehaviour
     {
         string dbName = "grammatag.db";
 
-        string persistentPath = Path.Combine(Application.persistentDataPath, dbName);
-        string streamingPath = Application.streamingAssetsPath + "/" + dbName;
+        string persistentPath = Path.Combine(Application.persistentDataPath, dbName).ToLower();
+        string streamingPath = Path.Combine(Application.streamingAssetsPath, dbName);
 
         Debug.Log("📂 Persistent Path: " + persistentPath);
         Debug.Log("📦 Streaming Path: " + streamingPath);
 
+        // ✅ FRESH INSTALL CHECK
+        string installFlagKey = "db_installed_v1";
+        bool isFreshInstall = !PlayerPrefs.HasKey(installFlagKey);
 
-        /////////////dsadsagdujhgsadgkjsagdkjgasdkjgsakjdg
-        ///djhsakjgdkjsadkjasgkdjasgd
-        ///dhsadhsahdkas
-        ///dsaldhlsahdlksa
-        ///dksajhdhjlsadlk
-        ///dpksajdpohjsajhd
-
-
-        // 🔥 FIRST INSTALL CHECK
-        // 🔥 CHECK IF USER ALREADY LOGGED IN
-        // 🔥 FORCE CHECK USER TABLE LATER
-        // 🔥 FIRST INSTALL CHECK
-        bool firstInstall = PlayerPrefs.GetInt("FIRST_INSTALL_DONE", 0) == 0;
-
-        if (firstInstall)
+        if (isFreshInstall && File.Exists(persistentPath))
         {
-            Debug.Log("🔥 FIRST INSTALL DETECTED");
-
-            // 🔥 CLEAR ALL PLAYER PREFS
-            PlayerPrefs.DeleteAll();
-            PlayerPrefs.Save();
-
-            Debug.Log("🧹 PLAYER PREFS CLEARED");
+            Debug.Log("🆕 FRESH INSTALL DETECTED — Deleting old persistent DB...");
+            File.Delete(persistentPath);
+            Debug.Log("🗑️ Old DB deleted.");
+        }
 
 #if UNITY_ANDROID && !UNITY_EDITOR
+    string wrongCasePath = Path.Combine(Application.persistentDataPath, "GrammaTag.db");
 
-    // 🔥 DELETE OLD DATABASE
-    if (File.Exists(persistentPath))
+    if (File.Exists(wrongCasePath) && !File.Exists(persistentPath))
     {
-        try
-        {
-            File.Delete(persistentPath);
-            Debug.Log("🧹 OLD DB DELETED");
-        }
-        catch (Exception e)
-        {
-            Debug.LogError("❌ DELETE FAILED: " + e.Message);
-        }
+        Debug.Log("⚠️ Wrong case DB detected. Renaming...");
+        File.Move(wrongCasePath, persistentPath);
+        Debug.Log("✅ DB renamed to lowercase.");
     }
-
-#else
-
-            // 🔥 UNITY EDITOR
-            if (File.Exists(persistentPath))
-            {
-                try
-                {
-                    File.Delete(persistentPath);
-                    Debug.Log("🧹 OLD DB DELETED (EDITOR)");
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError("❌ DELETE FAILED: " + e.Message);
-                }
-            }
-
 #endif
 
-            // 🔥 MARK INSTALL COMPLETE
-            PlayerPrefs.SetInt("FIRST_INSTALL_DONE", 1);
-            PlayerPrefs.Save();
-        }
-
-        // 🔥 COPY DB ONLY IF NOT EXISTS
+        // ✅ CREATE DATABASE IF NOT EXIST
         if (!File.Exists(persistentPath))
         {
+            Debug.Log("🔥 DATABASE NOT FOUND. CREATING...");
+
 #if UNITY_ANDROID && !UNITY_EDITOR
         UnityWebRequest www = UnityWebRequest.Get(streamingPath);
+
         yield return www.SendWebRequest();
 
         if (www.result != UnityWebRequest.Result.Success)
         {
-            Debug.LogError("❌ DB load failed: " + www.error);
+            Debug.LogError("❌ DB COPY FAILED: " + www.error);
             yield break;
         }
 
-        File.WriteAllBytes(persistentPath, www.downloadHandler.data);
-        Debug.Log("✅ DB copied (Android)");
+        try
+        {
+            File.WriteAllBytes(persistentPath, www.downloadHandler.data);
+            Debug.Log("✅ DATABASE CREATED (ANDROID)");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("❌ WRITE ERROR: " + e.Message);
+            yield break;
+        }
 #else
-            if (!File.Exists(persistentPath))
+            try
             {
-                File.Copy(streamingPath, persistentPath);
-                Debug.Log("✅ DB copied (Editor)");
+                File.Copy(streamingPath, persistentPath, true);
+                Debug.Log("✅ DATABASE CREATED (EDITOR)");
             }
-            else
+            catch (Exception e)
             {
-                Debug.Log("ℹ️ DB already exists (Editor)");
+                Debug.LogError("❌ COPY ERROR: " + e.Message);
+                yield break;
             }
-            Debug.Log("✅ DB copied (Editor)");
 #endif
         }
         else
         {
-            Debug.Log("ℹ️ DB already exists, skipping copy");
+            Debug.Log("ℹ️ EXISTING DATABASE FOUND");
         }
 
-        // 🔥 OPEN DB
-        try
+        // ✅ FINAL FILE CHECK
+        if (!File.Exists(persistentPath))
         {
-            db = new SQLiteConnection(persistentPath);
-            Debug.Log("✅ DB OPENED");
-        }
-        catch (Exception e)
-        {
-            Debug.LogError("❌ DB INIT ERROR: " + e.Message);
+            Debug.LogError("❌ DATABASE STILL MISSING");
             yield break;
         }
 
+        // ✅ OPEN SQLITE DATABASE
+        try
+        {
+            db = new SQLiteConnection(persistentPath);
+            Debug.Log("✅ DATABASE OPENED SUCCESSFULLY");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("❌ SQLITE INIT ERROR: " + e.Message);
+            yield break;
+        }
+
+        // ✅ MARK AS INSTALLED (after successful open)
+        PlayerPrefs.SetInt(installFlagKey, 1);
+        PlayerPrefs.Save();
+
         isReady = true;
-        Debug.Log("🔥 DB READY FLAG SET");
+
+        Debug.Log("🔥 DATABASE READY");
 
         yield return null;
     }
@@ -184,41 +165,52 @@ public class DatabaseManager : MonoBehaviour
 
     public void InsertUser(string first, string last, int age, string gender)
     {
-        lock (dbLock)
+        if (db == null)
         {
-            var existingUser = db.Table<User>().FirstOrDefault();
-
-            if (existingUser == null)
-            {
-                User user = new User
-                {
-                    FirstName = first,
-                    LastName = last,
-                    Age = age,
-                    Gender = gender,
-                    Coins = 0,
-                    Hearts = 5,
-                    lastHeartTime = DateTime.Now.ToString()
-                };
-
-                db.Insert(user);
-            }
-            else
-            {
-                existingUser.FirstName = first;
-                existingUser.LastName = last;
-                existingUser.Age = age;
-                existingUser.Gender = gender;
-
-                db.Update(existingUser);
-            }
+            Debug.LogError("❌ DB NULL");
+            return;
         }
 
-        // 🔥 IMPORTANT
-        PlayerPrefs.SetInt("HAS_LOGGED_IN", 1);
-        PlayerPrefs.Save();
+        lock (dbLock)
+        {
+            try
+            {
+                var existingUser = db.Table<User>().FirstOrDefault();
 
-        Debug.Log("User saved!");
+                if (existingUser == null)
+                {
+                    User user = new User
+                    {
+                        FirstName = first,
+                        LastName = last,
+                        Age = age,
+                        Gender = gender,
+                        Coins = 0,
+                        Hearts = 5,
+                        lastHeartTime = DateTime.Now.ToString()
+                    };
+
+                    db.Insert(user);
+
+                    Debug.Log("✅ NEW USER INSERTED");
+                }
+                else
+                {
+                    existingUser.FirstName = first;
+                    existingUser.LastName = last;
+                    existingUser.Age = age;
+                    existingUser.Gender = gender;
+
+                    db.Update(existingUser);
+
+                    Debug.Log("✅ EXISTING USER UPDATED");
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("❌ INSERT USER ERROR: " + e.Message);
+            }
+        }
     }
 
     public string GetPlayerName()
@@ -252,22 +244,23 @@ public class DatabaseManager : MonoBehaviour
     {
         if (db == null)
         {
-            Debug.LogWarning("DB not ready yet");
+            Debug.LogWarning("⚠️ DB NOT READY");
             return false;
         }
 
         lock (dbLock)
         {
-            var user = db.Table<User>().FirstOrDefault();
+            try
+            {
+                int count = db.Table<User>().Count();
 
-            if (user != null)
-            {
-                Debug.Log("👤 USER FOUND: " + user.FirstName);
-                return true;
+                Debug.Log("👤 USER COUNT: " + count);
+
+                return count > 0;
             }
-            else
+            catch (Exception e)
             {
-                Debug.Log("❌ NO USER FOUND");
+                Debug.LogError("❌ HASUSER ERROR: " + e.Message);
                 return false;
             }
         }
