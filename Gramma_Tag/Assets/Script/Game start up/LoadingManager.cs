@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using System.Collections;
+
 
 public class LoadingManager : MonoBehaviour
 {
@@ -116,16 +116,16 @@ public class LoadingManager : MonoBehaviour
             Debug.Log("✅ DATABASE READY SA LOADING");
         }
 
-        bool hasDBUser = DatabaseManager.Instance != null && DatabaseManager.Instance.HasUser();
-        bool hasLogged = PlayerPrefs.GetInt("HAS_LOGGED_IN", 0) == 1;
+        bool hasDBUser =
+            DatabaseManager.Instance != null &&
+            DatabaseManager.Instance.HasUser();
 
-        if (hasDBUser && hasLogged)
+        if (hasDBUser)
         {
             Debug.Log("✅ EXISTING USER → SKIP TERMS");
 
             hasUser = true;
 
-            // ❌ siguradong walang terms pag may user
             termsPanel.SetActive(false);
         }
         else
@@ -134,8 +134,6 @@ public class LoadingManager : MonoBehaviour
 
             hasUser = false;
 
-            // ❗ wag muna ipakita agad
-            // lalabas lang sa 50% (LoadScene logic mo)
             termsPanel.SetActive(false);
         }
 
