@@ -54,8 +54,28 @@ public class DatabaseManager : MonoBehaviour
         if (isFreshInstall && File.Exists(persistentPath))
         {
             Debug.Log("🆕 FRESH INSTALL DETECTED — Deleting old persistent DB...");
-            File.Delete(persistentPath);
-            Debug.Log("🗑️ Old DB deleted.");
+
+            // ✅ CLOSE FIRST bago i-delete (para sa Unity Editor)
+            if (db != null)
+            {
+                db.Close();
+                db = null;
+                Debug.Log("🔒 Old DB connection closed before delete.");
+            }
+
+            try
+            {
+                File.Delete(persistentPath);
+                Debug.Log("🗑️ Old DB deleted.");
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning("⚠️ Could not delete old DB: " + e.Message + " — Skipping delete, using existing.");
+                // ✅ HINDI mag-break — ituloy na lang gamit yung existing DB
+                // I-clear lang yung flag para sa susunod na try
+                PlayerPrefs.DeleteKey(installFlagKey);
+                PlayerPrefs.Save();
+            }
         }
 
 #if UNITY_ANDROID && !UNITY_EDITOR
