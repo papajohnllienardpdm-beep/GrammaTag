@@ -22144,12 +22144,12 @@ MonoBehaviour:
   - {fileID: 32900000, guid: f7b98dc8b91155242b776503826dc588, type: 3}
   - {fileID: 32900000, guid: 8f7f9fd11608fba468dfd854cc076c13, type: 3}
   - {fileID: 32900000, guid: d6744eaa8157e204b87204b736388c71, type: 3}
-  - {fileID: 32900000, guid: 73a09f41a8c347b4d91c7f1c5a3b94b7, type: 3}
-  - {fileID: 32900000, guid: f7b98dc8b91155242b776503826dc588, type: 3}
-  - {fileID: 32900000, guid: 8f7f9fd11608fba468dfd854cc076c13, type: 3}
-  - {fileID: 32900000, guid: d6744eaa8157e204b87204b736388c71, type: 3}
-  - {fileID: 32900000, guid: 73a09f41a8c347b4d91c7f1c5a3b94b7, type: 3}
-  - {fileID: 32900000, guid: f7b98dc8b91155242b776503826dc588, type: 3}
+  - {fileID: 32900000, guid: 7b5e4ff45ddfbb343bd7d0cc6d98782f, type: 3}
+  - {fileID: 32900000, guid: 520d1c03bfd4a9242aded7220c46f6f2, type: 3}
+  - {fileID: 32900000, guid: 9b7dd5ea40efd8e41ac5372a3adcb181, type: 3}
+  - {fileID: 32900000, guid: 210730cccb0bd0341bb3cb81763b639b, type: 3}
+  - {fileID: 32900000, guid: 6108fcc1857fb8e4ba64c0b085bd6669, type: 3}
+  - {fileID: 32900000, guid: 8fe27526afd3cc04483cfded6b9d5663, type: 3}
   nextScenes:
   - Module2_TutorialScene
   - Module2_GameScene
@@ -72973,7 +72973,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1278761296}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.3443889
+  m_Size: 0.34438893
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

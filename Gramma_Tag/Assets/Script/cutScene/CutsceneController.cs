@@ -14,37 +14,43 @@ public class CutsceneController : MonoBehaviour
 
     public string nextScene = "MainMenu";
 
-    void Start()
+    IEnumerator Start()
     {
-        // 👉 FORCE LANDSCAPE FOR CUTSCENE
+        // 👉 FORCE LANDSCAPE
         Screen.orientation = ScreenOrientation.LandscapeLeft;
 
-        // 👉 GET SELECTED GENDER
-        string gender = PlayerPrefs.GetString("SelectedGender", "Girl");
+        // 👉 WAIT DATABASE
+        yield return new WaitUntil(() =>
+            DatabaseManager.Instance != null &&
+            DatabaseManager.Instance.IsDatabaseReady()
+        );
+
+        // 👉 GET GENDER FROM SQLITE
+        string gender = DatabaseManager.Instance.GetUserGender();
+
+        Debug.Log("🎮 PLAYER GENDER: " + gender);
 
         // 👉 SELECT VIDEO
         if (gender == "Boy")
         {
             videoPlayer.clip = boyVideo;
-            Debug.Log("Playing Boy Cutscene");
+            Debug.Log("▶️ Playing Boy Cutscene");
         }
         else
         {
             videoPlayer.clip = girlVideo;
-            Debug.Log("Playing Girl Cutscene");
+            Debug.Log("▶️ Playing Girl Cutscene");
         }
-         
+
         // 👉 PLAY VIDEO
         videoPlayer.Play();
 
-        // 👉 LISTEN END
+        // 👉 VIDEO END EVENT
         videoPlayer.loopPointReached += OnVideoFinished;
     }
 
     void OnVideoFinished(VideoPlayer vp)
     {
-        // ❌ TINANGGAL NA: Screen.orientation = ScreenOrientation.Portrait;
-
         SceneManager.LoadScene(nextScene);
     }
 }
