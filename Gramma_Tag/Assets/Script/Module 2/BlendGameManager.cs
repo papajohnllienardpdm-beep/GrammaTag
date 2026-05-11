@@ -253,9 +253,9 @@ public class BlendGameManager : MonoBehaviour
         while (DatabaseManager.Instance == null || !DatabaseManager.Instance.IsDatabaseReady())
             yield return null;
 
-        DatabaseManager.Instance.SaveProgressBetter(1, moduleID, score, passed, stars);
-
         int coinsEarned = DatabaseManager.Instance.GiveCoins(moduleID, score, passed);
+
+        DatabaseManager.Instance.SaveProgressBetter(1, moduleID, score, passed, stars);
 
         PlayerPrefs.SetInt("FinalScore", score);
         PlayerPrefs.SetInt("TotalQ", total);

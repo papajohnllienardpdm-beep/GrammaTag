@@ -21,7 +21,7 @@ public class MainMenuUIManager : MonoBehaviour
         LoadPlayerData();
     }
 
-    void LoadPlayerData()
+    public void LoadPlayerData()
     {
         if (DatabaseManager.Instance == null)
         {
