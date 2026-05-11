@@ -32,6 +32,9 @@ public class BlendTutorialManager : MonoBehaviour
     private List<Question> questions = new List<Question>();
     private int currentIndex = 0;
 
+    private int correctAnswers = 0;
+    private int requiredCorrectAnswers = 3;
+
     private bool hasTouchedWord = false;
 
     void Awake()
@@ -46,9 +49,11 @@ public class BlendTutorialManager : MonoBehaviour
         originalPos = draggableWord.GetComponent<RectTransform>().anchoredPosition;
 
         SetupQuestions();
+        ShuffleQuestions();
+
 
         // ✅ set max once
-        progressBar.maxValue = questions.Count;
+        progressBar.maxValue = requiredCorrectAnswers;
         progressBar.value = 0;
 
         ShowQuestion();
@@ -58,9 +63,25 @@ public class BlendTutorialManager : MonoBehaviour
     {
         questions.Clear();
 
-        questions.Add(new Question("bl", "black", "tabl", "black"));
-        questions.Add(new Question("tr", "tree", "cartr", "tree"));
-        questions.Add(new Question("pl", "play", "appl", "play"));
+        questions.Add(new Question("bl", "black", "table", "black"));
+        questions.Add(new Question("tr", "tree", "car", "tree"));
+        questions.Add(new Question("pl", "play", "apple", "play"));
+        questions.Add(new Question("cl", "clock", "duck", "clock"));
+        questions.Add(new Question("gr", "green", "banana", "green"));
+        questions.Add(new Question("sm", "smile", "house", "smile"));
+    }
+
+    void ShuffleQuestions()
+    {
+        for (int i = 0; i < questions.Count; i++)
+        {
+            Question temp = questions[i];
+
+            int randomIndex = Random.Range(i, questions.Count);
+
+            questions[i] = questions[randomIndex];
+            questions[randomIndex] = temp;
+        }
     }
 
     void ShowQuestion()
@@ -69,8 +90,8 @@ public class BlendTutorialManager : MonoBehaviour
         if (currentIndex >= questions.Count)
         {
             // 🔥 force full progress
-            progressBar.value = questions.Count;
-            progressText.text = $"Tutorial {questions.Count} / {questions.Count}";
+            progressBar.value = requiredCorrectAnswers;
+            progressText.text = $"Progress: {requiredCorrectAnswers} / {requiredCorrectAnswers}";
 
             EndTutorial();
             return;
@@ -104,8 +125,8 @@ public class BlendTutorialManager : MonoBehaviour
         }
 
         // ✅ progress (starts at 0)
-        progressBar.value = currentIndex;
-        progressText.text = $"Progress: {currentIndex} / {questions.Count}";
+        progressBar.value = correctAnswers;
+        progressText.text = $"Progress: {correctAnswers} / {requiredCorrectAnswers}";
     }
 
     public void CheckAnswer(string answer)
@@ -116,11 +137,25 @@ public class BlendTutorialManager : MonoBehaviour
 
         if (answer == correct)
         {
+            // ✅ dagdag correct count
+            correctAnswers++;
+
             instructionText.text = "Great job! That word starts with the correct sound!";
 
             // 🔊 PLAY CORRECT SOUND
             if (AudioManager.Instance != null)
                 AudioManager.Instance.PlaySFX(correctSFX);
+
+            // ✅ kapag naka 3 correct na
+            if (correctAnswers >= requiredCorrectAnswers)
+            {
+                // ✅ force full progress UI
+                progressBar.value = requiredCorrectAnswers;
+                progressText.text = $"Progress: {requiredCorrectAnswers} / {requiredCorrectAnswers}";
+
+                EndTutorial();
+                return;
+            }
 
             Invoke("NextQuestion", 1.2f);
         }
@@ -150,6 +185,10 @@ public class BlendTutorialManager : MonoBehaviour
     void RestartTutorial()
     {
         currentIndex = 0;
+        ShuffleQuestions();
+
+        // ✅ reset correct answers din
+        correctAnswers = 0;
 
         draggableWord.ResetPosition(wordOriginalParent, originalPos);
 
