@@ -474,14 +474,22 @@ public class DatabaseManager : MonoBehaviour
             if (existing.Count > 0)
             {
                 int oldScore = existing[0].Score;
+                int oldPassed = existing[0].isPassed;
 
+                // ✅ KEEP HIGHEST SCORE
                 if (score > oldScore)
                 {
-                    db.Execute(
-                        "UPDATE Progress SET Score=?, isPassed=?, Stars=? WHERE UserID=? AND ModuleID=?",
-                        score, isPassed, stars, userID, moduleID
-                    );
+                    existing[0].Score = score;
+                    existing[0].Stars = stars;
                 }
+
+                // ✅ ONCE PASSED = ALWAYS PASSED
+                if (isPassed == 1)
+                {
+                    existing[0].isPassed = 1;
+                }
+
+                db.Update(existing[0]);
             }
             else
             {
@@ -555,44 +563,67 @@ public class DatabaseManager : MonoBehaviour
         {
             var user = db.Table<User>().FirstOrDefault();
 
-            if (user == null) return 0;
-
-            var existing = db.Query<Progress>(
-                "SELECT * FROM Progress WHERE UserID = ? AND ModuleID = ?",
-                user.UserID, moduleID
-            );
+            if (user == null)
+                return 0;
 
             int reward = 0;
 
-            if (passed == 1)
+            // ✅ CHECK EXISTING PROGRESS
+            var existing = db.Query<Progress>(
+                "SELECT * FROM Progress WHERE UserID = ? AND ModuleID = ?",
+                user.UserID,
+                moduleID
+            );
+
+            // ✅ FAILED
+            if (passed == 0)
             {
-                if (existing.Count == 0)
-                {
-                    reward = 200;
-                }
-                else
-                {
-                    reward = 20;
-                }
+                reward = 50;
+
+                Debug.Log("❌ FAILED REWARD");
             }
             else
             {
-                reward = 50;
+                bool alreadyPassedBefore = false;
+
+                if (existing.Count > 0)
+                {
+                    alreadyPassedBefore = existing[0].isPassed == 1;
+                }
+
+                // ✅ FIRST TIME PASS
+                if (!alreadyPassedBefore)
+                {
+                    reward = 200;
+
+                    Debug.Log("🎉 FIRST TIME PASS");
+                }
+                else
+                {
+                    // ✅ REPEAT PASS
+                    reward = 20;
+
+                    Debug.Log("🔁 REPEAT PASS");
+                }
             }
 
-            // 🔥 DOUBLE COIN HERE
+            // ✅ DOUBLE COIN
             if (IsPowerUpActive("DoubleCoin"))
             {
                 reward *= 2;
+
                 Debug.Log("💰 DOUBLE COIN APPLIED!");
 
                 DeactivatePowerUp("DoubleCoin");
             }
 
+            // ✅ ADD COINS
             user.Coins += reward;
+
             db.Update(user);
 
-            Debug.Log("Coins Earned: " + reward);
+            Debug.Log("🪙 FINAL REWARD: " + reward);
+
             return reward;
         }
     }

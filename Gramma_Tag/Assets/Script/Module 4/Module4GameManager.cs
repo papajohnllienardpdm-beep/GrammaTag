@@ -235,9 +235,11 @@ public class Module4GameManager : MonoBehaviour
 
     IEnumerator SaveAndExit(int moduleID, int total, int stars, int passed)
     {
-        DatabaseManager.Instance.SaveProgressBetter(1, moduleID, score, passed, stars);
+        
 
         int coinsEarned = DatabaseManager.Instance.GiveCoins(moduleID, score, passed);
+
+        DatabaseManager.Instance.SaveProgressBetter(1, moduleID, score, passed, stars);
 
         PlayerPrefs.SetInt("FinalScore", score);
         PlayerPrefs.SetInt("TotalQ", total);

@@ -99,6 +99,15 @@ public class SettingsUIManager : MonoBehaviour
         SetCharacterImage(gender);
 
         Debug.Log("User updated!");
+
+        // ✅ REFRESH MAIN MENU NAME
+        MainMenuUIManager menu = FindObjectOfType<MainMenuUIManager>();
+
+        if (menu != null)
+        {
+            menu.LoadPlayerData();
+        }
+
     }
 
     void SetCharacterImage(string gender)
