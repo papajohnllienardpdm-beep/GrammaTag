@@ -10,8 +10,20 @@ public class LoginManager : MonoBehaviour
 {
     public TMP_InputField firstNameInput;
     public TMP_InputField lastNameInput;
-    public TMP_Dropdown ageDropdown;
+    public TMP_InputField ageInput;
     public Button startButton;
+
+    [Header("Gender Buttons")]
+    public Image girlButtonImage;
+    public Image boyButtonImage;
+
+    [Header("Girl Sprites")]
+    public Sprite girlNormalSprite;
+    public Sprite girlSelectedSprite;
+
+    [Header("Boy Sprites")]
+    public Sprite boyNormalSprite;
+    public Sprite boySelectedSprite;
 
     public GameObject validationPanel;
     public TMP_Text validationText;
@@ -21,14 +33,40 @@ public class LoginManager : MonoBehaviour
     public void SelectGirl()
     {
         playerSex = "Girl";
+
+        // 🔥 GIRL SELECTED
+        if (girlButtonImage != null)
+            girlButtonImage.sprite = girlSelectedSprite;
+
+        // 🔥 BOY BACK TO NORMAL
+        if (boyButtonImage != null)
+            boyButtonImage.sprite = boyNormalSprite;
     }
 
     public void SelectBoy()
     {
         playerSex = "Boy";
+
+        // 🔥 BOY SELECTED
+        if (boyButtonImage != null)
+            boyButtonImage.sprite = boySelectedSprite;
+
+        // 🔥 GIRL BACK TO NORMAL
+        if (girlButtonImage != null)
+            girlButtonImage.sprite = girlNormalSprite;
     }
 
     private bool isSaving = false;
+
+    void Start()
+    {
+        // 🔥 DEFAULT BUTTON LOOK
+        if (girlButtonImage != null)
+            girlButtonImage.sprite = girlNormalSprite;
+
+        if (boyButtonImage != null)
+            boyButtonImage.sprite = boyNormalSprite;
+    }
 
     bool ValidateInputs()
     {
@@ -60,10 +98,17 @@ public class LoginManager : MonoBehaviour
             return false;
         }
 
-        // 🔥 AGE CHECK
-        if (ageDropdown.value == 0)
+        // 🔥 AGE EMPTY
+        if (string.IsNullOrWhiteSpace(ageInput.text))
         {
-            ShowValidation("Please select your age.");
+            ShowValidation("Please enter your age.");
+            return false;
+        }
+
+        // 🔥 AGE NUMBERS ONLY
+        if (!Regex.IsMatch(ageInput.text, @"^\d+$"))
+        {
+            ShowValidation("Age should contain numbers only.");
             return false;
         }
 
@@ -171,9 +216,9 @@ public class LoginManager : MonoBehaviour
 
         int age;
 
-        if (!int.TryParse(ageDropdown.options[ageDropdown.value].text, out age))
+        if (!int.TryParse(ageInput.text.Trim(), out age))
         {
-            ShowValidation("Invalid age selected.");
+            ShowValidation("Invalid age entered.");
 
             if (startButton != null)
                 startButton.interactable = true;
