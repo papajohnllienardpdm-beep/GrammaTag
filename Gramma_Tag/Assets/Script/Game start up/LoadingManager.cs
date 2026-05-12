@@ -130,11 +130,18 @@ public class LoadingManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("🆕 NEW USER → SHOW TERMS LATER");
+            Debug.Log("🆕 NEW USER → SHOW TERMS");
 
             hasUser = false;
 
-            termsPanel.SetActive(false);
+            // 🔥 SHOW TERMS AGAD
+            termsPanel.SetActive(true);
+
+            // 🔥 RESET TOGGLE
+            termsToggle.isOn = false;
+
+            // 🔥 PWEDENG I-CHECK
+            termsToggle.interactable = true;
         }
 
         StartCoroutine(LoadScene());
@@ -155,40 +162,35 @@ public class LoadingManager : MonoBehaviour
         operation.allowSceneActivation = false;
 
         float progress = 0f;
-        bool stoppedAtHalf = false;
         bool accepted = false;
 
         while (true)
         {
-            // 🔥 PHASE 1
-            if (!stoppedAtHalf)
+            // 🔥 FOR NEW USER
+            if (!hasUser)
             {
-                progress += Time.deltaTime * loadingSpeed;
-
-                // 👉 ONLY STOP kung WALANG USER
-                if (!hasUser && progress >= 0.5f)
+                // 🔥 WAIT HANGGANG MA-CHECK
+                if (!accepted)
                 {
-                    progress = 0.5f;
-                    stoppedAtHalf = true;
+                    if (termsToggle.isOn)
+                    {
+                        accepted = true;
 
-                    termsPanel.SetActive(true); // SHOW TERMS
+                        // 🔥 LOCK CHECKBOX
+                        termsToggle.interactable = false;
+                    }
                 }
-            }
-            // 🔥 WAIT LANG KUNG WALANG USER
-            else if (!accepted)
-            {
-                if (termsToggle.isOn)
+                else
                 {
-                    accepted = true;
-                    // panel stays (ayon sa gusto mo)
+                    // 🔥 TULOY LOADING
+                    progress += Time.deltaTime * loadingSpeed;
                 }
             }
             else
             {
+                // 🔥 EXISTING USER
                 progress += Time.deltaTime * loadingSpeed;
             }
-
-            
 
             loadingBar.value = Mathf.Clamp01(progress);
 
