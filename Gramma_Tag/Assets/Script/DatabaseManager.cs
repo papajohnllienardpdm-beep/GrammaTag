@@ -40,22 +40,24 @@ public class DatabaseManager : MonoBehaviour
     IEnumerator SetupDatabase()
     {
         string dbName = "grammatag.db";
+        string flagName = "db_installed.flag"; // ✅ FLAG FILE — kasama ma-delete ng Clear Data
 
         string persistentPath = Path.Combine(Application.persistentDataPath, dbName).ToLower();
+        string flagPath = Path.Combine(Application.persistentDataPath, flagName).ToLower();
         string streamingPath = Path.Combine(Application.streamingAssetsPath, dbName);
 
         Debug.Log("📂 Persistent Path: " + persistentPath);
         Debug.Log("📦 Streaming Path: " + streamingPath);
 
-        // ✅ FRESH INSTALL CHECK
-        string installFlagKey = "db_installed_v1";
-        bool isFreshInstall = !PlayerPrefs.HasKey(installFlagKey);
+        // ✅ FRESH INSTALL CHECK — gamit flag FILE, hindi PlayerPrefs
+        // Pag walang flag file = fresh install (Clear Data o bagong install)
+        bool isFreshInstall = !File.Exists(flagPath);
 
         if (isFreshInstall && File.Exists(persistentPath))
         {
             Debug.Log("🆕 FRESH INSTALL DETECTED — Deleting old persistent DB...");
 
-            // ✅ CLOSE FIRST bago i-delete (para sa Unity Editor)
+            // ✅ CLOSE FIRST bago i-delete
             if (db != null)
             {
                 db.Close();
@@ -70,11 +72,7 @@ public class DatabaseManager : MonoBehaviour
             }
             catch (Exception e)
             {
-                Debug.LogWarning("⚠️ Could not delete old DB: " + e.Message + " — Skipping delete, using existing.");
-                // ✅ HINDI mag-break — ituloy na lang gamit yung existing DB
-                // I-clear lang yung flag para sa susunod na try
-                PlayerPrefs.DeleteKey(installFlagKey);
-                PlayerPrefs.Save();
+                Debug.LogWarning("⚠️ Could not delete old DB: " + e.Message + " — Using existing.");
             }
         }
 
@@ -152,9 +150,24 @@ public class DatabaseManager : MonoBehaviour
             yield break;
         }
 
-        // ✅ MARK AS INSTALLED (after successful open)
-        PlayerPrefs.SetInt(installFlagKey, 1);
-        PlayerPrefs.Save();
+        // ✅ MARK AS INSTALLED — gamit flag FILE (hindi PlayerPrefs)
+        try
+        {
+            File.WriteAllText(flagPath, "installed");
+            Debug.Log("🚩 Install flag saved.");
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning("⚠️ Could not write flag file: " + e.Message);
+        }
+
+        // ✅ REMOVE OLD PLAYERPREFS FLAG (cleanup ng dati)
+        if (PlayerPrefs.HasKey("db_installed_v1"))
+        {
+            PlayerPrefs.DeleteKey("db_installed_v1");
+            PlayerPrefs.Save();
+            Debug.Log("🧹 Old PlayerPrefs flag cleaned up.");
+        }
 
         isReady = true;
 

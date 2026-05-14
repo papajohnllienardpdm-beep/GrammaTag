@@ -28,6 +28,11 @@ public class VideoManager : MonoBehaviour
     public float popupDuration = 0.25f;
     public AnimationCurve popupCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
+    [Header("Begin Popup")]
+    public GameObject popupBeginPanel;
+    public float beginPopupWaitTime = 2f;
+
+
     private Coroutine popupAnim;
 
     private int currentIndex = -1;
@@ -36,6 +41,9 @@ public class VideoManager : MonoBehaviour
     {
         if (noLivesPanel != null)
             noLivesPanel.SetActive(false);
+
+        if (popupBeginPanel != null)
+            popupBeginPanel.SetActive(false);
 
         // 🔥 LISTEN SA HEART SYSTEM
         HeartSystem.Instance.OnHeartUpdated += HandleHeartUpdate;
@@ -107,8 +115,8 @@ public class VideoManager : MonoBehaviour
         }
         else
         {
-            
-            StartCoroutine(LoadSceneAfterOrientation());
+
+            StartCoroutine(ShowBeginPopupAndLoad());
         }
     }
 
@@ -225,6 +233,51 @@ public class VideoManager : MonoBehaviour
     {
         yield return ScalePopup(Vector3.one, Vector3.zero);
         noLivesPanel.SetActive(false);
+    }
+
+    IEnumerator ScaleSpecificPopup(GameObject targetPopup, Vector3 from, Vector3 to)
+    {
+        float time = 0f;
+
+        RectTransform popupRect =
+            targetPopup.GetComponent<RectTransform>();
+
+        while (time < popupDuration)
+        {
+            float t = time / popupDuration;
+
+            float curveValue = popupCurve.Evaluate(t);
+
+            popupRect.localScale =
+                Vector3.LerpUnclamped(from, to, curveValue);
+
+            time += Time.unscaledDeltaTime;
+
+            yield return null;
+        }
+
+        popupRect.localScale = to;
+    }
+
+    IEnumerator ShowBeginPopupAndLoad()
+    {
+        // 🔥 SHOW PANEL
+        popupBeginPanel.SetActive(true);
+
+        // 🔥 PLAY POPUP ANIMATION
+        yield return StartCoroutine(
+            ScaleSpecificPopup(
+                popupBeginPanel,
+                Vector3.zero,
+                Vector3.one
+            )
+        );
+
+        // 🔥 WAIT
+        yield return new WaitForSeconds(beginPopupWaitTime);
+
+        // 🔥 LOAD NEXT SCENE
+        StartCoroutine(LoadSceneAfterOrientation());
     }
 
 }
