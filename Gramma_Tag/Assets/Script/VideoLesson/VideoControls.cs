@@ -19,6 +19,8 @@ public class VideoControls : MonoBehaviour
     private float updateTimer = 0f;
     private bool isDragging = false;
 
+    private bool canSkip = true;
+
     void Start()
     {
         UpdateIcon();
@@ -69,24 +71,52 @@ public class VideoControls : MonoBehaviour
 
     public void OnSliderDown()
     {
+        // ❌ FIRST WATCH = NO SKIP
+        if (!canSkip)
+            return;
+
         isDragging = true;
+
         videoPlayer.Pause();
     }
 
     public void Seek()
     {
-        if (!isDragging || videoPlayer.length <= 0) return;
+        // ❌ FIRST WATCH = NO SKIP
+        if (!canSkip)
+            return;
 
-        videoPlayer.time = slider.value * videoPlayer.length;
+        if (!isDragging || videoPlayer.length <= 0)
+            return;
+
+        videoPlayer.time =
+            slider.value * videoPlayer.length;
     }
 
     public void OnSliderRelease()
     {
+        // ❌ FIRST WATCH = NO SKIP
+        if (!canSkip)
+            return;
+
         isDragging = false;
 
-        videoPlayer.time = slider.value * videoPlayer.length;
+        videoPlayer.time =
+            slider.value * videoPlayer.length;
+
         videoPlayer.Play();
 
         UpdateIcon();
+    }
+
+    public void SetCanSkip(bool value)
+    {
+        canSkip = value;
+
+        // 🔥 ENABLE / DISABLE SLIDER
+        if (slider != null)
+        {
+            slider.interactable = value;
+        }
     }
 }
