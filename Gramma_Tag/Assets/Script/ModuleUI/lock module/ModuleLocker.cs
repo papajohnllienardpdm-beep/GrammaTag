@@ -45,15 +45,27 @@ public class ModuleLocker : MonoBehaviour
     {
         bool unlocked = false;
 
-        // 🎬 VIDEO BASED (Module 1)
-        if (useVideoUnlock)
+        // 🔥 BACKDOOR = UNLOCK ALL
+        if (BackdoorManager.backdoorEnabled)
         {
-            unlocked = PlayerPrefsManager.Instance.IsModuleUnlocked(moduleIndex);
+            unlocked = true;
         }
         else
         {
-            // 📚 DATABASE BASED (Module 2 pataas)
-            unlocked = DatabaseManager.Instance.IsSubtopicPassed(requiredSubtopicID);
+            // 🎬 VIDEO BASED (Module 1)
+            if (useVideoUnlock)
+            {
+                unlocked =
+                    PlayerPrefsManager.Instance
+                    .IsModuleUnlocked(moduleIndex);
+            }
+            else
+            {
+                // 📚 DATABASE BASED (Module 2 pataas)
+                unlocked =
+                    DatabaseManager.Instance
+                    .IsSubtopicPassed(requiredSubtopicID);
+            }
         }
 
         // 🔒 MAIN LOCK PANEL
@@ -64,10 +76,12 @@ public class ModuleLocker : MonoBehaviour
         if (moduleButton != null)
             moduleButton.interactable = unlocked;
 
-        // 🏆 ACHIEVEMENT LOCK PANEL (🔥 NEW)
+        // 🏆 ACHIEVEMENT LOCK PANEL
         if (achievementLockPanel != null)
             achievementLockPanel.SetActive(!unlocked);
 
-        Debug.Log($"[Module {moduleIndex}] unlocked: {unlocked} | RequiredSubtopic: {requiredSubtopicID}");
+        Debug.Log(
+            $"[Module {moduleIndex}] unlocked: {unlocked} | RequiredSubtopic: {requiredSubtopicID}"
+        );
     }
 }

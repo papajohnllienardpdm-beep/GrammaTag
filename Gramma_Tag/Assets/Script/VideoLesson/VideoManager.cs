@@ -18,6 +18,9 @@ public class VideoManager : MonoBehaviour
     public string[] nextScenes;
     public int[] moduleIDs;
 
+    [Header("Video Controls")]
+    public VideoControls videoControls;
+
     public OrientationManager orientationManager;
 
     [Header("No Lives UI")]
@@ -68,6 +71,19 @@ public class VideoManager : MonoBehaviour
             PlayerPrefs.SetInt("SelectedModuleID", selectedModule);
             PlayerPrefs.Save(); // 🔥 IMPORTANT
 
+            // 🔥 CHECK IF VIDEO ALREADY WATCHED
+            string watchKey =
+                "VIDEO_WATCHED_" + selectedModule;
+
+            bool alreadyWatched =
+                PlayerPrefs.HasKey(watchKey);
+
+            // 🔥 ENABLE / DISABLE SKIP
+            if (videoControls != null)
+            {
+                videoControls.SetCanSkip(alreadyWatched);
+            }
+
             Debug.Log("🔥 SELECTED MODULE ID: " + selectedModule);
         }
         else
@@ -104,6 +120,20 @@ public class VideoManager : MonoBehaviour
         vp.loopPointReached -= OnVideoFinished;
 
         videoPlayer.Stop();
+
+        // 🔥 MARK VIDEO AS WATCHED
+        if (currentIndex >= 0 &&
+            currentIndex < moduleIDs.Length)
+        {
+            int watchedModuleID =
+                moduleIDs[currentIndex];
+
+            string watchKey =
+                "VIDEO_WATCHED_" + watchedModuleID;
+
+            PlayerPrefs.SetInt(watchKey, 1);
+            PlayerPrefs.Save();
+        }
 
         // 🔊 RESTORE AUDIO
         if (AudioManager.Instance != null)

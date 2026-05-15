@@ -21,18 +21,30 @@ public class SubtopicLocker : MonoBehaviour
     {
         bool unlocked = false;
 
-        // 🔥 FIRST SUBTOPIC
-        if (previousModuleID == 0)
+        // 🔥 BACKDOOR = UNLOCK ALL
+        if (BackdoorManager.backdoorEnabled)
         {
             unlocked = true;
         }
         else
         {
-            unlocked = DatabaseManager.Instance.IsSubtopicPassed(previousModuleID);
+            // 🔥 FIRST SUBTOPIC
+            if (previousModuleID == 0)
+            {
+                unlocked = true;
+            }
+            else
+            {
+                unlocked =
+                    DatabaseManager.Instance
+                    .IsSubtopicPassed(previousModuleID);
+            }
         }
 
         button.interactable = unlocked;
 
-        Debug.Log($"Subtopic {moduleID} unlocked: {unlocked}");
+        Debug.Log(
+            $"Subtopic {moduleID} unlocked: {unlocked}"
+        );
     }
 }
