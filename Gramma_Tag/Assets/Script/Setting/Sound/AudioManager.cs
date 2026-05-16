@@ -21,6 +21,9 @@ public class AudioManager : MonoBehaviour
     private float prevMusicVolume;
     private float prevSFXVolume;
 
+    [Header("SFX Boost")]
+    public float sfxBoost = 1.5f;
+
     // 🔥 MULTIPLE SLIDERS SUPPORT
     private List<Slider> musicSliders = new List<Slider>();
     private List<Slider> sfxSliders = new List<Slider>();
@@ -156,7 +159,10 @@ public class AudioManager : MonoBehaviour
     {
         if (clip == null) return;
 
-        sfxSource.PlayOneShot(clip, sfxVol);
+        sfxSource.PlayOneShot(
+            clip,
+            sfxVol * sfxBoost
+        );
     }
 
 }
