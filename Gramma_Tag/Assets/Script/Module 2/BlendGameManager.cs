@@ -352,6 +352,9 @@ public class BlendGameManager : MonoBehaviour
     {
         countdownText.gameObject.SetActive(true);
 
+        countdownText.text = "Let's Begin!";
+        yield return new WaitForSeconds(1f);
+
         countdownText.text = "3";
         yield return new WaitForSeconds(1f);
 

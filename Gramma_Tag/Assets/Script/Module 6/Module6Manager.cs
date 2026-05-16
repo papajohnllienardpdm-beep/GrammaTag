@@ -311,18 +311,32 @@ public class Module6Manager : MonoBehaviour
     IEnumerator StartGameWithDelay()
     {
         getReadyText.SetActive(true);
-        TMP_Text txt = getReadyText.GetComponent<TMP_Text>();
 
-        txt.text = "3"; yield return new WaitForSeconds(1);
-        txt.text = "2"; yield return new WaitForSeconds(1);
-        txt.text = "1"; yield return new WaitForSeconds(1);
-        txt.text = "GO!"; yield return new WaitForSeconds(0.8f);
+        TMP_Text txt =
+            getReadyText.GetComponent<TMP_Text>();
+
+        // 🔥 NEW
+        txt.text = "Let's Begin!";
+        yield return new WaitForSeconds(1);
+
+        txt.text = "3";
+        yield return new WaitForSeconds(1);
+
+        txt.text = "2";
+        yield return new WaitForSeconds(1);
+
+        txt.text = "1";
+        yield return new WaitForSeconds(1);
+
+        txt.text = "GO!";
+        yield return new WaitForSeconds(0.8f);
 
         getReadyText.SetActive(false);
 
         gameUI.SetActive(true);
 
         StartTimer();
+
         LoadQuestion();
     }
 

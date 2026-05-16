@@ -513,6 +513,9 @@ public class GameManager_Module3 : MonoBehaviour
         getReadyText.SetActive(true);
         var txt = getReadyText.GetComponent<TextMeshProUGUI>();
 
+        txt.text = "Let's Begin!";
+        yield return new WaitForSeconds(1);
+
         txt.text = "3";
         yield return new WaitForSeconds(1);
 
