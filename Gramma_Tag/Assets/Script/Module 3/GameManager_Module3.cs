@@ -398,12 +398,11 @@ public class GameManager_Module3 : MonoBehaviour
 
     void TimeUp()
     {
-        
+        Debug.Log("⏰ TIME UP");
 
         isTimerRunning = false;
 
-
-        // 🔥 RESET HEART SESSION (TIMEOUT)
+        // 🔥 RESET HEART SESSION
         if (HeartSystem.Instance != null)
         {
             HeartSystem.Instance.ResetSession();
@@ -412,13 +411,53 @@ public class GameManager_Module3 : MonoBehaviour
         PlayerPrefs.SetInt("HEART_USED_THIS_SESSION", 0);
         PlayerPrefs.Save();
 
-        PlayerPrefs.SetInt("FinalScore", score);
-         PlayerPrefs.SetInt("TotalQ", totalTarget); // ✅ FIXED (always /10)
-        PlayerPrefs.SetString("LastScene", SceneManager.GetActiveScene().name);
+        // 🔥 COMPUTE RESULT USING CURRENT SCORE
+        int total = totalTarget;
 
-        PlayerPrefs.Save();
+        int stars = 0;
+        int passed = 0;
 
-        SceneManager.LoadScene("ResultScene");
+        if (score >= 9)
+        {
+            stars = 3;
+            passed = 1;
+        }
+        else if (score >= 7)
+        {
+            stars = 2;
+            passed = 1;
+        }
+        else if (score >= 6)
+        {
+            stars = 1;
+            passed = 1;
+        }
+        else
+        {
+            stars = 0;
+            passed = 0;
+        }
+
+        // 🔥 FORCE FULL PROGRESS BAR
+        if (progressBar != null)
+            progressBar.value = progressBar.maxValue;
+
+        if (progressText != null)
+            progressText.text =
+                progressBar.maxValue + " / " + progressBar.maxValue;
+
+        int moduleID =
+            PlayerPrefs.GetInt("SelectedModuleID", 1);
+
+        // 🔥 SAME FLOW AS NORMAL FINISH
+        StartCoroutine(
+            SaveAndExit(
+                moduleID,
+                total,
+                stars,
+                passed
+            )
+        );
     }
 
     public bool IsCorrectWord(string word)
