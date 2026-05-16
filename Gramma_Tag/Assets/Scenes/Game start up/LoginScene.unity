@@ -237,7 +237,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: a46b5c64533be92418f73b99b45438f5, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 406bb37a1eec105419a60b1aaeb4506e, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -290,10 +290,10 @@ MonoBehaviour:
   startButton: {fileID: 1411639009}
   girlButtonImage: {fileID: 1553724565}
   boyButtonImage: {fileID: 34644659}
-  girlNormalSprite: {fileID: 21300000, guid: e80de57ef458217419113cac2cd23428, type: 3}
-  girlSelectedSprite: {fileID: 21300000, guid: a3e52e3de3dab1640b80073c4163f5d9, type: 3}
-  boyNormalSprite: {fileID: 21300000, guid: a46b5c64533be92418f73b99b45438f5, type: 3}
-  boySelectedSprite: {fileID: 21300000, guid: a3e52e3de3dab1640b80073c4163f5d9, type: 3}
+  girlNormalSprite: {fileID: 21300000, guid: 11e762ae6fa96044cbe423bd6a026c30, type: 3}
+  girlSelectedSprite: {fileID: 21300000, guid: 54c3c66577529584fb9ace75b238ca9e, type: 3}
+  boyNormalSprite: {fileID: 21300000, guid: 406bb37a1eec105419a60b1aaeb4506e, type: 3}
+  boySelectedSprite: {fileID: 21300000, guid: 6f8296c7b8ffb554fa525ac887ec149d, type: 3}
   validationPanel: {fileID: 665501157}
   validationText: {fileID: 2116396579}
 --- !u!4 &105222642
@@ -948,7 +948,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Gender
+  m_text: Sex
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a48e7a37cea8fb24fb119a080aa82477, type: 2}
   m_sharedMaterial: {fileID: 7479966292288222148, guid: a48e7a37cea8fb24fb119a080aa82477, type: 2}
@@ -2376,7 +2376,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: eb7f0824202d0ba4e9a253c72cf1c7ad, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c59531b8e8d291f4eade99b2646f54bd, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2597,8 +2597,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278221567
-  m_fontColor: {r: 1, g: 0.47843137, b: 0, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -3435,7 +3435,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: e80de57ef458217419113cac2cd23428, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 11e762ae6fa96044cbe423bd6a026c30, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
