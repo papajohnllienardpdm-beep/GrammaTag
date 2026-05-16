@@ -36,13 +36,11 @@ public class MainMenuTutorial : MonoBehaviour
 
     void Start()
     {
-        /*
         if (PlayerPrefs.GetInt("MainMenuTutorialDone", 0) == 1)
         {
             tutorialCanvas.SetActive(false);
             return;
         }
-        */
 
         tutorialCanvas.SetActive(true);
 
@@ -176,6 +174,8 @@ foreach (Graphic g in graphics)
         tutorialCanvas.SetActive(false);
 
         PlayerPrefs.SetInt(
-            "MainMenuTutorialDone", 1);
+    "MainMenuTutorialDone", 1);
+
+        PlayerPrefs.Save();
     }
 }
