@@ -1157,7 +1157,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 00513eeb04b5e6b4ea2ca84d1cdbcaa5, type: 3}
+  m_Sprite: {fileID: 21300000, guid: a1b6319215218e343af14b2cd5992da8, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1519,6 +1519,7 @@ MonoBehaviour:
   - Great job! The next lesson, Inferences, is now unlocked!
   - Great job! The next lesson, Conclusion, is now unlocked!
   - Great job! The next lesson, Conclusion, is now unlocked!
+  popupDuration: 0.15
 --- !u!4 &1690955587
 Transform:
   m_ObjectHideFlags: 0
