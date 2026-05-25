@@ -55,23 +55,23 @@ public class Module4TutorialManager : MonoBehaviour
 
         questions.Add(new QuestionData
         {
-            sentenceText = "This is John's toy.\nIt is ____",
+            sentenceText = "This is John's toy.\nIt is ____.",
             correctAnswer = "his",
             choices = new string[] { "his", "her", "their", "my" }
         });
 
         questions.Add(new QuestionData
         {
-            sentenceText = "This is Maria's bag.\nIt is ____",
+            sentenceText = "This is Maria's bag.\nIt is ____.",
             correctAnswer = "her",
-            choices = new string[] { "his", "her", "their", "my" }
+            choices = new string[] { "his", "hers", "their", "my" }
         });
 
         questions.Add(new QuestionData
         {
-            sentenceText = "These are Ben and Ana's toys.\nThey are ____",
+            sentenceText = "These are Ben and Ana's toys.\nThey are ____.",
             correctAnswer = "their",
-            choices = new string[] { "his", "her", "their", "my" }
+            choices = new string[] { "his", "her", "theirs", "my" }
         });
     }
 

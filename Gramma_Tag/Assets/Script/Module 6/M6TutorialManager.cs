@@ -70,10 +70,10 @@ public class Module6TutorialManager : MonoBehaviour
             question = "Maria wore her uniform and packed her bag.",
             choices = new string[]
             {
-            "She will sleep",
-            "She will go to school",
-            "She will eat",
-            "She will watch TV"
+            "She will sleep.",
+            "She will go to school.",
+            "She will eat.",
+            "She will watch TV."
             },
             correctIndex = 1,
             images = mariaSet
@@ -85,10 +85,10 @@ public class Module6TutorialManager : MonoBehaviour
             question = "Dark clouds filled the sky.",
             choices = new string[]
             {
-            "It is sunny",
-            "It will rain",
-            "It is night",
-            "It is windy"
+            "It is sunny.",
+            "It will rain.",
+            "It is night.",
+            "It is windy."
             },
             correctIndex = 1,
             images = rainSet
@@ -100,10 +100,10 @@ public class Module6TutorialManager : MonoBehaviour
             question = "Kids are lying in bed with eyes closed.",
             choices = new string[]
             {
-            "They are eating",
-            "They are playing",
-            "They are sleeping",
-            "They are running"
+            "They are eating.",
+            "They are playing.",
+            "They are sleeping.",
+            "They are running."
             },
             correctIndex = 2,
             images = sleepSet
