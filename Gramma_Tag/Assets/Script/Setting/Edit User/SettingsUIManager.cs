@@ -14,6 +14,7 @@ public class SettingsUIManager : MonoBehaviour
 
     [Header("Button")]
     public Button editButton;
+    public Button logoutButton;
 
     [Header("Character Image")]
     public Image charImage;
@@ -30,6 +31,7 @@ public class SettingsUIManager : MonoBehaviour
         SetEditMode(false);
 
         editButton.onClick.AddListener(OnEditButtonClick);
+        logoutButton.onClick.AddListener(OnLogoutButtonClick);
     }
 
     void LoadUserData()
@@ -120,5 +122,17 @@ public class SettingsUIManager : MonoBehaviour
         {
             charImage.sprite = girlSprite;
         }
+    }
+
+
+    void OnLogoutButtonClick()
+    {
+        Debug.Log("Logout button clicked");
+
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+    Application.Quit();
+#endif
     }
 }
