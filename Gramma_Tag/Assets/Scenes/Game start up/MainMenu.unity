@@ -43794,8 +43794,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -3.7082, y: 55.6086}
-  m_SizeDelta: {x: 400.2436, y: 260.1027}
+  m_AnchoredPosition: {x: -11.121, y: 53.878}
+  m_SizeDelta: {x: 345.858, y: 256.642}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &771259470
 MonoBehaviour:
@@ -43819,8 +43819,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: More hearts, more fun!
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: aaa94fe6bbce9124997151fb4f23de97, type: 2}
-  m_sharedMaterial: {fileID: -8940571865142490197, guid: aaa94fe6bbce9124997151fb4f23de97, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 7a3b6fb5031d4c242a165f7e0c2ea164, type: 2}
+  m_sharedMaterial: {fileID: 5800235808446719442, guid: 7a3b6fb5031d4c242a165f7e0c2ea164, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -43844,8 +43844,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 61.7
-  m_fontSizeBase: 61.7
+  m_fontSize: 63.02
+  m_fontSizeBase: 63.02
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -116870,7 +116870,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 225}
+  m_AnchoredPosition: {x: 0, y: 641}
   m_SizeDelta: {x: 900, y: 377.8}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &2081601725
