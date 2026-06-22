@@ -63,14 +63,14 @@ public class Module4TutorialManager : MonoBehaviour
         questions.Add(new QuestionData
         {
             sentenceText = "This is Maria's bag.\nIt is ____.",
-            correctAnswer = "her",
+            correctAnswer = "hers",
             choices = new string[] { "his", "hers", "their", "my" }
         });
 
         questions.Add(new QuestionData
         {
             sentenceText = "These are Ben and Ana's toys.\nThey are ____.",
-            correctAnswer = "their",
+            correctAnswer = "theirs",
             choices = new string[] { "his", "her", "theirs", "my" }
         });
     }
