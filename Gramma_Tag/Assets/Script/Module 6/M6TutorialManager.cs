@@ -41,6 +41,9 @@ public class Module6TutorialManager : MonoBehaviour
     public Image imageC;
     public Image imageD;
 
+    [Header("Zoomable Images")]
+    public ZoomableImage[] zoomableImages;
+
     [Header("Tutorial Sprites")]
     public ImageSet mariaSet;
     public ImageSet rainSet;
@@ -131,6 +134,8 @@ public class Module6TutorialManager : MonoBehaviour
 
         hasAnswered = false;
 
+        SetZoomEnabled(true);
+
         questionText.text = q.question;
 
         textA.text = q.choices[0];
@@ -157,6 +162,8 @@ public class Module6TutorialManager : MonoBehaviour
     {
         if (hasAnswered) return;
         hasAnswered = true;
+
+        SetZoomEnabled(false);
 
         var q = questions[currentQuestionIndex];
 
@@ -203,6 +210,8 @@ public class Module6TutorialManager : MonoBehaviour
         }
 
         DisableAllButtons();
+
+
     }
 
     void GoToGame()
@@ -244,6 +253,15 @@ public class Module6TutorialManager : MonoBehaviour
         buttonB.interactable = true;
         buttonC.interactable = true;
         buttonD.interactable = true;
+    }
+
+    void SetZoomEnabled(bool value)
+    {
+        foreach (ZoomableImage zoom in zoomableImages)
+        {
+            if (zoom != null)
+                zoom.SetCanZoom(value);
+        }
     }
 
 }
