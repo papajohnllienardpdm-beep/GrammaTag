@@ -91,6 +91,9 @@ public class BlendGameManager : MonoBehaviour
         progressBar.maxValue = questions.Count;
         progressBar.value = 0;
 
+        choiceAZone.ResetImages();
+        choiceBZone.ResetImages();
+
         if (gameplayUI != null)
             gameplayUI.SetActive(false);
 

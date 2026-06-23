@@ -56,6 +56,9 @@ public class BlendTutorialManager : MonoBehaviour
         progressBar.maxValue = requiredCorrectAnswers;
         progressBar.value = 0;
 
+        choiceAZone.ResetImages();
+        choiceBZone.ResetImages();
+
         ShowQuestion();
     }
 
@@ -194,6 +197,9 @@ public class BlendTutorialManager : MonoBehaviour
 
         // reset progress
         progressBar.value = 0;
+
+        choiceAZone.ResetImages();
+        choiceBZone.ResetImages();
 
         ShowQuestion();
 
