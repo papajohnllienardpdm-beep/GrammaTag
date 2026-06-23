@@ -59,11 +59,16 @@ public class Module6Manager : MonoBehaviour
     public float nextDelay = 1.5f;
     private int totalQuestions = 10;
 
+
+
     [Header("Question Images")]
     public Image imageA;
     public Image imageB;
     public Image imageC;
     public Image imageD;
+
+    [Header("Zoomable Images")]
+    public ZoomableImage[] zoomableImages;
 
     [System.Serializable]
     public class QuestionImageSet
@@ -139,6 +144,8 @@ public class Module6Manager : MonoBehaviour
     {
         hasAnswered = false;
 
+        SetZoomEnabled(true);
+
         Module6Question q = questions[currentQuestion];
 
         ApplyImages(q.quizID);
@@ -167,6 +174,8 @@ public class Module6Manager : MonoBehaviour
         if (hasAnswered) return;
 
         hasAnswered = true;
+
+        SetZoomEnabled(false);
 
         Module6Question q = questions[currentQuestion];
 
@@ -253,7 +262,7 @@ public class Module6Manager : MonoBehaviour
 
     IEnumerator SaveAndExit(int moduleID, int total, int stars, int passed)
     {
-        
+
 
         int coins = DatabaseManager.Instance.GiveCoins(moduleID, score, passed);
 
@@ -300,13 +309,13 @@ public class Module6Manager : MonoBehaviour
     }
 
     void TimeUp()
-{
-    isTimerRunning = false;
+    {
+        isTimerRunning = false;
 
-    CancelInvoke(); // para walang pending invoke
+        CancelInvoke(); // para walang pending invoke
 
-    FinishGame(); // 🔥 diretso result scene
-}
+        FinishGame(); // 🔥 diretso result scene
+    }
 
     IEnumerator StartGameWithDelay()
     {
@@ -372,6 +381,15 @@ public class Module6Manager : MonoBehaviour
             imageB.enabled = false;
             imageC.enabled = false;
             imageD.enabled = false;
+        }
+    }
+
+    void SetZoomEnabled(bool value)
+    {
+        foreach (ZoomableImage zoom in zoomableImages)
+        {
+            if (zoom != null)
+                zoom.SetCanZoom(value);
         }
     }
 }
