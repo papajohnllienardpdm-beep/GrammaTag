@@ -16,4 +16,6 @@ public class DBQuestion
 
     public string ChoiceD { get; set; }
     public string CorrectAnswer { get; set; }
+
+    public string Feedback { get; set; }
 }

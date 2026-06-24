@@ -462,7 +462,19 @@ public class DatabaseManager : MonoBehaviour
         lock (dbLock)
         {
             return db.Query<DBQuestion>(
-                "SELECT * FROM AssessmentItems WHERE ModuleID = ?", moduleID
+                @"SELECT
+                QuizID,
+                ModuleID,
+                QuestionText,
+                ChoiceA,
+                ChoiceB,
+                ChoiceC,
+                ChoiceD,
+                CorrectAnswer,
+                Feedback
+              FROM AssessmentItems
+              WHERE ModuleID = ?",
+                moduleID
             );
         }
     }

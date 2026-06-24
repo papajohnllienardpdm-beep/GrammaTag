@@ -21,6 +21,11 @@ public class Module4GameManager : MonoBehaviour
     [Header("UI - Question")]
     public TMP_Text sentenceText;
 
+    [Header("UI - Feedback")]
+    public GameObject imageFeedback;
+    public TMP_Text feedbackText;
+
+
     [Header("UI - Answers")]
     public Button[] answerButtons;
     public TMP_Text[] answerTexts;
@@ -96,6 +101,8 @@ public class Module4GameManager : MonoBehaviour
 
         int moduleID = PlayerPrefs.GetInt("SelectedModuleID", 1);
 
+        Debug.Log("MODULE ID LOADED: " + moduleID);
+
         var dbQuestions = DatabaseManager.Instance
             .GetQuestionsByModule(moduleID)
             .OrderBy(x => Random.value)
@@ -104,13 +111,18 @@ public class Module4GameManager : MonoBehaviour
 
         foreach (var q in dbQuestions)
         {
+            Debug.Log("QUESTION: " + q.QuestionText);
+            Debug.Log("CORRECT: " + q.CorrectAnswer);
+            Debug.Log("FEEDBACK FROM DB: " + q.Feedback);
+
             questions.Add(new Module4Question(
                 q.QuestionText,
                 q.ChoiceA,
                 q.ChoiceB,
                 q.ChoiceC,
                 q.ChoiceD,
-                q.CorrectAnswer
+                q.CorrectAnswer,
+                q.Feedback
             ));
         }
     }
@@ -118,6 +130,9 @@ public class Module4GameManager : MonoBehaviour
     void LoadQuestion()
     {
         answered = false;
+
+        if (imageFeedback != null)
+            imageFeedback.SetActive(false);
 
         Module4Question q = questions[currentQuestionIndex];
 
@@ -180,6 +195,18 @@ public class Module4GameManager : MonoBehaviour
         {
             if (AudioManager.Instance != null)
                 AudioManager.Instance.PlaySFX(wrongSFX);
+        }
+
+        // ✅ SHOW FEEDBACK AFTER ANSWER
+        if (imageFeedback != null)
+            imageFeedback.SetActive(true);
+
+        if (feedbackText != null)
+        {
+            if (!string.IsNullOrEmpty(q.feedback))
+                feedbackText.text = q.feedback;
+            else
+                feedbackText.text = "No feedback found for this question.";
         }
 
         Invoke(nameof(NextQuestion), nextDelay);
@@ -329,11 +356,13 @@ public class Module4Question
     public string questionText;
     public string[] choices;
     public string correctAnswer;
+    public string feedback;
 
-    public Module4Question(string q, string a, string b, string c, string d, string correct)
+    public Module4Question(string q, string a, string b, string c, string d, string correct, string fb)
     {
         questionText = q;
         choices = new string[] { a, b, c, d };
         correctAnswer = correct;
+        feedback = fb;
     }
 }
