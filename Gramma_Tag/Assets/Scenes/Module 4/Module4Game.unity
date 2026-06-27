@@ -155,8 +155,7 @@ MonoBehaviour:
   timerText: {fileID: 2141402477}
   gameDuration: 300
   sentenceText: {fileID: 668139965}
-  imageFeedback: {fileID: 1523994750}
-  feedbackText: {fileID: 508223863}
+  feedbackText: {fileID: 668139965}
   answerButtons:
   - {fileID: 582412620}
   - {fileID: 773719030}

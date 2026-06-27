@@ -22,7 +22,7 @@ public class Module4GameManager : MonoBehaviour
     public TMP_Text sentenceText;
 
     [Header("UI - Feedback")]
-    public GameObject imageFeedback;
+ 
     public TMP_Text feedbackText;
 
 
@@ -131,8 +131,8 @@ public class Module4GameManager : MonoBehaviour
     {
         answered = false;
 
-        if (imageFeedback != null)
-            imageFeedback.SetActive(false);
+        if (feedbackText != null)
+            feedbackText.text = "";
 
         Module4Question q = questions[currentQuestionIndex];
 
@@ -196,10 +196,6 @@ public class Module4GameManager : MonoBehaviour
             if (AudioManager.Instance != null)
                 AudioManager.Instance.PlaySFX(wrongSFX);
         }
-
-        // ✅ SHOW FEEDBACK AFTER ANSWER
-        if (imageFeedback != null)
-            imageFeedback.SetActive(true);
 
         if (feedbackText != null)
         {
