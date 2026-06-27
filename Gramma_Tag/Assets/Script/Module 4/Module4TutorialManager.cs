@@ -15,6 +15,8 @@ public class Module4TutorialManager : MonoBehaviour
     public Slider progressBar;
     public TMP_Text tutorialText;
 
+    public TMP_Text feedbackText;
+
     [Header("SFX")]
     public AudioClip correctSFX;
     public AudioClip wrongSFX;
@@ -57,21 +59,24 @@ public class Module4TutorialManager : MonoBehaviour
         {
             sentenceText = "This is John's toy.\nIt is ____.",
             correctAnswer = "his",
-            choices = new string[] { "his", "her", "their", "my" }
+            choices = new string[] { "his", "her", "their", "my" },
+            feedback = "This is John's toy. It is his."
         });
 
         questions.Add(new QuestionData
         {
             sentenceText = "This is Maria's bag.\nIt is ____.",
             correctAnswer = "hers",
-            choices = new string[] { "his", "hers", "their", "my" }
+            choices = new string[] { "his", "hers", "their", "my" },
+            feedback = "This is Maria's bag. It is hers."
         });
 
         questions.Add(new QuestionData
         {
             sentenceText = "These are Ben and Ana's toys.\nThey are ____.",
             correctAnswer = "theirs",
-            choices = new string[] { "his", "her", "theirs", "my" }
+            choices = new string[] { "his", "her", "theirs", "my" },
+            feedback = "These are Ben and Ana's toys. They are theirs."
         });
     }
 
@@ -89,6 +94,9 @@ public class Module4TutorialManager : MonoBehaviour
     void LoadQuestion()
     {
         answered = false;
+
+        if (feedbackText != null)
+            feedbackText.text = "";
 
         currentQuestion = questions[currentIndex];
 
@@ -163,6 +171,9 @@ public class Module4TutorialManager : MonoBehaviour
             UpdateProgress(); // para reset agad UI
         }
 
+        if (feedbackText != null)
+            feedbackText.text = currentQuestion.feedback;
+
         Invoke(nameof(NextStep), nextDelay);
     }
 
@@ -213,4 +224,14 @@ public class Module4TutorialManager : MonoBehaviour
             tutorialText.text = "Last one! Get this right.";
         }
     }
+
+    [System.Serializable]
+    public class QuestionData
+    {
+        public string sentenceText;
+        public string correctAnswer;
+        public string[] choices;
+        public string feedback;
+    }
 }
+

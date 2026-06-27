@@ -272,6 +272,7 @@ MonoBehaviour:
   progressText: {fileID: 555955385}
   progressBar: {fileID: 2072225210}
   tutorialText: {fileID: 412240997}
+  feedbackText: {fileID: 668139965}
   correctSFX: {fileID: 8300000, guid: f63bfcbadf943d9499de87f0132ee881, type: 3}
   wrongSFX: {fileID: 8300000, guid: a7080d4a15658834183ab5a9b7bf81c2, type: 3}
   nextDelay: 1.5
