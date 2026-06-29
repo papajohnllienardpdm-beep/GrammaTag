@@ -12,11 +12,13 @@ public class Module7GameManager : MonoBehaviour
     {
         public string sentence;
         public bool isFact;
+        public string explanation;
 
-        public Question(string sentence, bool isFact)
+        public Question(string sentence, bool isFact, string explanation)
         {
             this.sentence = sentence;
             this.isFact = isFact;
+            this.explanation = explanation;
         }
     }
 
@@ -38,7 +40,7 @@ public class Module7GameManager : MonoBehaviour
     public Image opinionFrontImage;
     public Image opinionBackImage;
 
-    [Header("Reveal Text Optional")]
+    [Header("Reveal Text")]
     public TMP_Text factRevealText;
     public TMP_Text opinionRevealText;
 
@@ -52,7 +54,7 @@ public class Module7GameManager : MonoBehaviour
     public AudioSource audioSource;
 
     [Header("Game Settings")]
-    public float nextDelay = 1.5f;
+    public float nextDelay = 3f;
     public float flipSpeed = 0.15f;
 
     private List<Question> questions = new List<Question>();
@@ -60,13 +62,11 @@ public class Module7GameManager : MonoBehaviour
     private int score = 0;
     private bool answered = false;
     private bool isGameOver = false;
-    
+
     private float remainingTime;
 
     private Vector3 normalFactScale;
     private Vector3 normalOpinionScale;
-
-    
 
     void Start()
     {
@@ -90,8 +90,6 @@ public class Module7GameManager : MonoBehaviour
             settingsButton.onClick.AddListener(OpenSettings);
         }
 
-        
-
         LoadStaticQuestions();
         ShuffleQuestions();
 
@@ -111,16 +109,35 @@ public class Module7GameManager : MonoBehaviour
     {
         questions = new List<Question>()
         {
-            new Question("The sun rises in the east.", true),
-            new Question("Blue is my favorite color.", false),
-            new Question("A dog is an animal.", true),
-            new Question("I think apples are the best fruit.", false),
-            new Question("Fish live in water.", true),
-            new Question("Basketball is more fun than volleyball.", false),
-            new Question("Plants need sunlight to grow.", true),
-            new Question("In my opinion, reading books is boring.", false),
-            new Question("Water freezes when it is very cold.", true),
-            new Question("Cats are the cutest animals.", false)
+            new Question("The sun rises in the east.", true,
+                "This is a fact because it can be proven true."),
+
+            new Question("Blue is my favorite color.", false,
+                "This is an opinion because it tells a personal feeling or preference."),
+
+            new Question("A dog is an animal.", true,
+                "This is a fact because a dog can be proven to be an animal."),
+
+            new Question("I think apples are the best fruit.", false,
+                "This is an opinion because it uses the signal words 'I think'."),
+
+            new Question("Fish live in water.", true,
+                "This is a fact because it can be checked and proven."),
+
+            new Question("Basketball is more fun than volleyball.", false,
+                "This is an opinion because people may have different choices."),
+
+            new Question("Plants need sunlight to grow.", true,
+                "This is a fact because plants need sunlight for growth."),
+
+            new Question("In my opinion, reading books is boring.", false,
+                "This is an opinion because it uses the signal words 'in my opinion'."),
+
+            new Question("Water freezes when it is very cold.", true,
+                "This is a fact because water can freeze when the temperature is low enough."),
+
+            new Question("Cats are the cutest animals.", false,
+                "This is an opinion because people may not all agree with it.")
         };
     }
 
@@ -171,10 +188,17 @@ public class Module7GameManager : MonoBehaviour
         Image selectedBack = playerAnswerIsFact ? factBackImage : opinionBackImage;
         TMP_Text selectedRevealText = playerAnswerIsFact ? factRevealText : opinionRevealText;
 
-        StartCoroutine(FlipCard(selectedButton, selectedFront, selectedBack, selectedRevealText, isCorrect));
+        StartCoroutine(FlipCard(
+            selectedButton,
+            selectedFront,
+            selectedBack,
+            selectedRevealText,
+            isCorrect,
+            currentQuestion.explanation
+        ));
     }
 
-    IEnumerator FlipCard(Button selectedButton, Image frontImage, Image backImage, TMP_Text revealText, bool isCorrect)
+    IEnumerator FlipCard(Button selectedButton, Image frontImage, Image backImage, TMP_Text revealText, bool isCorrect, string explanation)
     {
         Vector3 originalScale = selectedButton.transform.localScale;
 
@@ -189,7 +213,7 @@ public class Module7GameManager : MonoBehaviour
         if (revealText != null)
         {
             revealText.gameObject.SetActive(true);
-            revealText.text = isCorrect ? "CORRECT!" : "WRONG!";
+            revealText.text = (isCorrect ? "CORRECT!\n\n" : "WRONG!\n\n") + explanation;
         }
 
         if (isCorrect)
@@ -311,8 +335,6 @@ public class Module7GameManager : MonoBehaviour
             settingsController.OpenSettings();
     }
 
-
-
     void GoToResultScene()
     {
         if (isGameOver) return;
@@ -320,7 +342,7 @@ public class Module7GameManager : MonoBehaviour
         isGameOver = true;
 
         int total = questions.Count;
-        int passingScore = 8; // Module 7 hard = 80%, so 8/10
+        int passingScore = 8;
         int passed = score >= passingScore ? 1 : 0;
         int coinsEarned = passed == 1 ? 200 : 50;
 
