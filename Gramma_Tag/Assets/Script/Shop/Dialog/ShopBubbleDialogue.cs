@@ -32,12 +32,32 @@ public class ShopBubbleDialogue : MonoBehaviour
     public bool loop = true;
 
     int currentIndex = 0;
+    Coroutine dialogueCoroutine;
 
-    void Start()
+    void OnEnable()
     {
+        if (dialogueText == null) return;
+        if (dialogues == null || dialogues.Length == 0) return;
+
+        if (dialogueCoroutine != null)
+        {
+            StopCoroutine(dialogueCoroutine);
+        }
+
+        dialogueCoroutine = StartCoroutine(PlayDialogues());
+    }
+
+    void OnDisable()
+    {
+        if (dialogueCoroutine != null)
+        {
+            StopCoroutine(dialogueCoroutine);
+            dialogueCoroutine = null;
+        }
+
         if (dialogueText != null)
         {
-            StartCoroutine(PlayDialogues());
+            dialogueText.text = "";
         }
     }
 
@@ -45,36 +65,25 @@ public class ShopBubbleDialogue : MonoBehaviour
     {
         while (true)
         {
-            if (dialogues.Length == 0)
-                yield break;
-
             DialogueData current = dialogues[currentIndex];
 
-            // 🔥 APPLY FONT SIZE
             dialogueText.fontSize = current.fontSize;
-
-            // 🔥 CLEAR TEXT
             dialogueText.text = "";
 
-            // 🔥 TYPEWRITER EFFECT
             string currentText = "";
 
             foreach (char letter in current.message)
             {
                 currentText += letter;
-
                 dialogueText.SetText(currentText);
 
                 yield return new WaitForSecondsRealtime(current.typingSpeed);
             }
 
-            // 🔥 WAIT AFTER COMPLETE
             yield return new WaitForSecondsRealtime(current.stayDuration);
 
-            // 🔥 NEXT
             currentIndex++;
 
-            // 🔥 LOOP
             if (currentIndex >= dialogues.Length)
             {
                 if (loop)
@@ -83,6 +92,7 @@ public class ShopBubbleDialogue : MonoBehaviour
                 }
                 else
                 {
+                    dialogueCoroutine = null;
                     yield break;
                 }
             }
