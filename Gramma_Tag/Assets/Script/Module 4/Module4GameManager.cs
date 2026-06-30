@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Text.RegularExpressions;
 
 
 public class Module4GameManager : MonoBehaviour
@@ -199,10 +200,20 @@ public class Module4GameManager : MonoBehaviour
 
         if (feedbackText != null)
         {
+            bool isCorrect = selectedAnswer == q.correctAnswer;
+
             if (!string.IsNullOrEmpty(q.feedback))
-                feedbackText.text = q.feedback;
+            {
+                feedbackText.text = GetColoredFeedback(
+                    q.feedback,
+                    q.correctAnswer,
+                    isCorrect
+                );
+            }
             else
+            {
                 feedbackText.text = "No feedback found for this question.";
+            }
         }
 
         Invoke(nameof(NextQuestion), nextDelay);
@@ -343,6 +354,20 @@ public class Module4GameManager : MonoBehaviour
         StartTimer();
 
         LoadQuestion();
+    }
+
+    string GetColoredFeedback(string feedback, string correctAnswer, bool isCorrect)
+    {
+        string color = isCorrect ? "green" : "red";
+
+        string pattern = @"\b" + Regex.Escape(correctAnswer) + @"\b";
+
+        return Regex.Replace(
+            feedback,
+            pattern,
+            "<color=" + color + ">$0</color>",
+            RegexOptions.IgnoreCase
+        );
     }
 }
 

@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System.Text.RegularExpressions;
 
 public class Module4TutorialManager : MonoBehaviour
 {
@@ -172,7 +173,10 @@ public class Module4TutorialManager : MonoBehaviour
         }
 
         if (feedbackText != null)
-            feedbackText.text = currentQuestion.feedback;
+        {
+            bool isCorrect = selected == currentQuestion.correctAnswer;
+            feedbackText.text = GetColoredFeedback(currentQuestion.feedback, currentQuestion.correctAnswer, isCorrect);
+        }
 
         Invoke(nameof(NextStep), nextDelay);
     }
@@ -223,6 +227,20 @@ public class Module4TutorialManager : MonoBehaviour
         {
             tutorialText.text = "Last one! Get this right.";
         }
+    }
+
+    string GetColoredFeedback(string feedback, string correctAnswer, bool isCorrect)
+    {
+        string color = isCorrect ? "green" : "red";
+
+        string pattern = @"\b" + Regex.Escape(correctAnswer) + @"\b";
+
+        return Regex.Replace(
+            feedback,
+            pattern,
+            "<color=" + color + ">$0</color>",
+            RegexOptions.IgnoreCase
+        );
     }
 
     [System.Serializable]
