@@ -11,8 +11,10 @@ public class SettingsPanelController : MonoBehaviour
     public GameObject settingsPanel;
 
     [Header("Scene Name")]
-    public string mainMenuSceneName = "MainMenu"; // pwede mong baguhin sa inspector
+    public string mainMenuSceneName = "MainMenu";
 
+    [Header("Heart Deduction")]
+    public bool deductHeartOnExit = true;
 
     [Header("Animation")]
     public float animationDuration = 0.25f;
@@ -20,8 +22,6 @@ public class SettingsPanelController : MonoBehaviour
 
     private Coroutine currentAnim;
 
-
-    // 👉 OPEN SETTINGS
     public void OpenSettings()
     {
         settingsPanel.SetActive(true);
@@ -30,23 +30,18 @@ public class SettingsPanelController : MonoBehaviour
         currentAnim = StartCoroutine(ScalePanel(Vector3.zero, Vector3.one));
     }
 
-    // 👉 CLOSE SETTINGS
     public void CloseSettings()
     {
         if (currentAnim != null) StopCoroutine(currentAnim);
         currentAnim = StartCoroutine(CloseAnim());
     }
 
-    // 👉 GO TO MAIN MENU
     public void GoToMainMenu()
     {
-        // 🔥 SAVE CURRENT HEART STATE
-        if (HeartSystem.Instance != null && DatabaseManager.Instance != null)
+        // 🔥 BAWAS HEART ONLY IF THIS SCENE IS AN ACTUAL GAME
+        if (deductHeartOnExit && HeartSystem.Instance != null)
         {
-            DatabaseManager.Instance.UpdateHearts(
-            HeartSystem.Instance.currentHearts,
-            HeartSystem.Instance.GetLastHeartTime()
-);
+            HeartSystem.Instance.UseHeartSafe(1);
         }
 
         SceneManager.LoadScene(mainMenuSceneName);
@@ -75,6 +70,4 @@ public class SettingsPanelController : MonoBehaviour
         yield return ScalePanel(Vector3.one, Vector3.zero);
         settingsPanel.SetActive(false);
     }
-
-
 }

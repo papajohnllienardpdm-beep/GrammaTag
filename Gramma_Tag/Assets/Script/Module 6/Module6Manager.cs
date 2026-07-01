@@ -94,8 +94,14 @@ public class Module6Manager : MonoBehaviour
         while (HeartSystem.Instance == null)
             yield return null;
 
-        // 🔥 DITO LANG BABAWAS NG HEART
-        HeartSystem.Instance.UseHeartSafe(1);
+        // 🔥 NEW GAME SESSION - allow 1 heart deduction later
+        PlayerPrefs.SetInt("HEART_USED_THIS_SESSION", 0);
+        PlayerPrefs.Save();
+
+        if (HeartSystem.Instance != null)
+        {
+            HeartSystem.Instance.ResetSession();
+        }
 
         LoadQuestionsFromDB();
 
@@ -237,13 +243,10 @@ public class Module6Manager : MonoBehaviour
 
     void FinishGame()
     {
-        // 🔥 RESET HEART SESSION
-        PlayerPrefs.SetInt("HEART_USED_THIS_SESSION", 0);
-        PlayerPrefs.Save();
-
+        // 🔥 BAWAS 1 HEART ONLY WHEN GAME ENDS
         if (HeartSystem.Instance != null)
         {
-            HeartSystem.Instance.ResetSession();
+            HeartSystem.Instance.UseHeartSafe(1);
         }
 
         int total = questions.Count;

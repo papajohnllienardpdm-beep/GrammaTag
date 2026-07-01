@@ -74,10 +74,17 @@ public class GameManager_Module3 : MonoBehaviour
         while (HeartSystem.Instance == null)
             yield return null;
 
-        // 🔥 deduct heart ONLY sa game (hindi tutorial)
+        // 🔥 NEW GAME SESSION ONLY SA ACTUAL GAME
+        // Tutorial = no heart deduction
         if (!isTutorial)
         {
-            HeartSystem.Instance.UseHeartSafe(1);
+            PlayerPrefs.SetInt("HEART_USED_THIS_SESSION", 0);
+            PlayerPrefs.Save();
+
+            if (HeartSystem.Instance != null)
+            {
+                HeartSystem.Instance.ResetSession();
+            }
         }
 
         LoadRoundsFromDB();
@@ -303,13 +310,10 @@ public class GameManager_Module3 : MonoBehaviour
 
     void FinishGame()
     {
-        // 🔥 RESET HEART SESSION
-        PlayerPrefs.SetInt("HEART_USED_THIS_SESSION", 0);
-        PlayerPrefs.Save();
-
-        if (HeartSystem.Instance != null)
+        // 🔥 BAWAS HEART ONLY SA ACTUAL GAME
+        if (!isTutorial && HeartSystem.Instance != null)
         {
-            HeartSystem.Instance.ResetSession();
+            HeartSystem.Instance.UseHeartSafe(1);
         }
 
         int total = rounds.Count;
@@ -402,14 +406,11 @@ public class GameManager_Module3 : MonoBehaviour
 
         isTimerRunning = false;
 
-        // 🔥 RESET HEART SESSION
-        if (HeartSystem.Instance != null)
+        // 🔥 BAWAS HEART ONLY SA ACTUAL GAME TIME UP
+        if (!isTutorial && HeartSystem.Instance != null)
         {
-            HeartSystem.Instance.ResetSession();
+            HeartSystem.Instance.UseHeartSafe(1);
         }
-
-        PlayerPrefs.SetInt("HEART_USED_THIS_SESSION", 0);
-        PlayerPrefs.Save();
 
         // 🔥 COMPUTE RESULT USING CURRENT SCORE
         int total = totalTarget;
