@@ -1,19 +1,53 @@
+using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
-public class Module5WordItem : MonoBehaviour, IPointerClickHandler
+public class Module5WordItem : MonoBehaviour
 {
     private Module5BoardCleanerManager manager;
     private bool shouldStay;
+    private bool alreadyCleaned;
+    private string currentWord;
 
-    public void Setup(Module5BoardCleanerManager gameManager, bool correctWord)
+    public TMP_Text wordText;
+
+    public void Setup(Module5BoardCleanerManager gameManager, string word, bool isCorrectWord)
     {
         manager = gameManager;
-        shouldStay = correctWord;
+        shouldStay = isCorrectWord;
+        currentWord = word;
+        alreadyCleaned = false;
+
+        if (wordText == null)
+            wordText = GetComponentInChildren<TMP_Text>();
+
+        if (wordText != null)
+            wordText.text = word;
+
+        gameObject.SetActive(true);
     }
 
-    public void OnPointerClick(PointerEventData eventData)
+    public string GetWord()
     {
-        manager.OnWordClicked(this, shouldStay);
+        return currentWord;
+    }
+
+    public bool ShouldStay()
+    {
+        return shouldStay;
+    }
+
+    public void TryClean()
+    {
+        if (alreadyCleaned) return;
+
+        alreadyCleaned = true;
+
+        if (manager != null)
+            manager.OnWordCleaned(this, shouldStay);
+    }
+
+    public void HideWord()
+    {
+        gameObject.SetActive(false);
     }
 }
