@@ -18,12 +18,20 @@ public class FallingWord : MonoBehaviour
 
     public TextMeshProUGUI wordTMP;
 
+    [Header("Cloud References")]
+    public Image cloudImage;
+    public RectTransform textRect;
+    public RectTransform cloudRect;
 
-    [Header("Cloud Variations")]
-    public Image cloudImage;        // 👈 reference sa Cloud Image
-    public CloudData[] cloudVariants;
-    public RectTransform textRect; // 👈 para ma-resize text box
-    public RectTransform cloudRect; // 👈 para ma-resize cloud
+    
+
+    [Header("Choice Cloud Visuals - SET THIS IN PREFAB")]
+    public ChoiceCloudVisual[] choiceCloudVisuals;
+
+    [Header("Runtime Choice Info")]
+    public int currentModuleID;
+    public int currentQuizID;
+    public string currentChoiceKey;
 
     void Start()
     {
@@ -31,33 +39,78 @@ public class FallingWord : MonoBehaviour
 
         float randomX = Random.Range(-200f, 200f);
         rt.anchoredPosition = new Vector2(randomX, 700f);
+    }
 
-        // 🎨 RANDOM CLOUD
-        if (cloudVariants != null && cloudVariants.Length > 0)
+    public void SetupChoiceVisual(int moduleID, int quizID, string choiceKey)
+    {
+        currentModuleID = moduleID;
+        currentQuizID = quizID;
+        currentChoiceKey = choiceKey;
+
+        CloudData matchedCloud = GetVisualCloud(
+            currentModuleID,
+            currentQuizID,
+            currentChoiceKey
+        );
+
+        if (matchedCloud != null)
         {
-            int index = Random.Range(0, cloudVariants.Length);
-            CloudData data = cloudVariants[index];
+            ApplyCloudData(matchedCloud);
 
-            // 🖼️ SET SPRITE
-            if (cloudImage != null)
-                cloudImage.sprite = data.sprite;
+            Debug.Log(
+                "✅ Cloud applied: ModuleID " + currentModuleID +
+                " | QuizID " + currentQuizID +
+                " | ChoiceKey " + currentChoiceKey
+            );
+        }
+        else
+        {
+            Debug.LogWarning(
+                "⚠️ No assigned cloud found for ModuleID: " + currentModuleID +
+                " | QuizID: " + currentQuizID +
+                " | ChoiceKey: " + currentChoiceKey
+            );
+        }
+    }
 
-            // 📦 SET CLOUD SIZE
-            if (cloudRect != null)
-                cloudRect.sizeDelta = data.cloudSize;
+    CloudData GetVisualCloud(int moduleID, int quizID, string choiceKey)
+    {
+        if (choiceCloudVisuals == null) return null;
 
-            // 🔤 SET TEXT SIZE
-            if (wordTMP != null)
-                wordTMP.fontSize = data.fontSize;
+        string cleanChoiceKey = choiceKey.Trim();
 
-            // 📐 SET TEXT BOX SIZE
-            // 📐 SET TEXT BOX SIZE
-            if (textRect != null)
-                textRect.sizeDelta = data.textSize;
+        foreach (ChoiceCloudVisual visual in choiceCloudVisuals)
+        {
+            if (visual.moduleID == moduleID &&
+                visual.quizID == quizID &&
+                visual.choiceKey.Trim() == cleanChoiceKey)
+            {
+                return visual.cloudData;
+            }
+        }
 
-            // 📍 SET TEXT POSITION
-            if (textRect != null)
-                textRect.anchoredPosition = data.textPosition;
+        return null;
+    }
+
+
+
+    public void ApplyCloudData(CloudData data)
+    {
+        if (data == null) return;
+
+        if (cloudImage != null)
+            cloudImage.sprite = data.sprite;
+
+        if (cloudRect != null)
+            cloudRect.sizeDelta = data.cloudSize;
+
+        if (wordTMP != null)
+            wordTMP.fontSize = data.fontSize;
+
+        if (textRect != null)
+        {
+            textRect.sizeDelta = data.textSize;
+            textRect.anchoredPosition = data.textPosition;
         }
     }
 
@@ -65,11 +118,8 @@ public class FallingWord : MonoBehaviour
     {
         if (answered) return;
 
-        
-
         rt.anchoredPosition += Vector2.down * fallSpeed * Time.deltaTime;
 
-        // ✅ NASALO
         if (CheckCollision())
         {
             bool isCorrect = gameManager.IsCorrectWord(wordText);
@@ -77,7 +127,6 @@ public class FallingWord : MonoBehaviour
             return;
         }
 
-        // ✅ HINDI NASALO
         if (IsBelowScreen())
         {
             Destroy(gameObject);
@@ -133,7 +182,6 @@ public class FallingWord : MonoBehaviour
             gameManager.hasActiveWord = false;
         }
     }
-
 }
 
 [System.Serializable]
@@ -142,12 +190,24 @@ public class CloudData
     public Sprite sprite;
 
     [Header("Cloud Size")]
-    public Vector2 cloudSize; // width, height
+    public Vector2 cloudSize;
 
     [Header("Text Settings")]
     public int fontSize;
-    public Vector2 textSize; // width, height
+    public Vector2 textSize;
 
     [Header("Text Position")]
-    public Vector2 textPosition; // 👈 NEW
+    public Vector2 textPosition;
+}
+
+[System.Serializable]
+public class ChoiceCloudVisual
+{
+    public int moduleID;
+    public int quizID;
+
+    [Tooltip("Use exactly: ChoiceA, ChoiceB, or ChoiceC")]
+    public string choiceKey;
+
+    public CloudData cloudData;
 }

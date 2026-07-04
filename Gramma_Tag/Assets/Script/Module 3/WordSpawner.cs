@@ -9,9 +9,7 @@ public class WordSpawner : MonoBehaviour
     public RectTransform gameArea;
     public RectTransform catchPoint;
 
-
-
-    public void SpawnWord(string word)
+    public void SpawnWord(string word, int moduleID, int quizID, string choiceKey)
     {
         GameObject obj = Instantiate(wordPrefab, spawnPoint.position, Quaternion.identity, spawnPoint.parent);
 
@@ -29,5 +27,7 @@ public class WordSpawner : MonoBehaviour
 
         fw.gameArea = gameArea;
         fw.catchPoint = catchPoint;
+
+        fw.SetupChoiceVisual(moduleID, quizID, choiceKey);
     }
 }

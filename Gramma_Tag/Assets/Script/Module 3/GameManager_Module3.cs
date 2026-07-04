@@ -48,9 +48,9 @@ public class GameManager_Module3 : MonoBehaviour
     private List<Module3Round> rounds = new List<Module3Round>();
     private int currentRoundIndex = 0;
     private int spawnIndexInRound = 0;
-   
 
-    private List<string> currentRoundWords = new List<string>();
+
+    private List<Module3WordSpawnData> currentRoundWords = new List<Module3WordSpawnData>();
 
     public bool hasActiveWord = false;
    
@@ -143,6 +143,8 @@ public class GameManager_Module3 : MonoBehaviour
         foreach (var q in dbQuestions)
         {
             rounds.Add(new Module3Round(
+                q.QuizID,
+                q.ModuleID,
                 q.QuestionText,
                 q.ChoiceA,
                 q.ChoiceB,
@@ -237,9 +239,9 @@ public class GameManager_Module3 : MonoBehaviour
         SpawnNext();
     }
 
-   
 
-    
+
+
 
     public void SpawnNext()
     {
@@ -247,7 +249,6 @@ public class GameManager_Module3 : MonoBehaviour
 
         isSpawning = true;
 
-        // ✅ END GAME CHECK
         if (current >= totalTarget)
         {
             FinishGame();
@@ -255,7 +256,6 @@ public class GameManager_Module3 : MonoBehaviour
             return;
         }
 
-        // LOOP ROUNDS
         if (currentRoundIndex >= rounds.Count)
         {
             currentRoundIndex = 0;
@@ -268,8 +268,14 @@ public class GameManager_Module3 : MonoBehaviour
 
         if (spawnIndexInRound < currentRoundWords.Count)
         {
-            string word = currentRoundWords[spawnIndexInRound];
-            spawner.SpawnWord(word);
+            Module3WordSpawnData spawnData = currentRoundWords[spawnIndexInRound];
+
+            spawner.SpawnWord(
+                spawnData.word,
+                spawnData.moduleID,
+                spawnData.quizID,
+                spawnData.choiceKey
+            );
 
             hasActiveWord = true;
             spawnIndexInRound++;
@@ -279,7 +285,7 @@ public class GameManager_Module3 : MonoBehaviour
             currentRoundIndex++;
             spawnIndexInRound = 0;
 
-            UpdateTargetLabel(); // 🔥 important
+            UpdateTargetLabel();
 
             isSpawning = false;
             SpawnNext();
@@ -295,12 +301,14 @@ public class GameManager_Module3 : MonoBehaviour
 
         var round = rounds[currentRoundIndex];
 
-        currentRoundWords.Add(round.correct);
-
-        foreach (var w in round.choices)
+        foreach (var choice in round.choices)
         {
-            if (w != round.correct)
-                currentRoundWords.Add(w);
+            currentRoundWords.Add(new Module3WordSpawnData(
+                choice.word,
+                round.moduleID,
+                round.quizID,
+                choice.choiceKey
+            ));
         }
 
         currentRoundWords = currentRoundWords
@@ -542,14 +550,56 @@ public class GameManager_Module3 : MonoBehaviour
 [System.Serializable]
 public class Module3Round
 {
+    public int quizID;
+    public int moduleID;
+
     public string target;
-    public string[] choices;
+    public Module3ChoiceData[] choices;
     public string correct;
 
-    public Module3Round(string t, string a, string b, string c, string correct)
+    public Module3Round(int quizID, int moduleID, string t, string a, string b, string c, string correct)
     {
+        this.quizID = quizID;
+        this.moduleID = moduleID;
+
         target = t;
-        choices = new string[] { a, b, c };
         this.correct = correct;
+
+        choices = new Module3ChoiceData[]
+        {
+            new Module3ChoiceData("ChoiceA", a),
+            new Module3ChoiceData("ChoiceB", b),
+            new Module3ChoiceData("ChoiceC", c)
+        };
+    }
+}
+
+[System.Serializable]
+public class Module3ChoiceData
+{
+    public string choiceKey;
+    public string word;
+
+    public Module3ChoiceData(string choiceKey, string word)
+    {
+        this.choiceKey = choiceKey;
+        this.word = word;
+    }
+}
+
+[System.Serializable]
+public class Module3WordSpawnData
+{
+    public string word;
+    public int moduleID;
+    public int quizID;
+    public string choiceKey;
+
+    public Module3WordSpawnData(string word, int moduleID, int quizID, string choiceKey)
+    {
+        this.word = word;
+        this.moduleID = moduleID;
+        this.quizID = quizID;
+        this.choiceKey = choiceKey;
     }
 }
