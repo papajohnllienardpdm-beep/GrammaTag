@@ -1417,7 +1417,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1882862421}
         m_TargetAssemblyTypeName: SettingsPanelController, Assembly-CSharp
         m_MethodName: GoToMainMenu
         m_Mode: 1
@@ -3831,8 +3831,9 @@ MonoBehaviour:
   eraserController: {fileID: 582645972}
   eraserHitboxScale: 0.25
   wordHitboxScale: 0.55
-  resultPanel: {fileID: 0}
-  resultText: {fileID: 0}
+  resultSceneName: ResultScene
+  gameSceneName: Module5_GameScene
+  moduleName: Module 5
   audioSource: {fileID: 0}
   correctSFX: {fileID: 0}
   wrongSFX: {fileID: 0}
