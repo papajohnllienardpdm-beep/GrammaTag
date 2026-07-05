@@ -129,21 +129,47 @@ public class Module5BoardCleanerManager : MonoBehaviour
 
         Vector2[] positions =
         {
-            new Vector2(-350f, 120f),
-            new Vector2(350f, 120f),
-            new Vector2(-350f, -120f),
-            new Vector2(350f, -120f)
-        };
+        new Vector2(-350f, 120f),
+        new Vector2(350f, 120f),
+        new Vector2(-350f, -120f),
+        new Vector2(350f, -120f)
+    };
 
-        for (int i = 0; i < 4; i++)
+        // Randomize positions
+        for (int i = 0; i < positions.Length; i++)
+        {
+            int randomIndex = Random.Range(i, positions.Length);
+
+            Vector2 temp = positions[i];
+            positions[i] = positions[randomIndex];
+            positions[randomIndex] = temp;
+        }
+
+        // Randomize choices
+        List<WordChoice> shuffledChoices = new List<WordChoice>(q.choices);
+
+        for (int i = 0; i < shuffledChoices.Count; i++)
+        {
+            int randomIndex = Random.Range(i, shuffledChoices.Count);
+
+            WordChoice temp = shuffledChoices[i];
+            shuffledChoices[i] = shuffledChoices[randomIndex];
+            shuffledChoices[randomIndex] = temp;
+        }
+
+        for (int i = 0; i < shuffledChoices.Count; i++)
         {
             GameObject obj = Instantiate(wordPrefab, wordsHolder);
 
             Module5WordItem item = obj.GetComponent<Module5WordItem>();
-            item.Setup(this, q.choices[i].word, q.choices[i].shouldStay);
 
-            RectTransform rect = obj.GetComponent<RectTransform>();
-            rect.anchoredPosition = positions[i];
+            item.Setup(
+                this,
+                shuffledChoices[i].word,
+                shuffledChoices[i].shouldStay
+            );
+
+            obj.GetComponent<RectTransform>().anchoredPosition = positions[i];
 
             activeWords.Add(item);
         }
@@ -322,10 +348,19 @@ public class Module5BoardCleanerManager : MonoBehaviour
         Debug.Log("GAME FINISHED!");
         Debug.Log("FINAL SCORE: " + score + "/" + questions.Count);
 
-        PlayerPrefs.SetInt("LastScore", score);
-        PlayerPrefs.SetInt("LastTotal", questions.Count);
-        PlayerPrefs.SetString("LastGameScene", gameSceneName);
-        PlayerPrefs.SetString("LastModuleName", moduleName);
+        PlayerPrefs.SetInt("FinalScore", score);
+        PlayerPrefs.SetInt("TotalQ", questions.Count);
+
+        PlayerPrefs.SetString("LastScene", gameSceneName);
+
+        PlayerPrefs.SetInt("CoinsEarned", 0);
+
+        // Passed kapag 6 pataas
+        PlayerPrefs.SetInt("Passed", score >= 6 ? 1 : 0);
+
+        PlayerPrefs.Save();
+
+        SceneManager.LoadScene(resultSceneName);
         PlayerPrefs.Save();
 
         SceneManager.LoadScene(resultSceneName);
