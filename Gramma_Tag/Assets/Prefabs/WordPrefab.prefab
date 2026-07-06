@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4384991768471382205}
   - component: {fileID: 1594201177748938391}
   - component: {fileID: 4357406848180101891}
+  - component: {fileID: 6905803164636743770}
   m_Layer: 5
   m_Name: WordPrefab
   m_TagString: Untagged
@@ -147,3 +148,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c6026294b5eaf440ba2d75d32ff12a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  wordText: {fileID: 0}
+--- !u!114 &6905803164636743770
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3849488004895809223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4bbfa928d9370f4087f5759382a07df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wordText: {fileID: 0}
