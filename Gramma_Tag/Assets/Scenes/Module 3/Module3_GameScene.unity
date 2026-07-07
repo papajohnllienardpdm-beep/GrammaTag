@@ -3286,6 +3286,8 @@ MonoBehaviour:
   correctSFX: {fileID: 8300000, guid: f63bfcbadf943d9499de87f0132ee881, type: 3}
   wrongSFX: {fileID: 8300000, guid: a7080d4a15658834183ab5a9b7bf81c2, type: 3}
   hasActiveWord: 0
+  maxActiveWords: 3
+  spawnInterval: 2
   startDelay: 5
 --- !u!4 &1438014230
 Transform:

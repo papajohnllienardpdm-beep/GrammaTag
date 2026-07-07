@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+
 public class GameManager_Module3 : MonoBehaviour
 {
     public static GameManager_Module3 instance;
@@ -53,8 +54,16 @@ public class GameManager_Module3 : MonoBehaviour
     private List<Module3WordSpawnData> currentRoundWords = new List<Module3WordSpawnData>();
 
     public bool hasActiveWord = false;
-   
+
     private bool isSpawning = false;
+
+    [Header("Multi Word Spawn")]
+    public int maxActiveWords = 2;
+    public float spawnInterval = 0.8f;
+
+    private int activeWordCount = 0;
+    private bool spawnLoopRunning = false;
+    private bool gameEnded = false;
 
     [Header("Start Delay")]
     public float startDelay = 5f;
@@ -121,7 +130,7 @@ public class GameManager_Module3 : MonoBehaviour
             else
             {
                 StartTimer();
-                SpawnNext();
+                StartSpawnLoop();
             }
         }
 
@@ -183,7 +192,6 @@ public class GameManager_Module3 : MonoBehaviour
             {
                 AudioManager.Instance?.PlaySFX(wrongSFX);
                 ResetTutorial();
-                SpawnNext();
                 return;
             }
 
@@ -200,7 +208,6 @@ public class GameManager_Module3 : MonoBehaviour
                 return;
             }
 
-            SpawnNext();
             return;
         }
 
@@ -234,9 +241,8 @@ public class GameManager_Module3 : MonoBehaviour
             return;
         }
 
-        // ❗ CONTINUE SPAWNING
-        hasActiveWord = false;
-        SpawnNext();
+        // SpawnLoop na ang bahala maglabas ng kasunod na word
+        hasActiveWord = activeWordCount > 0;
     }
 
 
@@ -245,24 +251,92 @@ public class GameManager_Module3 : MonoBehaviour
 
     public void SpawnNext()
     {
-        if (hasActiveWord || isSpawning) return;
+        if (gameEnded || isSpawning) return;
 
-        isSpawning = true;
-
-        if (current >= totalTarget)
+        // Tutorial stays one-by-one para hindi magulo tutorial logic
+        if (isTutorial)
         {
-            FinishGame();
+            if (hasActiveWord) return;
+
+            isSpawning = true;
+
+            if (rounds.Count <= 0)
+            {
+                isSpawning = false;
+                return;
+            }
+
+            if (currentRoundIndex >= rounds.Count)
+                currentRoundIndex = 0;
+
+            if (spawnIndexInRound == 0)
+                PrepareRoundWords();
+
+            // Kapag naubos na yung 3 words sa current row,
+            // lipat agad sa next row tapos prepare ulit ng words.
+            if (spawnIndexInRound >= currentRoundWords.Count)
+            {
+                currentRoundIndex++;
+                spawnIndexInRound = 0;
+
+                if (currentRoundIndex >= rounds.Count)
+                    currentRoundIndex = 0;
+
+                UpdateTargetLabel();
+                PrepareRoundWords();
+            }
+
+            if (spawnIndexInRound < currentRoundWords.Count)
+            {
+                Module3WordSpawnData spawnData = currentRoundWords[spawnIndexInRound];
+
+                spawner.SpawnWord(
+                    spawnData.word,
+                    spawnData.moduleID,
+                    spawnData.quizID,
+                    spawnData.choiceKey
+                );
+
+                hasActiveWord = true;
+                spawnIndexInRound++;
+            }
+
             isSpawning = false;
             return;
         }
 
-        if (currentRoundIndex >= rounds.Count)
+        // Actual game multi-word spawning
+        if (activeWordCount >= maxActiveWords) return;
+
+        if (current >= totalTarget)
         {
-            currentRoundIndex = 0;
+            FinishGame();
+            return;
         }
 
+        isSpawning = true;
+
+        if (currentRoundIndex >= rounds.Count)
+            currentRoundIndex = 0;
+
         if (spawnIndexInRound == 0)
+            PrepareRoundWords();
+
+        if (spawnIndexInRound >= currentRoundWords.Count)
         {
+            if (activeWordCount > 0)
+            {
+                isSpawning = false;
+                return;
+            }
+
+            currentRoundIndex++;
+            spawnIndexInRound = 0;
+
+            if (currentRoundIndex >= rounds.Count)
+                currentRoundIndex = 0;
+
+            UpdateTargetLabel();
             PrepareRoundWords();
         }
 
@@ -277,19 +351,10 @@ public class GameManager_Module3 : MonoBehaviour
                 spawnData.choiceKey
             );
 
-            hasActiveWord = true;
+            activeWordCount++;
+            hasActiveWord = activeWordCount > 0;
+
             spawnIndexInRound++;
-        }
-        else
-        {
-            currentRoundIndex++;
-            spawnIndexInRound = 0;
-
-            UpdateTargetLabel();
-
-            isSpawning = false;
-            SpawnNext();
-            return;
         }
 
         isSpawning = false;
@@ -318,6 +383,10 @@ public class GameManager_Module3 : MonoBehaviour
 
     void FinishGame()
     {
+
+        if (gameEnded) return;
+        gameEnded = true;
+
         // 🔥 BAWAS HEART ONLY SA ACTUAL GAME
         if (!isTutorial && HeartSystem.Instance != null)
         {
@@ -355,9 +424,47 @@ public class GameManager_Module3 : MonoBehaviour
         StartCoroutine(SaveAndExit(moduleID, total, stars, passed));
     }
 
+    void StartSpawnLoop()
+    {
+        if (spawnLoopRunning) return;
+
+        StartCoroutine(SpawnLoop());
+    }
+
+    IEnumerator SpawnLoop()
+    {
+        spawnLoopRunning = true;
+
+        while (!gameEnded && !isTutorial)
+        {
+            if (current >= totalTarget)
+            {
+                FinishGame();
+                break;
+            }
+
+            if (activeWordCount < maxActiveWords)
+            {
+                SpawnNext();
+            }
+
+            yield return new WaitForSeconds(spawnInterval);
+        }
+
+        spawnLoopRunning = false;
+    }
+
+    public void OnFallingWordFinished()
+    {
+        if (activeWordCount > 0)
+            activeWordCount--;
+
+        hasActiveWord = activeWordCount > 0;
+    }
+
     IEnumerator SaveAndExit(int moduleID, int total, int stars, int passed)
     {
-        
+
 
         int coins = DatabaseManager.Instance.GiveCoins(moduleID, score, passed);
 
@@ -410,6 +517,9 @@ public class GameManager_Module3 : MonoBehaviour
 
     void TimeUp()
     {
+        if (gameEnded) return;
+        gameEnded = true;
+
         Debug.Log("⏰ TIME UP");
 
         isTimerRunning = false;
@@ -537,7 +647,7 @@ public class GameManager_Module3 : MonoBehaviour
         getReadyText.SetActive(false);
 
         StartTimer();
-        SpawnNext();
+        StartSpawnLoop();
     }
 
     IEnumerator StartWithDelay()
@@ -602,4 +712,5 @@ public class Module3WordSpawnData
         this.quizID = quizID;
         this.choiceKey = choiceKey;
     }
+
 }

@@ -129,14 +129,15 @@ public class FallingWord : MonoBehaviour
 
         if (IsBelowScreen())
         {
-            Destroy(gameObject);
-
             if (gameManager != null)
             {
-                gameManager.hasActiveWord = false;
-                gameManager.SpawnNext();
+                gameManager.OnFallingWordFinished();
+
+                if (gameManager.isTutorial)
+                    gameManager.SpawnNext();
             }
 
+            Destroy(gameObject);
             return;
         }
     }
@@ -175,12 +176,15 @@ public class FallingWord : MonoBehaviour
 
         gameManager.Answer(correct);
 
-        Destroy(gameObject);
-
         if (gameManager != null)
         {
-            gameManager.hasActiveWord = false;
+            gameManager.OnFallingWordFinished();
+
+            if (gameManager.isTutorial)
+                gameManager.SpawnNext();
         }
+
+        Destroy(gameObject);
     }
 }
 
