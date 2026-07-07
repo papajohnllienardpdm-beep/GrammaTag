@@ -39,10 +39,14 @@ public class Module5BoardCleanerManager : MonoBehaviour
     [Range(0.1f, 1f)]
     public float wordHitboxScale = 0.75f;
 
+    [Header("Orientation")]
+    public OrientationManager orientationManager;
+
     [Header("Result Scene")]
     public string resultSceneName = "ResultScene";
     public string gameSceneName = "Module5_GameScene";
     public string moduleName = "Module 5";
+
 
     [Header("Audio Optional")]
     public AudioSource audioSource;
@@ -61,7 +65,10 @@ public class Module5BoardCleanerManager : MonoBehaviour
 
     void Start()
     {
-     
+        if (orientationManager != null)
+        {
+            orientationManager.SetLandscape();
+        }
 
         if (floatingEraser != null)
             floatingEraser.gameObject.SetActive(false);
@@ -360,12 +367,22 @@ public class Module5BoardCleanerManager : MonoBehaviour
 
         PlayerPrefs.Save();
 
-        SceneManager.LoadScene(resultSceneName);
-        PlayerPrefs.Save();
+        StartCoroutine(GoToResultScene());
+    }
+    IEnumerator GoToResultScene()
+    {
+        // Ibalik muna sa portrait
+        if (orientationManager != null)
+        {
+            orientationManager.SetPortrait();
+        }
 
+        // Bigyan ng konting oras para mag-rotate ang screen
+        yield return new WaitForSeconds(0.5f);
+
+        // Saka lang pumunta sa Result Scene
         SceneManager.LoadScene(resultSceneName);
     }
-
     void PlaySound(AudioClip clip)
     {
         if (audioSource != null && clip != null)
