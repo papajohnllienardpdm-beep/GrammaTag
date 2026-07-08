@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,6 +23,7 @@ public class Module5BoardCleanerManager : MonoBehaviour
     }
 
     [Header("UI")]
+    public TMP_Text instructionText;
     public TMP_Text progressText;
     public Slider progressBar;
 
@@ -47,9 +49,7 @@ public class Module5BoardCleanerManager : MonoBehaviour
     public string gameSceneName = "Module5_GameScene";
     public string moduleName = "Module 5";
 
-
-    [Header("Audio Optional")]
-    public AudioSource audioSource;
+    [Header("SFX")]
     public AudioClip correctSFX;
     public AudioClip wrongSFX;
 
@@ -65,6 +65,11 @@ public class Module5BoardCleanerManager : MonoBehaviour
 
     void Start()
     {
+        StartCoroutine(WaitForSystemsThenStart());
+    }
+
+    IEnumerator WaitForSystemsThenStart()
+    {
         if (orientationManager != null)
         {
             orientationManager.SetLandscape();
@@ -73,38 +78,85 @@ public class Module5BoardCleanerManager : MonoBehaviour
         if (floatingEraser != null)
             floatingEraser.gameObject.SetActive(false);
 
-        LoadQuestions();
+        while (DatabaseManager.Instance == null || !DatabaseManager.Instance.IsDatabaseReady())
+            yield return null;
+
+        while (HeartSystem.Instance == null)
+            yield return null;
+
+        PlayerPrefs.SetInt("HEART_USED_THIS_SESSION", 0);
+        PlayerPrefs.Save();
+
+        HeartSystem.Instance.ResetSession();
+
+        LoadQuestionsFromDB();
+
+        if (progressBar != null)
+        {
+            progressBar.minValue = 0;
+            progressBar.maxValue = questions.Count;
+            progressBar.value = 0;
+        }
+
         ShowQuestion();
     }
 
-    void LoadQuestions()
+    void LoadQuestionsFromDB()
     {
         questions.Clear();
 
-        AddQuestion("Keep only the PAST TENSE verb", "walked", true, "walk", false, "walks", false, "will walk", false);
-        AddQuestion("Keep only the PAST TENSE verb", "played", true, "play", false, "plays", false, "will play", false);
-        AddQuestion("Keep only the PAST TENSE verb", "jumped", true, "jump", false, "jumps", false, "will jump", false);
-        AddQuestion("Keep only the PAST TENSE verb", "ran", true, "run", false, "runs", false, "will run", false);
-        AddQuestion("Keep only the PAST TENSE verb", "baked", true, "bake", false, "bakes", false, "will bake", false);
-        AddQuestion("Keep only the PAST TENSE verb", "cleaned", true, "clean", false, "cleans", false, "will clean", false);
-        AddQuestion("Keep only the PAST TENSE verb", "cried", true, "cry", false, "cries", false, "will cry", false);
-        AddQuestion("Keep only the PAST TENSE verb", "studied", true, "study", false, "studies", false, "will study", false);
-        AddQuestion("Keep only the PAST TENSE verb", "danced", true, "dance", false, "dances", false, "will dance", false);
-        AddQuestion("Keep only the PAST TENSE verb", "washed", true, "wash", false, "washes", false, "will wash", false);
+        int moduleID = PlayerPrefs.GetInt("SelectedModuleID", 1);
+
+        Debug.Log("MODULE 5 SELECTED MODULE ID: " + moduleID);
+
+        var dbQuestions = DatabaseManager.Instance
+            .GetQuestionsByModule(moduleID)
+            .OrderBy(x => Random.value)
+            .Take(10)
+            .ToList();
+
+        foreach (var dbQ in dbQuestions)
+        {
+            BoardQuestion q = new BoardQuestion();
+            q.instruction = dbQ.QuestionText;
+            q.choices = new WordChoice[4];
+
+            q.choices[0] = new WordChoice
+            {
+                word = dbQ.ChoiceA,
+                shouldStay = IsSameAnswer(dbQ.ChoiceA, dbQ.CorrectAnswer)
+            };
+
+            q.choices[1] = new WordChoice
+            {
+                word = dbQ.ChoiceB,
+                shouldStay = IsSameAnswer(dbQ.ChoiceB, dbQ.CorrectAnswer)
+            };
+
+            q.choices[2] = new WordChoice
+            {
+                word = dbQ.ChoiceC,
+                shouldStay = IsSameAnswer(dbQ.ChoiceC, dbQ.CorrectAnswer)
+            };
+
+            q.choices[3] = new WordChoice
+            {
+                word = dbQ.ChoiceD,
+                shouldStay = IsSameAnswer(dbQ.ChoiceD, dbQ.CorrectAnswer)
+            };
+
+            questions.Add(q);
+        }
+
+        Debug.Log("MODULE 5 QUESTIONS LOADED: " + questions.Count);
     }
 
-    void AddQuestion(string instruction, string w1, bool s1, string w2, bool s2, string w3, bool s3, string w4, bool s4)
+    bool IsSameAnswer(string choice, string correctAnswer)
     {
-        BoardQuestion q = new BoardQuestion();
-        q.instruction = instruction;
-        q.choices = new WordChoice[4];
+        if (string.IsNullOrWhiteSpace(choice)) return false;
+        if (string.IsNullOrWhiteSpace(correctAnswer)) return false;
 
-        q.choices[0] = new WordChoice { word = w1, shouldStay = s1 };
-        q.choices[1] = new WordChoice { word = w2, shouldStay = s2 };
-        q.choices[2] = new WordChoice { word = w3, shouldStay = s3 };
-        q.choices[3] = new WordChoice { word = w4, shouldStay = s4 };
-
-        questions.Add(q);
+        return choice.Trim().ToLower() == correctAnswer.Trim().ToLower();
     }
 
     void ShowQuestion()
@@ -123,6 +175,9 @@ public class Module5BoardCleanerManager : MonoBehaviour
             return;
         }
 
+        if (instructionText != null)
+            instructionText.text = questions[currentQuestionIndex].instruction;
+
         Debug.Log("QUESTION " + (currentQuestionIndex + 1) + "/" + questions.Count);
         Debug.Log("Current Score: " + score + "/" + questions.Count);
 
@@ -136,13 +191,12 @@ public class Module5BoardCleanerManager : MonoBehaviour
 
         Vector2[] positions =
         {
-        new Vector2(-350f, 120f),
-        new Vector2(350f, 120f),
-        new Vector2(-350f, -120f),
-        new Vector2(350f, -120f)
-    };
+            new Vector2(-350f, 120f),
+            new Vector2(350f, 120f),
+            new Vector2(-350f, -120f),
+            new Vector2(350f, -120f)
+        };
 
-        // Randomize positions
         for (int i = 0; i < positions.Length; i++)
         {
             int randomIndex = Random.Range(i, positions.Length);
@@ -152,7 +206,6 @@ public class Module5BoardCleanerManager : MonoBehaviour
             positions[randomIndex] = temp;
         }
 
-        // Randomize choices
         List<WordChoice> shuffledChoices = new List<WordChoice>(q.choices);
 
         for (int i = 0; i < shuffledChoices.Count; i++)
@@ -194,7 +247,8 @@ public class Module5BoardCleanerManager : MonoBehaviour
 
         if (shouldStay)
         {
-            PlaySound(wrongSFX);
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(wrongSFX);
 
             Debug.Log("QUESTION " + questionNumber + " WRONG!");
             Debug.Log("Binura mo ang TAMANG word: " + erasedWord);
@@ -212,7 +266,8 @@ public class Module5BoardCleanerManager : MonoBehaviour
             return;
         }
 
-        PlaySound(correctSFX);
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX(correctSFX);
         item.HideWord();
 
         cleanedWrongWords++;
@@ -355,37 +410,50 @@ public class Module5BoardCleanerManager : MonoBehaviour
         Debug.Log("GAME FINISHED!");
         Debug.Log("FINAL SCORE: " + score + "/" + questions.Count);
 
+        if (HeartSystem.Instance != null)
+        {
+            HeartSystem.Instance.UseHeartSafe(1);
+        }
+
+        int total = questions.Count;
+
+        int stars = 0;
+        int passed = 0;
+
+        if (score >= 9) { stars = 3; passed = 1; }
+        else if (score >= 7) { stars = 2; passed = 1; }
+        else if (score >= 6) { stars = 1; passed = 1; }
+
+        int moduleID = PlayerPrefs.GetInt("SelectedModuleID", 1);
+
+        StartCoroutine(SaveAndGoToResult(moduleID, total, stars, passed));
+    }
+
+    IEnumerator SaveAndGoToResult(int moduleID, int total, int stars, int passed)
+    {
+        int userID = DatabaseManager.Instance.GetUserID();
+
+        int coinsEarned = DatabaseManager.Instance.GiveCoins(moduleID, score, passed);
+
+        DatabaseManager.Instance.SaveProgressBetter(userID, moduleID, score, passed, stars);
+
         PlayerPrefs.SetInt("FinalScore", score);
-        PlayerPrefs.SetInt("TotalQ", questions.Count);
-
+        PlayerPrefs.SetInt("TotalQ", total);
+        PlayerPrefs.SetInt("Stars", stars);
+        PlayerPrefs.SetInt("Passed", passed);
+        PlayerPrefs.SetInt("CoinsEarned", coinsEarned);
         PlayerPrefs.SetString("LastScene", gameSceneName);
-
-        PlayerPrefs.SetInt("CoinsEarned", 0);
-
-        // Passed kapag 6 pataas
-        PlayerPrefs.SetInt("Passed", score >= 6 ? 1 : 0);
-
         PlayerPrefs.Save();
 
-        StartCoroutine(GoToResultScene());
-    }
-    IEnumerator GoToResultScene()
-    {
-        // Ibalik muna sa portrait
         if (orientationManager != null)
         {
             orientationManager.SetPortrait();
         }
 
-        // Bigyan ng konting oras para mag-rotate ang screen
         yield return new WaitForSeconds(0.5f);
 
-        // Saka lang pumunta sa Result Scene
         SceneManager.LoadScene(resultSceneName);
     }
-    void PlaySound(AudioClip clip)
-    {
-        if (audioSource != null && clip != null)
-            audioSource.PlayOneShot(clip);
-    }
+
+    
 }
