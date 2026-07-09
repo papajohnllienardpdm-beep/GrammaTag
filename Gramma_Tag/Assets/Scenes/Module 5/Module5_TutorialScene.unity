@@ -1260,7 +1260,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 342, y: 177}
+  m_AnchoredPosition: {x: 346, y: -113}
   m_SizeDelta: {x: 160, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &404850856
@@ -3888,7 +3888,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -186, y: 117}
+  m_AnchoredPosition: {x: 346, y: 177}
   m_SizeDelta: {x: 160, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1772883852
@@ -4231,8 +4231,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -346, y: -113}
-  m_SizeDelta: {x: 160, y: 60}
+  m_AnchoredPosition: {x: -250, y: -113}
+  m_SizeDelta: {x: 300, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1837851497
 MonoBehaviour:
@@ -4503,13 +4503,24 @@ MonoBehaviour:
   countdownText: {fileID: 581126466}
   wordsHolder: {fileID: 1564118425}
   wordPrefab: {fileID: 3849488004895809223, guid: 2b6be48cb25d8494d97d1326c96c3191, type: 3}
+  wordSlots:
+  - anchoredPosition: {x: -250, y: 177}
+    size: {x: 300, y: 60}
+  - anchoredPosition: {x: 346, y: 177}
+    size: {x: 300, y: 60}
+  - anchoredPosition: {x: 346, y: -113}
+    size: {x: 300, y: 60}
+  - anchoredPosition: {x: -250, y: -113}
+    size: {x: 300, y: 60}
+  wordFontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  wordFontSize: 60
+  wordFontColor: {r: 1, g: 1, b: 1, a: 1}
   floatingEraser: {fileID: 994885487}
   eraserController: {fileID: 643757947}
   eraserHitboxScale: 0.45
   wordHitboxScale: 0.75
   orientationManager: {fileID: 1132976166}
   gameSceneName: Module5_GameScene
-  audioSource: {fileID: 0}
   correctSFX: {fileID: 8300000, guid: f63bfcbadf943d9499de87f0132ee881, type: 3}
   wrongSFX: {fileID: 8300000, guid: a7080d4a15658834183ab5a9b7bf81c2, type: 3}
 --- !u!1 &1954978980
@@ -5128,8 +5139,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -425, y: 142}
-  m_SizeDelta: {x: 160, y: 60}
+  m_AnchoredPosition: {x: -250, y: 177}
+  m_SizeDelta: {x: 300, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2137820288
 MonoBehaviour:

@@ -44,6 +44,14 @@ public class Module5TutorialManager : MonoBehaviour
     public RectTransform wordsHolder;
     public GameObject wordPrefab;
 
+    [Header("Word Slot Layout")]
+    public WordSlotSettings[] wordSlots = new WordSlotSettings[4];
+
+    [Header("Word Text Style")]
+    public TMP_FontAsset wordFontAsset;
+    public float wordFontSize = 55f;
+    public Color wordFontColor = Color.white;
+
     [Header("Eraser")]
     public RectTransform floatingEraser;
     public Module5TutorialEraserController eraserController;
@@ -60,8 +68,7 @@ public class Module5TutorialManager : MonoBehaviour
     [Header("Scene")]
     public string gameSceneName = "Module5_GameScene";
 
-    [Header("Audio")]
-    public AudioSource audioSource;
+    [Header("SFX")]
     public AudioClip correctSFX;
     public AudioClip wrongSFX;
 
@@ -80,8 +87,9 @@ public class Module5TutorialManager : MonoBehaviour
     private const int requiredCorrect = 3;
 
     // Need to erase 3 wrong words
-    private int cleanedWrongWords = 0;
-    private int wrongWordsNeeded = 3;
+    // Need to erase 3 words, then check the last remaining word
+    private int cleanedWordsCount = 0;
+    private int wordsToCleanBeforeCheck = 3;
 
     private bool questionEnded = false;
 
@@ -301,7 +309,7 @@ public class Module5TutorialManager : MonoBehaviour
     {
         questionEnded = false;
 
-        cleanedWrongWords = 0;
+        cleanedWordsCount = 0;
 
         if (eraserController != null)
             eraserController.StopHold();
@@ -331,23 +339,13 @@ public class Module5TutorialManager : MonoBehaviour
     {
         activeWords.Clear();
 
-        Vector2[] positions =
+        Vector2[] fallbackPositions =
         {
-            new Vector2(-350,120),
-            new Vector2(350,120),
-            new Vector2(-350,-120),
-            new Vector2(350,-120)
-        };
-
-        for (int i = 0; i < positions.Length; i++)
-        {
-            int rand =
-                Random.Range(i, positions.Length);
-
-            Vector2 temp = positions[i];
-            positions[i] = positions[rand];
-            positions[rand] = temp;
-        }
+        new Vector2(-250f, 90f),
+        new Vector2(250f, 90f),
+        new Vector2(-250f, -90f),
+        new Vector2(250f, -90f)
+    };
 
         List<WordChoice> shuffled =
             new List<WordChoice>(q.choices);
@@ -362,21 +360,28 @@ public class Module5TutorialManager : MonoBehaviour
             shuffled[rand] = temp;
         }
 
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < shuffled.Count; i++)
         {
-            Debug.Log("===== SPAWN " + i + " =====");
-
-            Debug.Log("wordPrefab = " + wordPrefab);
-            Debug.Log("wordsHolder = " + wordsHolder);
-
             GameObject obj = Instantiate(wordPrefab, wordsHolder);
 
-            Debug.Log("Instantiated = " + obj);
+            RectTransform rect = obj.GetComponent<RectTransform>();
+
+            if (rect != null)
+            {
+                if (wordSlots != null && wordSlots.Length > i)
+                {
+                    rect.anchoredPosition = wordSlots[i].anchoredPosition;
+                    rect.sizeDelta = wordSlots[i].size;
+                }
+                else
+                {
+                    rect.anchoredPosition = fallbackPositions[i];
+                    rect.sizeDelta = new Vector2(250f, 100f);
+                }
+            }
 
             Module5TutorialWordItem item =
                 obj.GetComponent<Module5TutorialWordItem>();
-
-            Debug.Log("Tutorial Item = " + item);
 
             if (item == null)
             {
@@ -384,22 +389,37 @@ public class Module5TutorialManager : MonoBehaviour
                 return;
             }
 
-            Debug.Log("Word = " + shuffled[i].word);
-
             item.Setup(
                 this,
                 shuffled[i].word,
                 shuffled[i].shouldStay
             );
 
-            RectTransform rect = obj.GetComponent<RectTransform>();
-
-            Debug.Log("RectTransform = " + rect);
-
-            rect.anchoredPosition = positions[i];
+            ApplyWordTextStyle(item);
 
             activeWords.Add(item);
         }
+    }
+
+    void ApplyWordTextStyle(Module5TutorialWordItem item)
+    {
+        if (item == null) return;
+
+        TMP_Text txt = item.wordText;
+
+        if (txt == null)
+            txt = item.GetComponentInChildren<TMP_Text>();
+
+        if (txt == null) return;
+
+        if (wordFontAsset != null)
+            txt.font = wordFontAsset;
+
+        txt.fontSize = wordFontSize;
+        txt.color = wordFontColor;
+
+        txt.enableAutoSizing = false;
+        txt.alignment = TextAlignmentOptions.Center;
     }
 
     public void OnWordCleaned(Module5TutorialWordItem item, bool shouldStay)
@@ -407,36 +427,56 @@ public class Module5TutorialManager : MonoBehaviour
         if (questionEnded)
             return;
 
-        if (shouldStay)
+        item.HideWord();
+
+        cleanedWordsCount++;
+
+        Debug.Log("Words erased: " + cleanedWordsCount + "/" + wordsToCleanBeforeCheck);
+
+        // Walang sound habang nagbubura pa.
+        // Saka lang magche-check kapag isang word na lang ang natira.
+        if (cleanedWordsCount < wordsToCleanBeforeCheck)
         {
-            PlaySound(wrongSFX);
+            return;
+        }
 
-            questionEnded = true;
+        questionEnded = true;
 
-            item.HideWord();
+        if (eraserController != null)
+            eraserController.StopHold();
+
+        Module5TutorialWordItem remainingWord =
+            GetRemainingActiveWord();
+
+        if (remainingWord == null)
+        {
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(wrongSFX);
 
             tutorialProgress = 0;
 
             if (instructionText != null)
-                instructionText.text =
-                    "Oops! Let's start again.";
+                instructionText.text = "Oops! Let's start again.";
 
             UpdateProgressUI();
 
             StartCoroutine(RestartTutorial());
-
             return;
         }
 
-        PlaySound(correctSFX);
+        bool isCorrectRemaining =
+            remainingWord.ShouldStay();
 
-        item.HideWord();
+        string remainingText =
+            remainingWord.GetWord();
 
-        cleanedWrongWords++;
+        Debug.Log("REMAINING WORD: " + remainingText);
+        Debug.Log("Is Correct Remaining? " + isCorrectRemaining);
 
-        if (cleanedWrongWords >= wrongWordsNeeded)
+        if (isCorrectRemaining)
         {
-            questionEnded = true;
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(correctSFX);
 
             tutorialProgress++;
 
@@ -449,12 +489,41 @@ public class Module5TutorialManager : MonoBehaviour
             else
             {
                 if (instructionText != null)
-                    instructionText.text =
-                        "Great! Try another one.";
+                    instructionText.text = "Great! Try another one.";
 
                 StartCoroutine(NextQuestion());
             }
         }
+        else
+        {
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(wrongSFX);
+
+            tutorialProgress = 0;
+
+            if (instructionText != null)
+                instructionText.text = "Oops! Let's start again.";
+
+            UpdateProgressUI();
+
+            StartCoroutine(RestartTutorial());
+        }
+    }
+
+    Module5TutorialWordItem GetRemainingActiveWord()
+    {
+        foreach (Module5TutorialWordItem item in activeWords)
+        {
+            if (item == null)
+                continue;
+
+            if (item.gameObject.activeSelf)
+            {
+                return item;
+            }
+        }
+
+        return null;
     }
 
     IEnumerator NextQuestion()
@@ -648,9 +717,10 @@ public class Module5TutorialManager : MonoBehaviour
         SceneManager.LoadScene(gameSceneName);
     }
 
-    void PlaySound(AudioClip clip)
+    [System.Serializable]
+    public class WordSlotSettings
     {
-        if (audioSource != null && clip != null)
-            audioSource.PlayOneShot(clip);
+        public Vector2 anchoredPosition;
+        public Vector2 size = new Vector2(250f, 100f);
     }
 }

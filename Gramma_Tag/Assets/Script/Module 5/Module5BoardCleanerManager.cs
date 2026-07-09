@@ -22,6 +22,13 @@ public class Module5BoardCleanerManager : MonoBehaviour
         public WordChoice[] choices = new WordChoice[4];
     }
 
+    [System.Serializable]
+    public class WordSlotSettings
+    {
+        public Vector2 anchoredPosition;
+        public Vector2 size = new Vector2(250f, 100f);
+    }
+
     [Header("UI")]
     public TMP_Text instructionText;
     public TMP_Text progressText;
@@ -30,6 +37,14 @@ public class Module5BoardCleanerManager : MonoBehaviour
     [Header("Words")]
     public RectTransform wordsHolder;
     public GameObject wordPrefab;
+
+    [Header("Word Slot Layout")]
+    public WordSlotSettings[] wordSlots = new WordSlotSettings[4];
+
+    [Header("Word Text Style")]
+    public TMP_FontAsset wordFontAsset;
+    public float wordFontSize = 55f;
+    public Color wordFontColor = Color.white;
 
     [Header("Eraser")]
     public RectTransform floatingEraser;
@@ -58,8 +73,8 @@ public class Module5BoardCleanerManager : MonoBehaviour
 
     private int currentQuestionIndex = 0;
     private int score = 0;
-    private int cleanedWrongWords = 0;
-    private int wrongWordsNeeded = 3;
+    private int cleanedWordsCount = 0;
+    private int wordsToCleanBeforeCheck = 3;
 
     private bool questionEnded = false;
 
@@ -162,7 +177,7 @@ public class Module5BoardCleanerManager : MonoBehaviour
     void ShowQuestion()
     {
         questionEnded = false;
-        cleanedWrongWords = 0;
+        cleanedWordsCount = 0;
 
         if (eraserController != null)
             eraserController.StopHold();
@@ -189,22 +204,14 @@ public class Module5BoardCleanerManager : MonoBehaviour
     {
         activeWords.Clear();
 
-        Vector2[] positions =
+        // Default fallback kung hindi pa na-set sa Inspector
+        Vector2[] fallbackPositions =
         {
-            new Vector2(-350f, 120f),
-            new Vector2(350f, 120f),
-            new Vector2(-350f, -120f),
-            new Vector2(350f, -120f)
-        };
-
-        for (int i = 0; i < positions.Length; i++)
-        {
-            int randomIndex = Random.Range(i, positions.Length);
-
-            Vector2 temp = positions[i];
-            positions[i] = positions[randomIndex];
-            positions[randomIndex] = temp;
-        }
+        new Vector2(-250f, 90f),
+        new Vector2(250f, 90f),
+        new Vector2(-250f, -90f),
+        new Vector2(250f, -90f)
+    };
 
         List<WordChoice> shuffledChoices = new List<WordChoice>(q.choices);
 
@@ -221,6 +228,22 @@ public class Module5BoardCleanerManager : MonoBehaviour
         {
             GameObject obj = Instantiate(wordPrefab, wordsHolder);
 
+            RectTransform rect = obj.GetComponent<RectTransform>();
+
+            if (rect != null)
+            {
+                if (wordSlots != null && wordSlots.Length > i)
+                {
+                    rect.anchoredPosition = wordSlots[i].anchoredPosition;
+                    rect.sizeDelta = wordSlots[i].size;
+                }
+                else
+                {
+                    rect.anchoredPosition = fallbackPositions[i];
+                    rect.sizeDelta = new Vector2(250f, 100f);
+                }
+            }
+
             Module5WordItem item = obj.GetComponent<Module5WordItem>();
 
             item.Setup(
@@ -229,10 +252,31 @@ public class Module5BoardCleanerManager : MonoBehaviour
                 shuffledChoices[i].shouldStay
             );
 
-            obj.GetComponent<RectTransform>().anchoredPosition = positions[i];
+            ApplyWordTextStyle(item);
 
             activeWords.Add(item);
         }
+    }
+
+    void ApplyWordTextStyle(Module5WordItem item)
+    {
+        if (item == null) return;
+
+        TMP_Text txt = item.wordText;
+
+        if (txt == null)
+            txt = item.GetComponentInChildren<TMP_Text>();
+
+        if (txt == null) return;
+
+        if (wordFontAsset != null)
+            txt.font = wordFontAsset;
+
+        txt.fontSize = wordFontSize;
+        txt.color = wordFontColor;
+
+        txt.enableAutoSizing = false;
+        txt.alignment = TextAlignmentOptions.Center;
     }
 
     public void OnWordCleaned(Module5WordItem item, bool shouldStay)
@@ -245,46 +289,80 @@ public class Module5BoardCleanerManager : MonoBehaviour
         Debug.Log("ERASED WORD: " + erasedWord);
         Debug.Log("Should Stay? " + shouldStay);
 
-        if (shouldStay)
+        item.HideWord();
+
+        cleanedWordsCount++;
+
+        Debug.Log("QUESTION " + questionNumber + ": erased word: " + erasedWord);
+        Debug.Log("Words erased: " + cleanedWordsCount + "/" + wordsToCleanBeforeCheck);
+
+        // Walang sound habang nagbubura pa.
+        // Mag-sound lang kapag may isang word na lang at iche-check na.
+        if (cleanedWordsCount < wordsToCleanBeforeCheck)
+        {
+            return;
+        }
+
+        questionEnded = true;
+
+        if (eraserController != null)
+            eraserController.StopHold();
+
+        Module5WordItem remainingWord = GetRemainingActiveWord();
+
+        if (remainingWord == null)
+        {
+            Debug.LogWarning("No remaining word found.");
+
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(wrongSFX);
+
+            StartCoroutine(NextQuestionDelay());
+            return;
+        }
+
+        string remainingText = remainingWord.GetWord();
+        bool isCorrectRemaining = remainingWord.ShouldStay();
+
+        Debug.Log("REMAINING WORD: " + remainingText);
+        Debug.Log("Is Correct Remaining? " + isCorrectRemaining);
+
+        if (isCorrectRemaining)
+        {
+            score++;
+
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(correctSFX);
+
+            Debug.Log("QUESTION " + questionNumber + " CORRECT!");
+            Debug.Log("Score is now: " + score + "/" + questions.Count);
+        }
+        else
         {
             if (AudioManager.Instance != null)
                 AudioManager.Instance.PlaySFX(wrongSFX);
 
             Debug.Log("QUESTION " + questionNumber + " WRONG!");
-            Debug.Log("Binura mo ang TAMANG word: " + erasedWord);
+            Debug.Log("Remaining word is not the correct answer: " + remainingText);
             Debug.Log("Score stays: " + score + "/" + questions.Count);
-
-            questionEnded = true;
-
-            item.HideWord();
-
-            if (eraserController != null)
-                eraserController.StopHold();
-
-            currentQuestionIndex++;
-            ShowQuestion();
-            return;
         }
 
-        if (AudioManager.Instance != null)
-            AudioManager.Instance.PlaySFX(correctSFX);
-        item.HideWord();
+        StartCoroutine(NextQuestionDelay());
+    }
 
-        cleanedWrongWords++;
-
-        Debug.Log("QUESTION " + questionNumber + ": nabura ang maling word: " + erasedWord);
-        Debug.Log("Wrong words erased: " + cleanedWrongWords + "/3");
-
-        if (cleanedWrongWords >= wrongWordsNeeded)
+    Module5WordItem GetRemainingActiveWord()
+    {
+        foreach (Module5WordItem item in activeWords)
         {
-            score++;
+            if (item == null) continue;
 
-            Debug.Log("QUESTION " + questionNumber + " CORRECT!");
-            Debug.Log("Score is now: " + score + "/" + questions.Count);
-
-            questionEnded = true;
-            StartCoroutine(NextQuestionDelay());
+            if (item.gameObject.activeSelf)
+            {
+                return item;
+            }
         }
+
+        return null;
     }
 
     IEnumerator NextQuestionDelay()
