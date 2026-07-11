@@ -18,8 +18,12 @@ public class Module5BoardCleanerManager : MonoBehaviour
     [System.Serializable]
     public class BoardQuestion
     {
+        public int quizID;
+
         public string instruction;
-        public WordChoice[] choices = new WordChoice[4];
+
+        public WordChoice[] choices =
+            new WordChoice[4];
     }
 
     [System.Serializable]
@@ -29,10 +33,39 @@ public class Module5BoardCleanerManager : MonoBehaviour
         public Vector2 size = new Vector2(250f, 100f);
     }
 
+    [System.Serializable]
+    public class QuestionHighlightRule
+    {
+        public int moduleID;
+        public int quizID;
+
+        [TextArea]
+        public string wordToHighlight;
+    }
+
+    [Header("UI - Timer")]
+    public TMP_Text timerText;
+
+    [Header("Game Timer Settings")]
+    public float gameDuration = 300f;
+
+    private float timer;
+    private bool isTimerRunning = false;
+    private bool gameEnded = false;
+
+    private Color defaultTimerColor;
+
     [Header("UI")]
     public TMP_Text instructionText;
     public TMP_Text progressText;
     public Slider progressBar;
+
+    [Header("Question Highlight")]
+
+    public List<QuestionHighlightRule> questionHighlights =
+    new List<QuestionHighlightRule>();
+
+    public Color highlightColor = Color.yellow;
 
     [Header("Words")]
     public RectTransform wordsHolder;
@@ -78,6 +111,9 @@ public class Module5BoardCleanerManager : MonoBehaviour
 
     private bool questionEnded = false;
 
+    private int currentModuleID;
+    private int currentQuizID;
+
     void Start()
     {
         StartCoroutine(WaitForSystemsThenStart());
@@ -113,14 +149,25 @@ public class Module5BoardCleanerManager : MonoBehaviour
             progressBar.value = 0;
         }
 
+        if (timerText != null)
+        {
+            defaultTimerColor = timerText.color;
+        }
+
+
         ShowQuestion();
+
+        StartTimer();
     }
 
     void LoadQuestionsFromDB()
     {
         questions.Clear();
 
-        int moduleID = PlayerPrefs.GetInt("SelectedModuleID", 1);
+        currentModuleID =
+    PlayerPrefs.GetInt("SelectedModuleID", 1);
+
+        int moduleID = currentModuleID;
 
         Debug.Log("MODULE 5 SELECTED MODULE ID: " + moduleID);
 
@@ -132,7 +179,10 @@ public class Module5BoardCleanerManager : MonoBehaviour
 
         foreach (var dbQ in dbQuestions)
         {
-            BoardQuestion q = new BoardQuestion();
+            BoardQuestion q =new BoardQuestion();
+
+            q.quizID = dbQ.QuizID;
+
             q.instruction = dbQ.QuestionText;
             q.choices = new WordChoice[4];
 
@@ -190,14 +240,78 @@ public class Module5BoardCleanerManager : MonoBehaviour
             return;
         }
 
+        BoardQuestion current = questions[currentQuestionIndex];
+
+        currentQuizID = current.quizID;
+
         if (instructionText != null)
-            instructionText.text = questions[currentQuestionIndex].instruction;
+        {
+            instructionText.text = GetHighlightedInstruction(current);
+        }
 
         Debug.Log("QUESTION " + (currentQuestionIndex + 1) + "/" + questions.Count);
         Debug.Log("Current Score: " + score + "/" + questions.Count);
 
-        SpawnFourWords(questions[currentQuestionIndex]);
+        SpawnFourWords(current);
         UpdateProgressUI();
+    }
+
+    string GetHighlightedInstruction(BoardQuestion question)
+    {
+        string text = question.instruction;
+
+        QuestionHighlightRule rule = null;
+
+        foreach (QuestionHighlightRule r in questionHighlights)
+        {
+            if (r.moduleID == currentModuleID &&
+                r.quizID == question.quizID)
+            {
+                rule = r;
+                break;
+            }
+        }
+
+        if (rule == null)
+            return text;
+
+        if (string.IsNullOrWhiteSpace(rule.wordToHighlight))
+            return text;
+
+        int index =
+            text.IndexOf(
+                rule.wordToHighlight,
+                System.StringComparison.OrdinalIgnoreCase);
+
+        if (index < 0)
+            return text;
+
+        string originalWord =
+            text.Substring(
+                index,
+                rule.wordToHighlight.Length);
+
+        string color =
+            ColorUtility.ToHtmlStringRGB(highlightColor);
+
+        string coloredWord =
+            "<color=#" +
+            color +
+            ">" +
+            originalWord +
+            "</color>";
+
+        text =
+            text.Remove(
+                index,
+                originalWord.Length);
+
+        text =
+            text.Insert(
+                index,
+                coloredWord);
+
+        return text;
     }
 
     void SpawnFourWords(BoardQuestion q)
@@ -474,6 +588,13 @@ public class Module5BoardCleanerManager : MonoBehaviour
 
     void EndGame()
     {
+        if (gameEnded)
+            return;
+
+        gameEnded = true;
+
+        isTimerRunning = false;
+
         ClearOldWords();
 
         if (eraserController != null)
@@ -505,6 +626,58 @@ public class Module5BoardCleanerManager : MonoBehaviour
         int moduleID = PlayerPrefs.GetInt("SelectedModuleID", 1);
 
         StartCoroutine(SaveAndGoToResult(moduleID, total, stars, passed));
+    }
+
+    public void StartTimer()
+    {
+        timer = gameDuration;
+        isTimerRunning = true;
+    }
+
+    void Update()
+    {
+        if (!isTimerRunning)
+            return;
+
+        timer -= Time.deltaTime;
+
+        if (timer <= 0)
+        {
+            timer = 0;
+            TimeUp();
+        }
+
+        UpdateTimerUI();
+    }
+
+    void UpdateTimerUI()
+    {
+        int minutes = Mathf.FloorToInt(timer / 60f);
+        int seconds = Mathf.FloorToInt(timer % 60f);
+
+        if (timerText == null)
+            return;
+
+        timerText.text = $"{minutes:00}:{seconds:00}";
+
+        if (timer <= 5f)
+        {
+            timerText.color = Color.red;
+        }
+        else
+        {
+            timerText.color = defaultTimerColor;
+        }
+    }
+
+    void TimeUp()
+    {
+        if (!isTimerRunning)
+            return;
+
+        isTimerRunning = false;
+
+        EndGame();
     }
 
     IEnumerator SaveAndGoToResult(int moduleID, int total, int stars, int passed)

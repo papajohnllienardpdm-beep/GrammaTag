@@ -29,6 +29,10 @@ public class Module5TutorialManager : MonoBehaviour
     public class TutorialQuestion
     {
         public string instruction;
+
+        [TextArea]
+        public string wordToHighlight;
+
         public WordChoice[] choices = new WordChoice[4];
     }
 
@@ -51,6 +55,9 @@ public class Module5TutorialManager : MonoBehaviour
     public TMP_FontAsset wordFontAsset;
     public float wordFontSize = 55f;
     public Color wordFontColor = Color.white;
+
+    [Header("Question Highlight")]
+    public Color highlightColor = Color.yellow;
 
     [Header("Eraser")]
     public RectTransform floatingEraser;
@@ -142,7 +149,9 @@ public class Module5TutorialManager : MonoBehaviour
     void LoadPastTutorial()
     {
         AddQuestion(
-            "Keep only the PAST TENSE word.",
+            "Yesterday, I walk to school. What is the past tense of walk?",
+            "walk",
+
             "walked", true,
             "walk", false,
             "walks", false,
@@ -150,7 +159,9 @@ public class Module5TutorialManager : MonoBehaviour
         );
 
         AddQuestion(
-            "Keep only the PAST TENSE word.",
+            "Last Sunday, we play basketball. What is the past tense of play?",
+            "play",
+
             "played", true,
             "play", false,
             "plays", false,
@@ -158,7 +169,9 @@ public class Module5TutorialManager : MonoBehaviour
         );
 
         AddQuestion(
-            "Keep only the PAST TENSE word.",
+            "Yesterday, she jump over the box. What is the past tense of jump?",
+            "jump",
+
             "jumped", true,
             "jump", false,
             "jumps", false,
@@ -166,10 +179,55 @@ public class Module5TutorialManager : MonoBehaviour
         );
     }
 
+    void LoadBeVerbTutorial()
+    {
+        AddQuestion(
+    "They ___ playing outside. Which be-verb correctly completes the sentence?",
+    "They",
+
+    "are", true,
+    "am", false,
+    "is", false,
+    "was", false
+);
+
+        AddQuestion(
+    "I ___ happy today. Which be-verb correctly completes the sentence?",
+    "I",
+
+    "am", true,
+    "is", false,
+    "are", false,
+    "were", false
+);
+
+        AddQuestion(
+    "She ___ my best friend. Which be-verb correctly completes the sentence?",
+    "She",
+
+    "is", true,
+    "am", false,
+    "are", false,
+    "were", false
+);
+    }
+
     void LoadPresentTutorial()
     {
         AddQuestion(
-            "Keep only the PRESENT TENSE word.",
+            "Every day, Ana walk to school. What is the correct present tense of walk?",
+            "walk",
+
+            "walks", true,
+            "walk", false,
+            "walked", false,
+            "will walk", false
+        );
+
+        AddQuestion(
+            "Every Saturday, Ben play basketball. What is the correct present tense of play?",
+            "play",
+
             "plays", true,
             "play", false,
             "played", false,
@@ -177,86 +235,64 @@ public class Module5TutorialManager : MonoBehaviour
         );
 
         AddQuestion(
-            "Keep only the PRESENT TENSE word.",
-            "runs", true,
-            "run", false,
-            "ran", false,
-            "will run", false
-        );
+            "Every morning, Dad cook breakfast. What is the correct present tense of cook?",
+            "cook",
 
-        AddQuestion(
-            "Keep only the PRESENT TENSE word.",
-            "writes", true,
-            "write", false,
-            "wrote", false,
-            "will write", false
+            "cooks", true,
+            "cook", false,
+            "cooked", false,
+            "will cook", false
         );
     }
 
     void LoadFutureTutorial()
     {
         AddQuestion(
-            "Keep only the FUTURE TENSE word.",
-            "will jump", true,
-            "jump", false,
-            "jumped", false,
-            "jumps", false
+            "Tomorrow, I walk to school. What is the future tense of walk?",
+            "walk",
+
+            "will walk", true,
+            "walk", false,
+            "walked", false,
+            "walks", false
         );
 
         AddQuestion(
-            "Keep only the FUTURE TENSE word.",
-            "will bake", true,
-            "bake", false,
-            "baked", false,
-            "bakes", false
-        );
+            "Next week, we clean the room. What is the future tense of clean?",
+            "clean",
 
-        AddQuestion(
-            "Keep only the FUTURE TENSE word.",
             "will clean", true,
             "clean", false,
             "cleaned", false,
             "cleans", false
         );
-    }
-
-    void LoadBeVerbTutorial()
-    {
-        AddQuestion(
-            "Keep only the correct BE-VERB.",
-            "They are", true,
-            "They am", false,
-            "They is", false,
-            "They be", false
-        );
 
         AddQuestion(
-            "Keep only the correct BE-VERB.",
-            "I am", true,
-            "I is", false,
-            "I are", false,
-            "I be", false
-        );
+            "Later, she jump over the rope. What is the future tense of jump?",
+            "jump",
 
-        AddQuestion(
-            "Keep only the correct BE-VERB.",
-            "She was", true,
-            "She were", false,
-            "She are", false,
-            "She am", false
+            "will jump", true,
+            "jump", false,
+            "jumped", false,
+            "jumps", false
         );
     }
 
     void AddQuestion(
-        string instruction,
-        string w1, bool s1,
-        string w2, bool s2,
-        string w3, bool s3,
-        string w4, bool s4)
+    string instruction,
+    string highlightWord,
+
+    string w1, bool s1,
+    string w2, bool s2,
+    string w3, bool s3,
+    string w4, bool s4)
     {
-        TutorialQuestion q = new TutorialQuestion();
+        TutorialQuestion q =
+            new TutorialQuestion();
 
         q.instruction = instruction;
+
+        q.wordToHighlight = highlightWord;
 
         q.choices = new WordChoice[4];
 
@@ -289,6 +325,49 @@ public class Module5TutorialManager : MonoBehaviour
             };
 
         questions.Add(q);
+    }
+
+    string GetHighlightedInstruction(TutorialQuestion question)
+    {
+        string text = question.instruction;
+
+        if (string.IsNullOrWhiteSpace(question.wordToHighlight))
+            return text;
+
+        int index =
+            text.IndexOf(
+                question.wordToHighlight,
+                System.StringComparison.OrdinalIgnoreCase);
+
+        if (index < 0)
+            return text;
+
+        string originalWord =
+            text.Substring(
+                index,
+                question.wordToHighlight.Length);
+
+        string color =
+            ColorUtility.ToHtmlStringRGB(highlightColor);
+
+        string coloredWord =
+            "<color=#"
+            + color +
+            ">"
+            + originalWord +
+            "</color>";
+
+        text =
+            text.Remove(
+                index,
+                originalWord.Length);
+
+        text =
+            text.Insert(
+                index,
+                coloredWord);
+
+        return text;
     }
 
     void ShuffleQuestions()
@@ -328,7 +407,7 @@ public class Module5TutorialManager : MonoBehaviour
 
         if (instructionText != null)
             instructionText.text =
-                q.instruction;
+    GetHighlightedInstruction(q);
 
         SpawnFourWords(q);
 
