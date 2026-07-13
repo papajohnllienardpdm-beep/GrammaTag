@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,17 +18,66 @@ public class Module5BoardCleanerManager : MonoBehaviour
     [System.Serializable]
     public class BoardQuestion
     {
+        public int quizID;
+
         public string instruction;
-        public WordChoice[] choices = new WordChoice[4];
+
+        public WordChoice[] choices =
+            new WordChoice[4];
     }
 
+    [System.Serializable]
+    public class WordSlotSettings
+    {
+        public Vector2 anchoredPosition;
+        public Vector2 size = new Vector2(250f, 100f);
+    }
+
+    [System.Serializable]
+    public class QuestionHighlightRule
+    {
+        public int moduleID;
+        public int quizID;
+
+        [TextArea]
+        public string wordToHighlight;
+    }
+
+    [Header("UI - Timer")]
+    public TMP_Text timerText;
+
+    [Header("Game Timer Settings")]
+    public float gameDuration = 300f;
+
+    private float timer;
+    private bool isTimerRunning = false;
+    private bool gameEnded = false;
+
+    private Color defaultTimerColor;
+
     [Header("UI")]
+    public TMP_Text instructionText;
     public TMP_Text progressText;
     public Slider progressBar;
+
+    [Header("Question Highlight")]
+
+    public List<QuestionHighlightRule> questionHighlights =
+    new List<QuestionHighlightRule>();
+
+    public Color highlightColor = Color.yellow;
 
     [Header("Words")]
     public RectTransform wordsHolder;
     public GameObject wordPrefab;
+
+    [Header("Word Slot Layout")]
+    public WordSlotSettings[] wordSlots = new WordSlotSettings[4];
+
+    [Header("Word Text Style")]
+    public TMP_FontAsset wordFontAsset;
+    public float wordFontSize = 55f;
+    public Color wordFontColor = Color.white;
 
     [Header("Eraser")]
     public RectTransform floatingEraser;
@@ -47,9 +97,7 @@ public class Module5BoardCleanerManager : MonoBehaviour
     public string gameSceneName = "Module5_GameScene";
     public string moduleName = "Module 5";
 
-
-    [Header("Audio Optional")]
-    public AudioSource audioSource;
+    [Header("SFX")]
     public AudioClip correctSFX;
     public AudioClip wrongSFX;
 
@@ -58,12 +106,20 @@ public class Module5BoardCleanerManager : MonoBehaviour
 
     private int currentQuestionIndex = 0;
     private int score = 0;
-    private int cleanedWrongWords = 0;
-    private int wrongWordsNeeded = 3;
+    private int cleanedWordsCount = 0;
+    private int wordsToCleanBeforeCheck = 3;
 
     private bool questionEnded = false;
 
+    private int currentModuleID;
+    private int currentQuizID;
+
     void Start()
+    {
+        StartCoroutine(WaitForSystemsThenStart());
+    }
+
+    IEnumerator WaitForSystemsThenStart()
     {
         if (orientationManager != null)
         {
@@ -73,44 +129,105 @@ public class Module5BoardCleanerManager : MonoBehaviour
         if (floatingEraser != null)
             floatingEraser.gameObject.SetActive(false);
 
-        LoadQuestions();
+        while (DatabaseManager.Instance == null || !DatabaseManager.Instance.IsDatabaseReady())
+            yield return null;
+
+        while (HeartSystem.Instance == null)
+            yield return null;
+
+        PlayerPrefs.SetInt("HEART_USED_THIS_SESSION", 0);
+        PlayerPrefs.Save();
+
+        HeartSystem.Instance.ResetSession();
+
+        LoadQuestionsFromDB();
+
+        if (progressBar != null)
+        {
+            progressBar.minValue = 0;
+            progressBar.maxValue = questions.Count;
+            progressBar.value = 0;
+        }
+
+        if (timerText != null)
+        {
+            defaultTimerColor = timerText.color;
+        }
+
+
         ShowQuestion();
+
+        StartTimer();
     }
 
-    void LoadQuestions()
+    void LoadQuestionsFromDB()
     {
         questions.Clear();
 
-        AddQuestion("Keep only the PAST TENSE verb", "walked", true, "walk", false, "walks", false, "will walk", false);
-        AddQuestion("Keep only the PAST TENSE verb", "played", true, "play", false, "plays", false, "will play", false);
-        AddQuestion("Keep only the PAST TENSE verb", "jumped", true, "jump", false, "jumps", false, "will jump", false);
-        AddQuestion("Keep only the PAST TENSE verb", "ran", true, "run", false, "runs", false, "will run", false);
-        AddQuestion("Keep only the PAST TENSE verb", "baked", true, "bake", false, "bakes", false, "will bake", false);
-        AddQuestion("Keep only the PAST TENSE verb", "cleaned", true, "clean", false, "cleans", false, "will clean", false);
-        AddQuestion("Keep only the PAST TENSE verb", "cried", true, "cry", false, "cries", false, "will cry", false);
-        AddQuestion("Keep only the PAST TENSE verb", "studied", true, "study", false, "studies", false, "will study", false);
-        AddQuestion("Keep only the PAST TENSE verb", "danced", true, "dance", false, "dances", false, "will dance", false);
-        AddQuestion("Keep only the PAST TENSE verb", "washed", true, "wash", false, "washes", false, "will wash", false);
+        currentModuleID =
+    PlayerPrefs.GetInt("SelectedModuleID", 1);
+
+        int moduleID = currentModuleID;
+
+        Debug.Log("MODULE 5 SELECTED MODULE ID: " + moduleID);
+
+        var dbQuestions = DatabaseManager.Instance
+            .GetQuestionsByModule(moduleID)
+            .OrderBy(x => Random.value)
+            .Take(10)
+            .ToList();
+
+        foreach (var dbQ in dbQuestions)
+        {
+            BoardQuestion q =new BoardQuestion();
+
+            q.quizID = dbQ.QuizID;
+
+            q.instruction = dbQ.QuestionText;
+            q.choices = new WordChoice[4];
+
+            q.choices[0] = new WordChoice
+            {
+                word = dbQ.ChoiceA,
+                shouldStay = IsSameAnswer(dbQ.ChoiceA, dbQ.CorrectAnswer)
+            };
+
+            q.choices[1] = new WordChoice
+            {
+                word = dbQ.ChoiceB,
+                shouldStay = IsSameAnswer(dbQ.ChoiceB, dbQ.CorrectAnswer)
+            };
+
+            q.choices[2] = new WordChoice
+            {
+                word = dbQ.ChoiceC,
+                shouldStay = IsSameAnswer(dbQ.ChoiceC, dbQ.CorrectAnswer)
+            };
+
+            q.choices[3] = new WordChoice
+            {
+                word = dbQ.ChoiceD,
+                shouldStay = IsSameAnswer(dbQ.ChoiceD, dbQ.CorrectAnswer)
+            };
+
+            questions.Add(q);
+        }
+
+        Debug.Log("MODULE 5 QUESTIONS LOADED: " + questions.Count);
     }
 
-    void AddQuestion(string instruction, string w1, bool s1, string w2, bool s2, string w3, bool s3, string w4, bool s4)
+    bool IsSameAnswer(string choice, string correctAnswer)
     {
-        BoardQuestion q = new BoardQuestion();
-        q.instruction = instruction;
-        q.choices = new WordChoice[4];
+        if (string.IsNullOrWhiteSpace(choice)) return false;
+        if (string.IsNullOrWhiteSpace(correctAnswer)) return false;
 
-        q.choices[0] = new WordChoice { word = w1, shouldStay = s1 };
-        q.choices[1] = new WordChoice { word = w2, shouldStay = s2 };
-        q.choices[2] = new WordChoice { word = w3, shouldStay = s3 };
-        q.choices[3] = new WordChoice { word = w4, shouldStay = s4 };
-
-        questions.Add(q);
+        return choice.Trim().ToLower() == correctAnswer.Trim().ToLower();
     }
 
     void ShowQuestion()
     {
         questionEnded = false;
-        cleanedWrongWords = 0;
+        cleanedWordsCount = 0;
 
         if (eraserController != null)
             eraserController.StopHold();
@@ -123,36 +240,93 @@ public class Module5BoardCleanerManager : MonoBehaviour
             return;
         }
 
+        BoardQuestion current = questions[currentQuestionIndex];
+
+        currentQuizID = current.quizID;
+
+        if (instructionText != null)
+        {
+            instructionText.text = GetHighlightedInstruction(current);
+        }
+
         Debug.Log("QUESTION " + (currentQuestionIndex + 1) + "/" + questions.Count);
         Debug.Log("Current Score: " + score + "/" + questions.Count);
 
-        SpawnFourWords(questions[currentQuestionIndex]);
+        SpawnFourWords(current);
         UpdateProgressUI();
+    }
+
+    string GetHighlightedInstruction(BoardQuestion question)
+    {
+        string text = question.instruction;
+
+        QuestionHighlightRule rule = null;
+
+        foreach (QuestionHighlightRule r in questionHighlights)
+        {
+            if (r.moduleID == currentModuleID &&
+                r.quizID == question.quizID)
+            {
+                rule = r;
+                break;
+            }
+        }
+
+        if (rule == null)
+            return text;
+
+        if (string.IsNullOrWhiteSpace(rule.wordToHighlight))
+            return text;
+
+        int index =
+            text.IndexOf(
+                rule.wordToHighlight,
+                System.StringComparison.OrdinalIgnoreCase);
+
+        if (index < 0)
+            return text;
+
+        string originalWord =
+            text.Substring(
+                index,
+                rule.wordToHighlight.Length);
+
+        string color =
+            ColorUtility.ToHtmlStringRGB(highlightColor);
+
+        string coloredWord =
+            "<color=#" +
+            color +
+            ">" +
+            originalWord +
+            "</color>";
+
+        text =
+            text.Remove(
+                index,
+                originalWord.Length);
+
+        text =
+            text.Insert(
+                index,
+                coloredWord);
+
+        return text;
     }
 
     void SpawnFourWords(BoardQuestion q)
     {
         activeWords.Clear();
 
-        Vector2[] positions =
+        // Default fallback kung hindi pa na-set sa Inspector
+        Vector2[] fallbackPositions =
         {
-        new Vector2(-350f, 120f),
-        new Vector2(350f, 120f),
-        new Vector2(-350f, -120f),
-        new Vector2(350f, -120f)
+        new Vector2(-250f, 90f),
+        new Vector2(250f, 90f),
+        new Vector2(-250f, -90f),
+        new Vector2(250f, -90f)
     };
 
-        // Randomize positions
-        for (int i = 0; i < positions.Length; i++)
-        {
-            int randomIndex = Random.Range(i, positions.Length);
-
-            Vector2 temp = positions[i];
-            positions[i] = positions[randomIndex];
-            positions[randomIndex] = temp;
-        }
-
-        // Randomize choices
         List<WordChoice> shuffledChoices = new List<WordChoice>(q.choices);
 
         for (int i = 0; i < shuffledChoices.Count; i++)
@@ -168,6 +342,22 @@ public class Module5BoardCleanerManager : MonoBehaviour
         {
             GameObject obj = Instantiate(wordPrefab, wordsHolder);
 
+            RectTransform rect = obj.GetComponent<RectTransform>();
+
+            if (rect != null)
+            {
+                if (wordSlots != null && wordSlots.Length > i)
+                {
+                    rect.anchoredPosition = wordSlots[i].anchoredPosition;
+                    rect.sizeDelta = wordSlots[i].size;
+                }
+                else
+                {
+                    rect.anchoredPosition = fallbackPositions[i];
+                    rect.sizeDelta = new Vector2(250f, 100f);
+                }
+            }
+
             Module5WordItem item = obj.GetComponent<Module5WordItem>();
 
             item.Setup(
@@ -176,10 +366,31 @@ public class Module5BoardCleanerManager : MonoBehaviour
                 shuffledChoices[i].shouldStay
             );
 
-            obj.GetComponent<RectTransform>().anchoredPosition = positions[i];
+            ApplyWordTextStyle(item);
 
             activeWords.Add(item);
         }
+    }
+
+    void ApplyWordTextStyle(Module5WordItem item)
+    {
+        if (item == null) return;
+
+        TMP_Text txt = item.wordText;
+
+        if (txt == null)
+            txt = item.GetComponentInChildren<TMP_Text>();
+
+        if (txt == null) return;
+
+        if (wordFontAsset != null)
+            txt.font = wordFontAsset;
+
+        txt.fontSize = wordFontSize;
+        txt.color = wordFontColor;
+
+        txt.enableAutoSizing = false;
+        txt.alignment = TextAlignmentOptions.Center;
     }
 
     public void OnWordCleaned(Module5WordItem item, bool shouldStay)
@@ -192,44 +403,80 @@ public class Module5BoardCleanerManager : MonoBehaviour
         Debug.Log("ERASED WORD: " + erasedWord);
         Debug.Log("Should Stay? " + shouldStay);
 
-        if (shouldStay)
+        item.HideWord();
+
+        cleanedWordsCount++;
+
+        Debug.Log("QUESTION " + questionNumber + ": erased word: " + erasedWord);
+        Debug.Log("Words erased: " + cleanedWordsCount + "/" + wordsToCleanBeforeCheck);
+
+        // Walang sound habang nagbubura pa.
+        // Mag-sound lang kapag may isang word na lang at iche-check na.
+        if (cleanedWordsCount < wordsToCleanBeforeCheck)
         {
-            PlaySound(wrongSFX);
-
-            Debug.Log("QUESTION " + questionNumber + " WRONG!");
-            Debug.Log("Binura mo ang TAMANG word: " + erasedWord);
-            Debug.Log("Score stays: " + score + "/" + questions.Count);
-
-            questionEnded = true;
-
-            item.HideWord();
-
-            if (eraserController != null)
-                eraserController.StopHold();
-
-            currentQuestionIndex++;
-            ShowQuestion();
             return;
         }
 
-        PlaySound(correctSFX);
-        item.HideWord();
+        questionEnded = true;
 
-        cleanedWrongWords++;
+        if (eraserController != null)
+            eraserController.StopHold();
 
-        Debug.Log("QUESTION " + questionNumber + ": nabura ang maling word: " + erasedWord);
-        Debug.Log("Wrong words erased: " + cleanedWrongWords + "/3");
+        Module5WordItem remainingWord = GetRemainingActiveWord();
 
-        if (cleanedWrongWords >= wrongWordsNeeded)
+        if (remainingWord == null)
+        {
+            Debug.LogWarning("No remaining word found.");
+
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(wrongSFX);
+
+            StartCoroutine(NextQuestionDelay());
+            return;
+        }
+
+        string remainingText = remainingWord.GetWord();
+        bool isCorrectRemaining = remainingWord.ShouldStay();
+
+        Debug.Log("REMAINING WORD: " + remainingText);
+        Debug.Log("Is Correct Remaining? " + isCorrectRemaining);
+
+        if (isCorrectRemaining)
         {
             score++;
 
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(correctSFX);
+
             Debug.Log("QUESTION " + questionNumber + " CORRECT!");
             Debug.Log("Score is now: " + score + "/" + questions.Count);
-
-            questionEnded = true;
-            StartCoroutine(NextQuestionDelay());
         }
+        else
+        {
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(wrongSFX);
+
+            Debug.Log("QUESTION " + questionNumber + " WRONG!");
+            Debug.Log("Remaining word is not the correct answer: " + remainingText);
+            Debug.Log("Score stays: " + score + "/" + questions.Count);
+        }
+
+        StartCoroutine(NextQuestionDelay());
+    }
+
+    Module5WordItem GetRemainingActiveWord()
+    {
+        foreach (Module5WordItem item in activeWords)
+        {
+            if (item == null) continue;
+
+            if (item.gameObject.activeSelf)
+            {
+                return item;
+            }
+        }
+
+        return null;
     }
 
     IEnumerator NextQuestionDelay()
@@ -341,6 +588,13 @@ public class Module5BoardCleanerManager : MonoBehaviour
 
     void EndGame()
     {
+        if (gameEnded)
+            return;
+
+        gameEnded = true;
+
+        isTimerRunning = false;
+
         ClearOldWords();
 
         if (eraserController != null)
@@ -355,37 +609,102 @@ public class Module5BoardCleanerManager : MonoBehaviour
         Debug.Log("GAME FINISHED!");
         Debug.Log("FINAL SCORE: " + score + "/" + questions.Count);
 
+        if (HeartSystem.Instance != null)
+        {
+            HeartSystem.Instance.UseHeartSafe(1);
+        }
+
+        int total = questions.Count;
+
+        int stars = 0;
+        int passed = 0;
+
+        if (score >= 9) { stars = 3; passed = 1; }
+        else if (score >= 7) { stars = 2; passed = 1; }
+        else if (score >= 6) { stars = 1; passed = 1; }
+
+        int moduleID = PlayerPrefs.GetInt("SelectedModuleID", 1);
+
+        StartCoroutine(SaveAndGoToResult(moduleID, total, stars, passed));
+    }
+
+    public void StartTimer()
+    {
+        timer = gameDuration;
+        isTimerRunning = true;
+    }
+
+    void Update()
+    {
+        if (!isTimerRunning)
+            return;
+
+        timer -= Time.deltaTime;
+
+        if (timer <= 0)
+        {
+            timer = 0;
+            TimeUp();
+        }
+
+        UpdateTimerUI();
+    }
+
+    void UpdateTimerUI()
+    {
+        int minutes = Mathf.FloorToInt(timer / 60f);
+        int seconds = Mathf.FloorToInt(timer % 60f);
+
+        if (timerText == null)
+            return;
+
+        timerText.text = $"{minutes:00}:{seconds:00}";
+
+        if (timer <= 5f)
+        {
+            timerText.color = Color.red;
+        }
+        else
+        {
+            timerText.color = defaultTimerColor;
+        }
+    }
+
+    void TimeUp()
+    {
+        if (!isTimerRunning)
+            return;
+
+        isTimerRunning = false;
+
+        EndGame();
+    }
+
+    IEnumerator SaveAndGoToResult(int moduleID, int total, int stars, int passed)
+    {
+        int userID = DatabaseManager.Instance.GetUserID();
+
+        int coinsEarned = DatabaseManager.Instance.GiveCoins(moduleID, score, passed);
+
+        DatabaseManager.Instance.SaveProgressBetter(userID, moduleID, score, passed, stars);
+
         PlayerPrefs.SetInt("FinalScore", score);
-        PlayerPrefs.SetInt("TotalQ", questions.Count);
-
+        PlayerPrefs.SetInt("TotalQ", total);
+        PlayerPrefs.SetInt("Stars", stars);
+        PlayerPrefs.SetInt("Passed", passed);
+        PlayerPrefs.SetInt("CoinsEarned", coinsEarned);
         PlayerPrefs.SetString("LastScene", gameSceneName);
-
-        PlayerPrefs.SetInt("CoinsEarned", 0);
-
-        // Passed kapag 6 pataas
-        PlayerPrefs.SetInt("Passed", score >= 6 ? 1 : 0);
-
         PlayerPrefs.Save();
 
-        StartCoroutine(GoToResultScene());
-    }
-    IEnumerator GoToResultScene()
-    {
-        // Ibalik muna sa portrait
         if (orientationManager != null)
         {
             orientationManager.SetPortrait();
         }
 
-        // Bigyan ng konting oras para mag-rotate ang screen
         yield return new WaitForSeconds(0.5f);
 
-        // Saka lang pumunta sa Result Scene
         SceneManager.LoadScene(resultSceneName);
     }
-    void PlaySound(AudioClip clip)
-    {
-        if (audioSource != null && clip != null)
-            audioSource.PlayOneShot(clip);
-    }
+
+    
 }
