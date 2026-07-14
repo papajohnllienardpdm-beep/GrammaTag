@@ -4462,6 +4462,8 @@ MonoBehaviour:
   topLimit: {fileID: 1553115413}
   bottomLimit: {fileID: 503367424}
   cloudTopPoint: {fileID: 1109951584}
+  bottomOffset: 550
+  topOffset: -200
 --- !u!61 &1683025122
 BoxCollider2D:
   m_ObjectHideFlags: 0

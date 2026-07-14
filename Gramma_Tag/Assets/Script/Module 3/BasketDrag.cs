@@ -22,6 +22,9 @@ public class BasketDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
 
     private Vector2 lastLocalPoint;
 
+    public float bottomOffset = 100f;
+    public float topOffset = 100f;
+
     void Start()
     {
         if (gameObject.name.Contains("CH"))
@@ -137,8 +140,8 @@ public class BasketDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
 
         float pivotOffset = rectTransform.pivot.y * rectTransform.rect.height;
 
-        float minY = cloudTopPoint.anchoredPosition.y + pivotOffset;
-        float maxY = halfHeight - basketHalfHeight;
+        float minY = cloudTopPoint.anchoredPosition.y + pivotOffset + bottomOffset;
+        float maxY = halfHeight - basketHalfHeight - topOffset;
 
         Vector2 newPos = rectTransform.anchoredPosition + delta;
 
