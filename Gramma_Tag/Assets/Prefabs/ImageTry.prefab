@@ -2781,11 +2781,11 @@ MonoBehaviour:
     quizID: 332
     choiceKey: ChoiceA
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: d9ca871c34aa71546aafa0276c5685d0, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 332
     choiceKey: ChoiceB
@@ -2808,20 +2808,20 @@ MonoBehaviour:
     quizID: 333
     choiceKey: ChoiceA
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: 93511b28a9eab6c449f86ee0294b5c52, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 333
     choiceKey: ChoiceB
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: 328f9b83cfca218479d7565a95566032, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 333
     choiceKey: ChoiceC
@@ -2835,20 +2835,20 @@ MonoBehaviour:
     quizID: 334
     choiceKey: ChoiceA
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: 7a578d75dba85f4459cb553d6e985a48, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 334
     choiceKey: ChoiceB
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: a8fe690fcd8bc2740a1d21d0bfd2997b, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 334
     choiceKey: ChoiceC
@@ -2871,38 +2871,38 @@ MonoBehaviour:
     quizID: 335
     choiceKey: ChoiceB
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: a9d34b1f67a6db84fa8e0b52b3a29154, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 335
     choiceKey: ChoiceC
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: 8a118e13d1d1e704da2bd481d91132e1, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 336
     choiceKey: ChoiceA
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: aad0a907becd03b4aadcdf9dba097ff2, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 336
     choiceKey: ChoiceB
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: 98edf9f26044c8c4da46e9d9e9ee7e17, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 336
     choiceKey: ChoiceC
@@ -2916,38 +2916,38 @@ MonoBehaviour:
     quizID: 337
     choiceKey: ChoiceA
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: d6a93d3587ebd264fa4e40484a217177, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 337
     choiceKey: ChoiceB
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: 6a331942ee59e844d82c05ab6a604573, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 337
     choiceKey: ChoiceC
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: 7c1a99197f4649245aad60720c37951e, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 338
     choiceKey: ChoiceA
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: 656ab31ae5996174586c7511d906365c, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 338
     choiceKey: ChoiceB
@@ -2979,11 +2979,11 @@ MonoBehaviour:
     quizID: 339
     choiceKey: ChoiceB
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: d79cd37eac217eb4aa04e1684218e531, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 339
     choiceKey: ChoiceC
@@ -2997,11 +2997,11 @@ MonoBehaviour:
     quizID: 340
     choiceKey: ChoiceA
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: e9f3479e5edfa7a4cb80fbcf03f538aa, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 340
     choiceKey: ChoiceB
@@ -3024,20 +3024,20 @@ MonoBehaviour:
     quizID: 341
     choiceKey: ChoiceA
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: a2d9978e739ed224a81f13e710857098, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 341
     choiceKey: ChoiceB
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: 6a855aac47dcffb4895f5f3a5379c2bb, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 341
     choiceKey: ChoiceC
@@ -3051,11 +3051,11 @@ MonoBehaviour:
     quizID: 342
     choiceKey: ChoiceA
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: c6dda2a54293c3040889a777dc46e819, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 342
     choiceKey: 'ChoiceB '
@@ -3069,16 +3069,16 @@ MonoBehaviour:
     quizID: 342
     choiceKey: ChoiceC
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: e10adafa2390f9343acfe15bc580e63d, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 343
     choiceKey: ChoiceA
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
+      sprite: {fileID: 21300000, guid: 60acbf884db4ca74e8cfb9a133c94fca, type: 3}
       cloudSize: {x: 370, y: 310}
       fontSize: 60
       textSize: {x: 600, y: 150}
@@ -3087,11 +3087,11 @@ MonoBehaviour:
     quizID: 343
     choiceKey: ChoiceB
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: 0c0bc5b5df42e7345866ccefcd9e4972, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 343
     choiceKey: ChoiceC
@@ -3105,20 +3105,20 @@ MonoBehaviour:
     quizID: 344
     choiceKey: ChoiceA
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: 5329d2c67046044499785664234f4d0a, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 344
     choiceKey: ChoiceB
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: 572c98d8594366e49baf94100dbb948d, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 344
     choiceKey: ChoiceC
@@ -3141,11 +3141,11 @@ MonoBehaviour:
     quizID: 345
     choiceKey: ChoiceB
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: 1d029a77fa6fbf240bc8ee48581e2878, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 345
     choiceKey: ChoiceC
@@ -3159,16 +3159,16 @@ MonoBehaviour:
     quizID: 346
     choiceKey: ChoiceA
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: 7b734d8364455f04ab41b9f504b3c162, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 346
     choiceKey: ChoiceB
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
+      sprite: {fileID: 21300000, guid: 60acbf884db4ca74e8cfb9a133c94fca, type: 3}
       cloudSize: {x: 370, y: 310}
       fontSize: 60
       textSize: {x: 600, y: 150}
@@ -3177,29 +3177,29 @@ MonoBehaviour:
     quizID: 346
     choiceKey: ChoiceC
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: 1543fd44487aba64d8923f9b7d14e1e1, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 347
     choiceKey: ChoiceA
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: 1f366e07b90408c42ba45737c0284a28, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 347
     choiceKey: ChoiceB
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: 25e1db2e7a8cf1f4da21d32d845b3277, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 347
     choiceKey: ChoiceC
@@ -3222,29 +3222,29 @@ MonoBehaviour:
     quizID: 348
     choiceKey: ChoiceB
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: b32705f213ee54f4ca8fba82af378dc3, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 348
     choiceKey: ChoiceC
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: a865a09425a7a3343a8312836f752a20, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 349
     choiceKey: ChoiceA
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: acc71c1e871b64a4ab86f570f3f7c338, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 349
     choiceKey: ChoiceB
@@ -3267,20 +3267,20 @@ MonoBehaviour:
     quizID: 350
     choiceKey: ChoiceA
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: 74d47f97ce3f17c4a974e371eb0f2d1c, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 350
     choiceKey: ChoiceB
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: 92be59718ec989c47bb3ebd0d91ace5b, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 350
     choiceKey: ChoiceC
@@ -3294,11 +3294,11 @@ MonoBehaviour:
     quizID: 351
     choiceKey: ChoiceA
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: 7e803de7dcfa86544b72b5339a00b64e, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 351
     choiceKey: ChoiceB
@@ -3321,25 +3321,25 @@ MonoBehaviour:
     quizID: 352
     choiceKey: ChoiceA
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: 942d1c828d7f9bf479044d6f1d008967, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 352
     choiceKey: ChoiceB
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: bf69969f2dee1614a9dfc9d49c7631bf, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 352
     choiceKey: ChoiceC
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
+      sprite: {fileID: 21300000, guid: 60acbf884db4ca74e8cfb9a133c94fca, type: 3}
       cloudSize: {x: 370, y: 310}
       fontSize: 60
       textSize: {x: 600, y: 150}
@@ -3348,38 +3348,38 @@ MonoBehaviour:
     quizID: 353
     choiceKey: ChoiceA
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: 02e9dfb542a6d34498e450001abce0e4, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 353
     choiceKey: ChoiceB
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: 1851c26dbb8f76c43a992e800a32188b, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 353
     choiceKey: ChoiceC
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: 56d39c870e0980b4a921f36b9c84062a, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 354
     choiceKey: ChoiceA
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: 6321f05c7f0109145afb320f6335a948, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 354
     choiceKey: ChoiceB
@@ -3402,25 +3402,25 @@ MonoBehaviour:
     quizID: 355
     choiceKey: ChoiceA
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: e1253e6752358054095f62436fddf376, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 355
     choiceKey: ChoiceB
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: 2696650d9b5e00f4ab8cf92ed18da211, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 355
     choiceKey: ChoiceC
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
+      sprite: {fileID: 21300000, guid: 60acbf884db4ca74e8cfb9a133c94fca, type: 3}
       cloudSize: {x: 370, y: 310}
       fontSize: 60
       textSize: {x: 600, y: 150}
@@ -3429,11 +3429,11 @@ MonoBehaviour:
     quizID: 356
     choiceKey: ChoiceA
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: b2e210c0fa2800346adc023b9c910c4b, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 356
     choiceKey: ChoiceB
@@ -3447,11 +3447,11 @@ MonoBehaviour:
     quizID: 356
     choiceKey: ChoiceC
     cloudData:
-      sprite: {fileID: 21300000, guid: c3e957d56994d914291e720f22908aee, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: 9a80bb0803b15d44e979e55b0c9ba765, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 357
     choiceKey: ChoiceA
@@ -3483,29 +3483,29 @@ MonoBehaviour:
     quizID: 358
     choiceKey: ChoiceA
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: 72a712eb3a9f14e4885d66fbed5062df, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 358
     choiceKey: ChoiceB
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: a9b26125b6d5aa341b22e428f70fc0bd, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 358
     choiceKey: ChoiceC
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: 1906382e6ee225c4f97ab23090a36a29, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 359
     choiceKey: ChoiceA
@@ -3537,11 +3537,11 @@ MonoBehaviour:
     quizID: 360
     choiceKey: ChoiceA
     cloudData:
-      sprite: {fileID: 21300000, guid: c3266aa3fb119f04bb58f67905516571, type: 3}
-      cloudSize: {x: 370, y: 310}
+      sprite: {fileID: 21300000, guid: e07cc033dcbfe294ca93e9af04f0f59d, type: 3}
+      cloudSize: {x: 350, y: 250}
       fontSize: 60
       textSize: {x: 600, y: 150}
-      textPosition: {x: 0, y: 3}
+      textPosition: {x: 0, y: -165.1}
   - moduleID: 6
     quizID: 360
     choiceKey: ChoiceB
