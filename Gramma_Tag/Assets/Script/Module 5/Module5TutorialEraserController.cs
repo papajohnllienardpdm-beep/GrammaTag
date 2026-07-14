@@ -76,6 +76,9 @@ public class Module5TutorialEraserController : MonoBehaviour
 
         floatingEraser.gameObject.SetActive(true);
 
+        if (tutorialManager != null)
+            tutorialManager.UpdateTutorialHint(true);
+
         MoveFloatingEraser();
     }
 
@@ -136,5 +139,8 @@ public class Module5TutorialEraserController : MonoBehaviour
 
         if (originalImage != null)
             originalImage.enabled = true;
+
+        if (tutorialManager != null)
+            tutorialManager.UpdateTutorialHint(false);
     }
 }

@@ -44,6 +44,15 @@ public class Module5TutorialManager : MonoBehaviour
     public Slider progressBar;
     public TMP_Text countdownText;
 
+    public TMP_Text tutorialHintText;
+
+    [Header("Tutorial Hint Messages")]
+    [TextArea]
+    public string holdEraserHint = "Touch and hold the eraser.";
+
+    [TextArea]
+    public string eraseWordsHint = "Erase the incorrect words.";
+
     [Header("Words")]
     public RectTransform wordsHolder;
     public GameObject wordPrefab;
@@ -99,6 +108,8 @@ public class Module5TutorialManager : MonoBehaviour
     private int wordsToCleanBeforeCheck = 3;
 
     private bool questionEnded = false;
+
+    
 
     void Start()
     {
@@ -408,6 +419,8 @@ public class Module5TutorialManager : MonoBehaviour
         if (instructionText != null)
             instructionText.text =
     GetHighlightedInstruction(q);
+
+        UpdateTutorialHint(false);
 
         SpawnFourWords(q);
 
@@ -724,6 +737,19 @@ public class Module5TutorialManager : MonoBehaviour
             Destroy(child.gameObject);
     }
 
+    public void UpdateTutorialHint(bool isHolding)
+    {
+        if (tutorialHintText == null)
+            return;
+
+        tutorialHintText.text =
+            isHolding ?
+            eraseWordsHint :
+            holdEraserHint;
+    }
+
+    
+
     void UpdateProgressUI()
     {
         if (progressText != null)
@@ -759,6 +785,9 @@ public class Module5TutorialManager : MonoBehaviour
         yield return StartCoroutine(ShowCountdown());
 
         GoToGame();
+
+        if (tutorialHintText != null)
+            tutorialHintText.text = "";
     }
 
     IEnumerator ShowCountdown()
