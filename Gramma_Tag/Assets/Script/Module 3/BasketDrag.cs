@@ -8,20 +8,19 @@ public class BasketDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
     private Canvas canvas;
     private RectTransform canvasRect;
     private CanvasGroup canvasGroup;
+
     private Vector2 startPos;
     private bool isDragging = false;
 
     public RectTransform gameArea;
-    public RectTransform topLimit; // 👈 progress bar or text
-    public static string activeBasket = "";
+    public RectTransform topLimit;      // 👈 Progress bar or text
+    public RectTransform bottomLimit;   // 👈 Clouds
+    public RectTransform cloudTopPoint;
 
+    public static string activeBasket = "";
     public static bool hasMoved = false;
 
     private Vector2 lastLocalPoint;
-
-    public RectTransform bottomLimit; // 👈 CLOUDS
-
-    public RectTransform cloudTopPoint;
 
     void Start()
     {
@@ -45,9 +44,8 @@ public class BasketDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
         }
 
         startPos = rectTransform.anchoredPosition;
-
-
     }
+
     public void OnBeginDrag(PointerEventData eventData)
     {
         isDragging = true;
@@ -64,34 +62,34 @@ public class BasketDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
     }
 
     public void OnDrag(PointerEventData eventData)
-{
-    if (!isDragging) return;
+    {
+        if (!isDragging)
+            return;
 
-    Vector2 localPoint;
+        Vector2 localPoint;
 
-    RectTransformUtility.ScreenPointToLocalPointInRectangle(
-        canvasRect,
-        eventData.position,
-        eventData.pressEventCamera,
-        out localPoint
-    );
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            canvasRect,
+            eventData.position,
+            eventData.pressEventCamera,
+            out localPoint
+        );
 
-    Vector2 delta = localPoint - lastLocalPoint;
+        Vector2 delta = localPoint - lastLocalPoint;
 
-    MoveBasket(delta);
+        MoveBasket(delta);
 
-    lastLocalPoint = localPoint; // 🔥 IMPORTANT
+        lastLocalPoint = localPoint;
 
-    if (bottomLimit == null || cloudTopPoint == null) return;
-}
-
-
+        // 🔥 IMPORTANT
+        if (bottomLimit == null || cloudTopPoint == null)
+            return;
+    }
 
     public void OnEndDrag(PointerEventData eventData)
     {
         isDragging = false;
         canvasGroup.blocksRaycasts = true;
-
         hasMoved = false;
 
         // ❌ REMOVE THIS
@@ -101,6 +99,7 @@ public class BasketDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
     public void ResetPosition()
     {
         isDragging = false;
+
         StopAllCoroutines();
         StartCoroutine(SmoothReset());
     }
@@ -113,7 +112,9 @@ public class BasketDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
         while (t < 1)
         {
             t += Time.deltaTime * 5f;
+
             rectTransform.anchoredPosition = Vector2.Lerp(start, startPos, t);
+
             yield return null;
         }
 
@@ -135,9 +136,8 @@ public class BasketDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
         bottomLimit.GetWorldCorners(corners);
 
         float pivotOffset = rectTransform.pivot.y * rectTransform.rect.height;
+
         float minY = cloudTopPoint.anchoredPosition.y + pivotOffset;
-
-
         float maxY = halfHeight - basketHalfHeight;
 
         Vector2 newPos = rectTransform.anchoredPosition + delta;
@@ -147,7 +147,7 @@ public class BasketDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
 
         rectTransform.anchoredPosition = new Vector2(clampedX, clampedY);
 
-        // ✅ anti-stuck fix
+        // ✅ Anti-stuck fix
         if (clampedX > minX && clampedX < maxX)
             lastLocalPoint.x += delta.x;
 
@@ -157,8 +157,6 @@ public class BasketDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
 
     void Update()
     {
-        
-    }
 
-    
+    }
 }
