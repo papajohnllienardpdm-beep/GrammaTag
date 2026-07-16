@@ -572,11 +572,8 @@ public class Module5BoardCleanerManager : MonoBehaviour
 
     void UpdateProgressUI()
     {
-        int display = currentQuestionIndex + 1;
-        if (display > questions.Count) display = questions.Count;
-
         if (progressText != null)
-            progressText.text = "Progress " + display + "/" + questions.Count;
+            progressText.text = "Progress " + currentQuestionIndex + "/" + questions.Count;
 
         if (progressBar != null)
         {
