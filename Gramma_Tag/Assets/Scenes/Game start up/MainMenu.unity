@@ -30181,8 +30181,8 @@ MonoBehaviour:
   slider: {fileID: 453033429}
   timeText: {fileID: 1578097617}
   playButtonImage: {fileID: 1019137290}
-  playIcon: {fileID: 21300000, guid: a34b89f4376f46643a4c6680c4c23c62, type: 3}
-  pauseIcon: {fileID: 21300000, guid: b9702fdbee0daf649b89934cc1ca508c, type: 3}
+  playIcon: {fileID: 21300000, guid: b9702fdbee0daf649b89934cc1ca508c, type: 3}
+  pauseIcon: {fileID: 21300000, guid: a34b89f4376f46643a4c6680c4c23c62, type: 3}
 --- !u!114 &516238240
 MonoBehaviour:
   m_ObjectHideFlags: 0

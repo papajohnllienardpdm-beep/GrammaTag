@@ -112,7 +112,13 @@ public class VideoManager : MonoBehaviour
     void OnPrepared(VideoPlayer vp)
     {
         vp.prepareCompleted -= OnPrepared;
+
         vp.Play();
+
+        if (videoControls != null)
+        {
+            videoControls.SetPlayingState(true);
+        }
     }
 
     void OnVideoFinished(VideoPlayer vp)
@@ -223,6 +229,11 @@ public class VideoManager : MonoBehaviour
 
         // ⏹ stop video
         videoPlayer.Stop();
+
+        if (videoControls != null)
+        {
+            videoControls.SetPlayingState(false);
+        }
 
         // 🔊 restore audio
         if (AudioManager.Instance != null)

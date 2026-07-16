@@ -21,8 +21,11 @@ public class VideoControls : MonoBehaviour
 
     private bool canSkip = true;
 
+    private bool isPaused = false;
+
     void Start()
     {
+        isPaused = false;
         UpdateIcon();
     }
 
@@ -53,31 +56,40 @@ public class VideoControls : MonoBehaviour
 
     public void PlayPause()
     {
-        if (videoPlayer.isPlaying)
-            videoPlayer.Pause();
-        else
+        if (isPaused)
+        {
             videoPlayer.Play();
+            isPaused = false;
+        }
+        else
+        {
+            videoPlayer.Pause();
+            isPaused = true;
+        }
 
         UpdateIcon();
     }
 
     void UpdateIcon()
     {
-        if (videoPlayer.isPlaying)
-            playButtonImage.sprite = pauseIcon;
-        else
+        if (isPaused)
             playButtonImage.sprite = playIcon;
+        else
+            playButtonImage.sprite = pauseIcon;
     }
 
     public void OnSliderDown()
     {
-        // ❌ FIRST WATCH = NO SKIP
         if (!canSkip)
             return;
 
         isDragging = true;
 
         videoPlayer.Pause();
+
+        isPaused = true;
+
+        UpdateIcon();
     }
 
     public void Seek()
@@ -95,7 +107,6 @@ public class VideoControls : MonoBehaviour
 
     public void OnSliderRelease()
     {
-        // ❌ FIRST WATCH = NO SKIP
         if (!canSkip)
             return;
 
@@ -105,6 +116,8 @@ public class VideoControls : MonoBehaviour
             slider.value * videoPlayer.length;
 
         videoPlayer.Play();
+
+        isPaused = false;
 
         UpdateIcon();
     }
@@ -118,5 +131,11 @@ public class VideoControls : MonoBehaviour
         {
             slider.interactable = value;
         }
+    }
+
+    public void SetPlayingState(bool playing)
+    {
+        isPaused = !playing;
+        UpdateIcon();
     }
 }
