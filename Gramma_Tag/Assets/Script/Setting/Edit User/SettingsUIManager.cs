@@ -9,7 +9,7 @@ public class SettingsUIManager : MonoBehaviour
     [Header("Inputs")]
     public TMP_InputField firstNameInput;
     public TMP_InputField lastNameInput;
-    public TMP_Dropdown ageDropdown;
+    public TMP_InputField ageInput;
     public TMP_InputField genderInput;
 
     [Header("Button")]
@@ -50,14 +50,8 @@ public class SettingsUIManager : MonoBehaviour
         genderInput.text = user.Gender;
 
         // 🔥 AGE DROPDOWN
-        for (int i = 0; i < ageDropdown.options.Count; i++)
-        {
-            if (ageDropdown.options[i].text == user.Age.ToString())
-            {
-                ageDropdown.value = i;
-                break;
-            }
-        }
+        // 🔥 AGE INPUT
+        ageInput.text = user.Age.ToString();
 
         // 🔥 UPDATE CHARACTER IMAGE
         SetCharacterImage(user.Gender);
@@ -67,7 +61,7 @@ public class SettingsUIManager : MonoBehaviour
     {
         firstNameInput.interactable = enable;
         lastNameInput.interactable = enable;
-        ageDropdown.interactable = enable;
+        ageInput.interactable = enable;
 
         // ❌ bawal i-edit gender
         genderInput.interactable = false;
@@ -90,9 +84,17 @@ public class SettingsUIManager : MonoBehaviour
 
     void SaveUserData()
     {
-        string first = firstNameInput.text;
-        string last = lastNameInput.text;
-        int age = int.Parse(ageDropdown.options[ageDropdown.value].text);
+        string first = firstNameInput.text.Trim();
+        string last = lastNameInput.text.Trim();
+
+        int age;
+
+        if (!int.TryParse(ageInput.text.Trim(), out age))
+        {
+            Debug.LogWarning("Invalid age.");
+            return;
+        }
+
         string gender = genderInput.text;
 
         DatabaseManager.Instance.InsertUser(first, last, age, gender);
@@ -109,7 +111,6 @@ public class SettingsUIManager : MonoBehaviour
         {
             menu.LoadPlayerData();
         }
-
     }
 
     void SetCharacterImage(string gender)
