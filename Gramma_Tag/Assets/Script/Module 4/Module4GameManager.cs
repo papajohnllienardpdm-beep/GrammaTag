@@ -39,6 +39,10 @@ public class Module4GameManager : MonoBehaviour
     public AudioClip correctSFX;
     public AudioClip wrongSFX;
 
+    [Header("Feedback Colors")]
+    public Color correctFeedbackColor = new Color(0f, 0.65f, 0f);
+    public Color wrongFeedbackColor = new Color(0.85f, 0f, 0f);
+
     private List<Module4Question> questions = new List<Module4Question>();
     private int totalQuestions = 10;
 
@@ -361,14 +365,16 @@ public class Module4GameManager : MonoBehaviour
 
     string GetColoredFeedback(string feedback, string correctAnswer, bool isCorrect)
     {
-        string color = isCorrect ? "green" : "red";
+        Color color = isCorrect ? correctFeedbackColor : wrongFeedbackColor;
+
+        string hexColor = ColorUtility.ToHtmlStringRGB(color);
 
         string pattern = @"\b" + Regex.Escape(correctAnswer) + @"\b";
 
         return Regex.Replace(
             feedback,
             pattern,
-            "<color=" + color + ">$0</color>",
+            "<color=#" + hexColor + ">$0</color>",
             RegexOptions.IgnoreCase
         );
     }

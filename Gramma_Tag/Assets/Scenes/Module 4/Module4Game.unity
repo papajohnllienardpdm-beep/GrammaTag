@@ -170,6 +170,8 @@ MonoBehaviour:
   progressBar: {fileID: 1102148378}
   correctSFX: {fileID: 8300000, guid: f63bfcbadf943d9499de87f0132ee881, type: 3}
   wrongSFX: {fileID: 8300000, guid: a7080d4a15658834183ab5a9b7bf81c2, type: 3}
+  correctFeedbackColor: {r: 0, g: 0.6313726, b: 0.20784314, a: 1}
+  wrongFeedbackColor: {r: 0.85, g: 0, b: 0, a: 1}
   nextDelay: 1.5
   getReadyText: {fileID: 249683244}
   gameUI: {fileID: 1977315076}

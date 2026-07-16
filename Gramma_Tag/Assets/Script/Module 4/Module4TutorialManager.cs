@@ -22,6 +22,10 @@ public class Module4TutorialManager : MonoBehaviour
     public AudioClip correctSFX;
     public AudioClip wrongSFX;
 
+    [Header("Feedback Colors")]
+    public Color correctFeedbackColor = new Color(0f, 0.65f, 0f);
+    public Color wrongFeedbackColor = new Color(0.85f, 0f, 0f);
+
     private int correctStreak = 0;
     private bool answered = false;
 
@@ -231,14 +235,16 @@ public class Module4TutorialManager : MonoBehaviour
 
     string GetColoredFeedback(string feedback, string correctAnswer, bool isCorrect)
     {
-        string color = isCorrect ? "green" : "red";
+        Color color = isCorrect ? correctFeedbackColor : wrongFeedbackColor;
+
+        string hexColor = ColorUtility.ToHtmlStringRGB(color);
 
         string pattern = @"\b" + Regex.Escape(correctAnswer) + @"\b";
 
         return Regex.Replace(
             feedback,
             pattern,
-            "<color=" + color + ">$0</color>",
+            "<color=#" + hexColor + ">$0</color>",
             RegexOptions.IgnoreCase
         );
     }
