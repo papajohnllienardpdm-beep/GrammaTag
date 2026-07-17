@@ -1,26 +1,19 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+using System.Linq;
 using TMPro;
+using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using System.Linq;
 
 public class Module7GameManager : MonoBehaviour
 {
-    [System.Serializable]
-    public class Question
-    {
-        public string sentence;
-        public bool isFact;
-        public string explanation;
 
-        public Question(string sentence, bool isFact, string explanation)
-        {
-            this.sentence = sentence;
-            this.isFact = isFact;
-            this.explanation = explanation;
-        }
-    }
+
+    [Header("Start Countdown")]
+    public GameObject getReadyText;
+    public GameObject gameUI;
 
     [Header("UI")]
     public TMP_Text sentenceText;
@@ -48,26 +41,30 @@ public class Module7GameManager : MonoBehaviour
     public TMP_Text timerText;
     public float totalTime = 300f;
 
-    [Header("SFX Optional")]
+    [Header("SFX")]
     public AudioClip correctSFX;
     public AudioClip wrongSFX;
-    public AudioSource audioSource;
 
     [Header("Game Settings")]
     public float nextDelay = 3f;
     public float flipDuration = 0.6f;
     public float liftHeight = 40f;
 
-    private List<Question> questions = new List<Question>();
+    private List<Module7Question> questions = new List<Module7Question>();
+
+    private int totalQuestions = 10;
     private int currentIndex = 0;
     private int score = 0;
     private bool answered = false;
     private bool isGameOver = false;
 
     private float remainingTime;
+    private bool isTimerRunning = false;
 
     private Vector3 normalFactScale;
     private Vector3 normalOpinionScale;
+
+
 
     void Start()
     {
@@ -91,67 +88,117 @@ public class Module7GameManager : MonoBehaviour
             settingsButton.onClick.AddListener(OpenSettings);
         }
 
-        LoadStaticQuestions();
-        ShuffleQuestions();
+        StartCoroutine(WaitForDB());
+    }
 
-        if (progressBar != null)
-            progressBar.maxValue = questions.Count;
+    IEnumerator WaitForDB()
+    {
+        while (DatabaseManager.Instance == null ||
+               !DatabaseManager.Instance.IsDatabaseReady())
+            yield return null;
+
+        while (HeartSystem.Instance == null)
+            yield return null;
+
+        PlayerPrefs.SetInt("HEART_USED_THIS_SESSION", 0);
+        PlayerPrefs.Save();
+
+        HeartSystem.Instance.ResetSession();
+
+        LoadQuestionsFromDB();
+
+        progressBar.maxValue = totalQuestions;
+        progressBar.value = 0;
+
+        remainingTime = totalTime;
+
+        if (getReadyText != null)
+        {
+            gameUI.SetActive(false);
+            StartCoroutine(StartGameWithDelay());
+        }
+        else
+        {
+            gameUI.SetActive(true);
+            LoadQuestion();
+        }
+    }
+
+    IEnumerator StartGameWithDelay()
+    {
+        getReadyText.SetActive(true);
+
+        TMP_Text txt =
+            getReadyText.GetComponent<TMP_Text>();
+
+        txt.text = "Let's Begin!";
+        yield return new WaitForSeconds(1);
+
+        txt.text = "3";
+        yield return new WaitForSeconds(1);
+
+        txt.text = "2";
+        yield return new WaitForSeconds(1);
+
+        txt.text = "1";
+        yield return new WaitForSeconds(1);
+
+        txt.text = "GO!";
+        yield return new WaitForSeconds(0.8f);
+
+        getReadyText.SetActive(false);
+
+        gameUI.SetActive(true);
+
+        // 🔥 START TIMER AFTER GO!
+        StartTimer();
 
         LoadQuestion();
     }
 
-    void Update()
+    void LoadQuestionsFromDB()
     {
-        if (!isGameOver)
-            UpdateTimer();
-    }
+        questions.Clear();
 
-    void LoadStaticQuestions()
-    {
-        questions = new List<Question>()
+        int moduleID =
+            PlayerPrefs.GetInt("SelectedModuleID", 7);
+
+        var dbQuestions =
+            DatabaseManager.Instance
+            .GetQuestionsByModule(moduleID)
+            .OrderBy(x => Random.value)
+            .Take(totalQuestions)
+            .ToList();
+
+        foreach (var q in dbQuestions)
         {
-            new Question("The sun rises in the east.", true,
-                "This is a fact because it can be proven true."),
-
-            new Question("Blue is my favorite color.", false,
-                "This is an opinion because it tells a personal feeling or preference."),
-
-            new Question("A dog is an animal.", true,
-                "This is a fact because a dog can be proven to be an animal."),
-
-            new Question("I think apples are the best fruit.", false,
-                "This is an opinion because it uses the signal words 'I think'."),
-
-            new Question("Fish live in water.", true,
-                "This is a fact because it can be checked and proven."),
-
-            new Question("Basketball is more fun than volleyball.", false,
-                "This is an opinion because people may have different choices."),
-
-            new Question("Plants need sunlight to grow.", true,
-                "This is a fact because plants need sunlight for growth."),
-
-            new Question("In my opinion, reading books is boring.", false,
-                "This is an opinion because it uses the signal words 'in my opinion'."),
-
-            new Question("Water freezes when it is very cold.", true,
-                "This is a fact because water can freeze when the temperature is low enough."),
-
-            new Question("Cats are the cutest animals.", false,
-                "This is an opinion because people may not all agree with it.")
-        };
-    }
-
-    void ShuffleQuestions()
-    {
-        for (int i = 0; i < questions.Count; i++)
-        {
-            Question temp = questions[i];
-            int randomIndex = Random.Range(i, questions.Count);
-            questions[i] = questions[randomIndex];
-            questions[randomIndex] = temp;
+            questions.Add(
+                new Module7Question(
+                    q.QuestionText,
+                    q.CorrectAnswer,
+                    q.Feedback
+                ));
         }
     }
+
+    public void StartTimer()
+    {
+        remainingTime = totalTime;
+        isTimerRunning = true;
+    }
+
+
+    void Update()
+    {
+        if (!isTimerRunning || isGameOver)
+            return;
+
+        UpdateTimer();
+    }
+
+
+
+
 
     void LoadQuestion()
     {
@@ -162,14 +209,14 @@ public class Module7GameManager : MonoBehaviour
         factButton.interactable = true;
         opinionButton.interactable = true;
 
-        Question currentQuestion = questions[currentIndex];
+        Module7Question currentQuestion = questions[currentIndex];
         sentenceText.text = currentQuestion.sentence;
 
         if (progressText != null)
-            progressText.text = "Progress " + (currentIndex + 1) + "/" + questions.Count;
+            progressText.text = "Progress " + currentIndex + "/" + questions.Count;
 
         if (progressBar != null)
-            progressBar.value = currentIndex + 1;
+            progressBar.value = currentIndex;
     }
 
     void Answer(bool playerAnswerIsFact)
@@ -181,8 +228,10 @@ public class Module7GameManager : MonoBehaviour
         factButton.interactable = false;
         opinionButton.interactable = false;
 
-        Question currentQuestion = questions[currentIndex];
-        bool isCorrect = playerAnswerIsFact == currentQuestion.isFact;
+        Module7Question currentQuestion = questions[currentIndex];
+        bool correctIsFact = currentQuestion.correctAnswer.ToLower() == "fact";
+
+        bool isCorrect = playerAnswerIsFact == correctIsFact;
 
         Button selectedButton = playerAnswerIsFact ? factButton : opinionButton;
         Image selectedFront = playerAnswerIsFact ? factFrontImage : opinionFrontImage;
@@ -195,7 +244,7 @@ public class Module7GameManager : MonoBehaviour
             selectedBack,
             selectedRevealText,
             isCorrect,
-            currentQuestion.explanation
+            currentQuestion.feedback
         ));
     }
 
@@ -205,7 +254,7 @@ public class Module7GameManager : MonoBehaviour
     Image backImage,
     TMP_Text revealText,
     bool isCorrect,
-    string explanation)
+    string feedback)
     {
         RectTransform rt = selectedButton.GetComponent<RectTransform>();
 
@@ -259,7 +308,7 @@ public class Module7GameManager : MonoBehaviour
 
                     revealText.text =
                         (isCorrect ? "CORRECT!\n\n" : "WRONG!\n\n")
-                        + explanation;
+                        + feedback;
 
                     revealText.rectTransform.localRotation =
                         Quaternion.Euler(0f, 180f, 0f);
@@ -287,13 +336,13 @@ public class Module7GameManager : MonoBehaviour
         {
             score++;
 
-            if (audioSource != null && correctSFX != null)
-                audioSource.PlayOneShot(correctSFX);
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(correctSFX);
         }
         else
         {
-            if (audioSource != null && wrongSFX != null)
-                audioSource.PlayOneShot(wrongSFX);
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(wrongSFX);
         }
 
         yield return new WaitForSeconds(nextDelay);
@@ -355,10 +404,20 @@ public class Module7GameManager : MonoBehaviour
 
         currentIndex++;
 
+        if (progressText != null)
+            progressText.text = "Progress " + currentIndex + "/" + questions.Count;
+
+        if (progressBar != null)
+            progressBar.value = currentIndex;
+
         if (currentIndex >= questions.Count)
+        {
             GoToResultScene();
+        }
         else
+        {
             LoadQuestion();
+        }
     }
 
 
@@ -430,22 +489,91 @@ public class Module7GameManager : MonoBehaviour
         if (isGameOver) return;
 
         isGameOver = true;
+        isTimerRunning = false;
+
+        if (HeartSystem.Instance != null)
+        {
+            HeartSystem.Instance.UseHeartSafe(1);
+        }
 
         int total = questions.Count;
-        int passingScore = 8;
-        int passed = score >= passingScore ? 1 : 0;
-        int coinsEarned = passed == 1 ? 200 : 50;
+
+        int stars = 0;
+        int passed = 0;
+
+        if (score >= 9)
+        {
+            stars = 3;
+            passed = 1;
+        }
+        else if (score >= 7)
+        {
+            stars = 2;
+            passed = 1;
+        }
+        else if (score >= 6)
+        {
+            stars = 1;
+            passed = 1;
+        }
+
+        int moduleID =
+            PlayerPrefs.GetInt("SelectedModuleID", 7);
+
+        StartCoroutine(
+            SaveAndExit(
+                moduleID,
+                total,
+                stars,
+                passed
+            ));
+    }
+
+    IEnumerator SaveAndExit(
+    int moduleID,
+    int total,
+    int stars,
+    int passed)
+    {
+        int coinsEarned =
+            DatabaseManager.Instance.GiveCoins(
+                moduleID,
+                score,
+                passed);
+
+        DatabaseManager.Instance.SaveProgressBetter(
+            1,
+            moduleID,
+            score,
+            passed,
+            stars);
 
         PlayerPrefs.SetInt("FinalScore", score);
         PlayerPrefs.SetInt("TotalQ", total);
-        PlayerPrefs.SetInt("CoinsEarned", coinsEarned);
+        PlayerPrefs.SetInt("Stars", stars);
         PlayerPrefs.SetInt("Passed", passed);
-
-        PlayerPrefs.SetInt("SelectedModuleID", 7);
-        PlayerPrefs.SetString("LastScene", SceneManager.GetActiveScene().name);
-
-        PlayerPrefs.Save();
+        PlayerPrefs.SetInt("CoinsEarned", coinsEarned);
 
         SceneManager.LoadScene("ResultScene");
+
+        yield return null;
+    }
+}
+
+[System.Serializable]
+public class Module7Question
+{
+    public string sentence;
+    public string correctAnswer;
+    public string feedback;
+
+    public Module7Question(
+        string sentence,
+        string correctAnswer,
+        string feedback)
+    {
+        this.sentence = sentence;
+        this.correctAnswer = correctAnswer;
+        this.feedback = feedback;
     }
 }
