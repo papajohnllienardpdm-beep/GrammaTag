@@ -53,7 +53,8 @@ public class Module7TutorialManager : MonoBehaviour
 
     [Header("Settings")]
     public float nextDelay = 3f;
-    public float flipSpeed = 0.15f;
+    public float flipDuration = 0.6f;
+    public float liftHeight = 40f;
     public float readyDelay = 1.2f;
     public string mainGameSceneName = "Module7_GameScene";
 
@@ -196,23 +197,109 @@ public class Module7TutorialManager : MonoBehaviour
         ));
     }
 
-    IEnumerator FlipCard(Button selectedButton, Image frontImage, Image backImage, TMP_Text revealText, bool isCorrect, string explanation)
+    IEnumerator FlipCard(
+    Button selectedButton,
+    Image frontImage,
+    Image backImage,
+    TMP_Text revealText,
+    bool isCorrect,
+    string explanation)
     {
-        Vector3 originalScale = selectedButton.transform.localScale;
+        RectTransform rt = selectedButton.GetComponent<RectTransform>();
 
-        yield return FlipToThin(selectedButton, originalScale);
+        Vector3 startPos = rt.localPosition;
+        Vector3 startScale = rt.localScale;
+        Quaternion startRot = rt.localRotation;
 
-        if (frontImage != null)
-            frontImage.gameObject.SetActive(false);
-
-        if (backImage != null)
-            backImage.gameObject.SetActive(true);
+        // Save original rotation ng reveal text
+        Quaternion revealTextOriginalRotation = Quaternion.identity;
 
         if (revealText != null)
+            revealTextOriginalRotation = revealText.rectTransform.localRotation;
+
+        float timer = 0f;
+        bool changedFace = false;
+
+        // =====================================================
+        // FIRST FLIP: FRONT -> BACK
+        // =====================================================
+
+        while (timer < flipDuration)
         {
-            revealText.gameObject.SetActive(true);
-            revealText.text = (isCorrect ? "CORRECT!\n\n" : "WRONG!\n\n") + explanation;
+            timer += Time.deltaTime;
+
+            float t = Mathf.Clamp01(timer / flipDuration);
+
+            // Aangat muna sa gitna ng animation,
+            // tapos bababa ulit
+            float height = Mathf.Sin(t * Mathf.PI) * liftHeight;
+
+            rt.localPosition = startPos + Vector3.up * height;
+
+            // Slight zoom habang umiikot
+            rt.localScale = Vector3.Lerp(
+                startScale,
+                startScale * 1.08f,
+                Mathf.Sin(t * Mathf.PI)
+            );
+
+            // Rotate from 0 to 180 degrees
+            float angle = Mathf.Lerp(0f, 180f, t);
+
+            rt.localRotation = Quaternion.Euler(
+                0f,
+                angle,
+                0f
+            );
+
+            // Paglagpas ng 90 degrees,
+            // palitan ang front papuntang back
+            if (!changedFace && angle >= 90f)
+            {
+                changedFace = true;
+
+                if (frontImage != null)
+                    frontImage.gameObject.SetActive(false);
+
+                if (backImage != null)
+                    backImage.gameObject.SetActive(true);
+
+                if (revealText != null)
+                {
+                    revealText.gameObject.SetActive(true);
+
+                    revealText.text =
+                        (isCorrect ? "CORRECT!\n\n" : "WRONG!\n\n")
+                        + explanation;
+
+                    // IMPORTANT:
+                    // Dahil ang parent card ay matatapos sa Y = 180,
+                    // i-counter rotate natin ang child text ng 180
+                    // para hindi ito maging mirrored.
+                    revealText.rectTransform.localRotation =
+                        Quaternion.Euler(0f, 180f, 0f);
+                }
+            }
+
+            yield return null;
         }
+
+        // Siguraduhin exact ang final transform
+        rt.localRotation = Quaternion.Euler(0f, 180f, 0f);
+        rt.localScale = startScale;
+        rt.localPosition = startPos;
+
+        // Siguraduhin na readable ang text
+        if (revealText != null)
+        {
+            revealText.rectTransform.localRotation =
+                Quaternion.Euler(0f, 180f, 0f);
+        }
+
+        // =====================================================
+        // EXISTING GAME LOGIC
+        // HINDI BINAGO
+        // =====================================================
 
         if (isCorrect)
         {
@@ -231,8 +318,6 @@ public class Module7TutorialManager : MonoBehaviour
 
         UpdateProgress();
 
-        yield return FlipToFull(selectedButton, originalScale);
-
         yield return new WaitForSeconds(nextDelay);
 
         if (correctStreak >= 3)
@@ -241,18 +326,83 @@ public class Module7TutorialManager : MonoBehaviour
             yield break;
         }
 
-        yield return FlipToThin(selectedButton, originalScale);
+        // =====================================================
+        // SECOND FLIP: BACK -> FRONT
+        // =====================================================
 
-        if (backImage != null)
-            backImage.gameObject.SetActive(false);
+        timer = 0f;
+        changedFace = false;
+
+        while (timer < flipDuration)
+        {
+            timer += Time.deltaTime;
+
+            float t = Mathf.Clamp01(timer / flipDuration);
+
+            // Aangat ulit habang bumabalik
+            float height = Mathf.Sin(t * Mathf.PI) * liftHeight;
+
+            rt.localPosition = startPos + Vector3.up * height;
+
+            // Slight zoom
+            rt.localScale = Vector3.Lerp(
+                startScale,
+                startScale * 1.08f,
+                Mathf.Sin(t * Mathf.PI)
+            );
+
+            // Continue rotation from 180 to 360
+            float angle = Mathf.Lerp(180f, 360f, t);
+
+            rt.localRotation = Quaternion.Euler(
+                0f,
+                angle,
+                0f
+            );
+
+            // Kapag nasa 270 degrees na,
+            // ibalik ang front
+            if (!changedFace && angle >= 270f)
+            {
+                changedFace = true;
+
+                if (backImage != null)
+                    backImage.gameObject.SetActive(false);
+
+                if (revealText != null)
+                {
+                    revealText.gameObject.SetActive(false);
+
+                    // Ibalik original rotation ng text
+                    revealText.rectTransform.localRotation =
+                        revealTextOriginalRotation;
+                }
+
+                if (frontImage != null)
+                    frontImage.gameObject.SetActive(true);
+            }
+
+            yield return null;
+        }
+
+        // =====================================================
+        // RESET TRANSFORM
+        // =====================================================
+
+        rt.localRotation = startRot;
+        rt.localScale = startScale;
+        rt.localPosition = startPos;
 
         if (revealText != null)
-            revealText.gameObject.SetActive(false);
+        {
+            revealText.rectTransform.localRotation =
+                revealTextOriginalRotation;
+        }
 
-        if (frontImage != null)
-            frontImage.gameObject.SetActive(true);
-
-        yield return FlipToFull(selectedButton, originalScale);
+        // =====================================================
+        // NEXT QUESTION
+        // EXISTING LOGIC
+        // =====================================================
 
         currentIndex++;
 
@@ -291,40 +441,17 @@ public class Module7TutorialManager : MonoBehaviour
         SceneManager.LoadScene(mainGameSceneName);
     }
 
-    IEnumerator FlipToThin(Button selectedButton, Vector3 originalScale)
-    {
-        float timer = 0f;
 
-        while (timer < flipSpeed)
-        {
-            timer += Time.deltaTime;
-            float xScale = Mathf.Lerp(originalScale.x, 0.02f, timer / flipSpeed);
-            selectedButton.transform.localScale = new Vector3(xScale, originalScale.y, originalScale.z);
-            yield return null;
-        }
 
-        selectedButton.transform.localScale = new Vector3(0.02f, originalScale.y, originalScale.z);
-    }
-
-    IEnumerator FlipToFull(Button selectedButton, Vector3 originalScale)
-    {
-        float timer = 0f;
-
-        while (timer < flipSpeed)
-        {
-            timer += Time.deltaTime;
-            float xScale = Mathf.Lerp(0.02f, originalScale.x, timer / flipSpeed);
-            selectedButton.transform.localScale = new Vector3(xScale, originalScale.y, originalScale.z);
-            yield return null;
-        }
-
-        selectedButton.transform.localScale = originalScale;
-    }
 
     void ResetCards()
     {
         factButton.transform.localScale = normalFactScale;
         opinionButton.transform.localScale = normalOpinionScale;
+
+        // Reset card rotations
+        factButton.transform.localRotation = Quaternion.identity;
+        opinionButton.transform.localRotation = Quaternion.identity;
 
         if (factFrontImage != null)
             factFrontImage.gameObject.SetActive(true);
@@ -339,10 +466,22 @@ public class Module7TutorialManager : MonoBehaviour
             opinionBackImage.gameObject.SetActive(false);
 
         if (factRevealText != null)
+        {
             factRevealText.gameObject.SetActive(false);
 
+            // Reset text rotation
+            factRevealText.rectTransform.localRotation =
+                Quaternion.identity;
+        }
+
         if (opinionRevealText != null)
+        {
             opinionRevealText.gameObject.SetActive(false);
+
+            // Reset text rotation
+            opinionRevealText.rectTransform.localRotation =
+                Quaternion.identity;
+        }
     }
 
     void UpdateProgress()

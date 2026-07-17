@@ -55,7 +55,8 @@ public class Module7GameManager : MonoBehaviour
 
     [Header("Game Settings")]
     public float nextDelay = 3f;
-    public float flipSpeed = 0.15f;
+    public float flipDuration = 0.6f;
+    public float liftHeight = 40f;
 
     private List<Question> questions = new List<Question>();
     private int currentIndex = 0;
@@ -198,23 +199,89 @@ public class Module7GameManager : MonoBehaviour
         ));
     }
 
-    IEnumerator FlipCard(Button selectedButton, Image frontImage, Image backImage, TMP_Text revealText, bool isCorrect, string explanation)
+    IEnumerator FlipCard(
+    Button selectedButton,
+    Image frontImage,
+    Image backImage,
+    TMP_Text revealText,
+    bool isCorrect,
+    string explanation)
     {
-        Vector3 originalScale = selectedButton.transform.localScale;
+        RectTransform rt = selectedButton.GetComponent<RectTransform>();
 
-        yield return FlipToThin(selectedButton, originalScale);
+        Vector3 startPos = rt.localPosition;
+        Vector3 startScale = rt.localScale;
+        Quaternion startRot = rt.localRotation;
 
-        if (frontImage != null)
-            frontImage.gameObject.SetActive(false);
+        Quaternion revealTextOriginalRotation = Quaternion.identity;
 
-        if (backImage != null)
-            backImage.gameObject.SetActive(true);
+        if (revealText != null)
+            revealTextOriginalRotation = revealText.rectTransform.localRotation;
+
+        float timer = 0f;
+        bool changedFace = false;
+
+        while (timer < flipDuration)
+        {
+            timer += Time.deltaTime;
+
+            float t = Mathf.Clamp01(timer / flipDuration);
+
+            float height = Mathf.Sin(t * Mathf.PI) * liftHeight;
+
+            rt.localPosition = startPos + Vector3.up * height;
+
+            rt.localScale = Vector3.Lerp(
+                startScale,
+                startScale * 1.08f,
+                Mathf.Sin(t * Mathf.PI));
+
+            float angle = Mathf.Lerp(0f, 180f, t);
+
+            rt.localRotation = Quaternion.Euler(
+                0f,
+                angle,
+                0f);
+
+            if (!changedFace && angle >= 90f)
+            {
+                changedFace = true;
+
+                if (frontImage != null)
+                    frontImage.gameObject.SetActive(false);
+
+                if (backImage != null)
+                    backImage.gameObject.SetActive(true);
+
+                if (revealText != null)
+                {
+                    revealText.gameObject.SetActive(true);
+
+                    revealText.text =
+                        (isCorrect ? "CORRECT!\n\n" : "WRONG!\n\n")
+                        + explanation;
+
+                    revealText.rectTransform.localRotation =
+                        Quaternion.Euler(0f, 180f, 0f);
+                }
+            }
+
+            yield return null;
+        }
+
+        rt.localRotation = Quaternion.Euler(0f, 180f, 0f);
+        rt.localScale = startScale;
+        rt.localPosition = startPos;
 
         if (revealText != null)
         {
-            revealText.gameObject.SetActive(true);
-            revealText.text = (isCorrect ? "CORRECT!\n\n" : "WRONG!\n\n") + explanation;
+            revealText.rectTransform.localRotation =
+                Quaternion.Euler(0f, 180f, 0f);
         }
+
+        // ======================================
+        // GAME LOGIC (same as original)
+        // ======================================
 
         if (isCorrect)
         {
@@ -229,22 +296,62 @@ public class Module7GameManager : MonoBehaviour
                 audioSource.PlayOneShot(wrongSFX);
         }
 
-        yield return FlipToFull(selectedButton, originalScale);
-
         yield return new WaitForSeconds(nextDelay);
 
-        yield return FlipToThin(selectedButton, originalScale);
+        timer = 0f;
+        changedFace = false;
 
-        if (backImage != null)
-            backImage.gameObject.SetActive(false);
+        while (timer < flipDuration)
+        {
+            timer += Time.deltaTime;
+
+            float t = Mathf.Clamp01(timer / flipDuration);
+
+            float height = Mathf.Sin(t * Mathf.PI) * liftHeight;
+
+            rt.localPosition = startPos + Vector3.up * height;
+
+            rt.localScale = Vector3.Lerp(
+                startScale,
+                startScale * 1.08f,
+                Mathf.Sin(t * Mathf.PI));
+
+            float angle = Mathf.Lerp(180f, 360f, t);
+
+            rt.localRotation = Quaternion.Euler(
+                0f,
+                angle,
+                0f);
+
+            if (!changedFace && angle >= 270f)
+            {
+                changedFace = true;
+
+                if (backImage != null)
+                    backImage.gameObject.SetActive(false);
+
+                if (revealText != null)
+                {
+                    revealText.gameObject.SetActive(false);
+
+                    revealText.rectTransform.localRotation =
+                        revealTextOriginalRotation;
+                }
+
+                if (frontImage != null)
+                    frontImage.gameObject.SetActive(true);
+            }
+
+            yield return null;
+        }
+
+        rt.localRotation = startRot;
+        rt.localScale = startScale;
+        rt.localPosition = startPos;
 
         if (revealText != null)
-            revealText.gameObject.SetActive(false);
-
-        if (frontImage != null)
-            frontImage.gameObject.SetActive(true);
-
-        yield return FlipToFull(selectedButton, originalScale);
+            revealText.rectTransform.localRotation =
+                revealTextOriginalRotation;
 
         currentIndex++;
 
@@ -254,35 +361,7 @@ public class Module7GameManager : MonoBehaviour
             LoadQuestion();
     }
 
-    IEnumerator FlipToThin(Button selectedButton, Vector3 originalScale)
-    {
-        float timer = 0f;
 
-        while (timer < flipSpeed)
-        {
-            timer += Time.deltaTime;
-            float xScale = Mathf.Lerp(originalScale.x, 0.02f, timer / flipSpeed);
-            selectedButton.transform.localScale = new Vector3(xScale, originalScale.y, originalScale.z);
-            yield return null;
-        }
-
-        selectedButton.transform.localScale = new Vector3(0.02f, originalScale.y, originalScale.z);
-    }
-
-    IEnumerator FlipToFull(Button selectedButton, Vector3 originalScale)
-    {
-        float timer = 0f;
-
-        while (timer < flipSpeed)
-        {
-            timer += Time.deltaTime;
-            float xScale = Mathf.Lerp(0.02f, originalScale.x, timer / flipSpeed);
-            selectedButton.transform.localScale = new Vector3(xScale, originalScale.y, originalScale.z);
-            yield return null;
-        }
-
-        selectedButton.transform.localScale = originalScale;
-    }
 
     void UpdateTimer()
     {
@@ -310,6 +389,9 @@ public class Module7GameManager : MonoBehaviour
         factButton.transform.localScale = normalFactScale;
         opinionButton.transform.localScale = normalOpinionScale;
 
+        factButton.transform.localRotation = Quaternion.identity;
+        opinionButton.transform.localRotation = Quaternion.identity;
+
         if (factFrontImage != null)
             factFrontImage.gameObject.SetActive(true);
 
@@ -323,10 +405,18 @@ public class Module7GameManager : MonoBehaviour
             opinionBackImage.gameObject.SetActive(false);
 
         if (factRevealText != null)
+        {
             factRevealText.gameObject.SetActive(false);
+            factRevealText.rectTransform.localRotation =
+                Quaternion.identity;
+        }
 
         if (opinionRevealText != null)
+        {
             opinionRevealText.gameObject.SetActive(false);
+            opinionRevealText.rectTransform.localRotation =
+                Quaternion.identity;
+        }
     }
 
     public void OpenSettings()
