@@ -1985,29 +1985,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b90144e3a7f524842bddca085a2dcd06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  questions:
-  - question: A house is on fire. What cause could make the house catch fire?
-    choiceA: A child plays with matches.
-    choiceB: A family watches television.
-    correctAnswer: A child plays with matches.
+  images:
+  - quizID: 1
     questionImage: {fileID: 21300000, guid: 82c7f8006c9186741b16e0691c4916fb, type: 3}
     choiceAImage: {fileID: 21300000, guid: f248ea1c61ea9bf4184d499a739767e2, type: 3}
     choiceBImage: {fileID: 21300000, guid: b55fa53fd94b99741a8f52ecf48b5177, type: 3}
     resultImageA: {fileID: 21300000, guid: df7eb8f5e339711418947c17a9fdf010, type: 3}
     resultImageB: {fileID: 21300000, guid: 299df5b9e046fc14fa3caccb6d2c424e, type: 3}
-  - question: A room is dark. What cause could make the room dark?
-    choiceA: Someone turns off the light.
-    choiceB: Someone turns on the light.
-    correctAnswer: Someone turns off the light.
+  - quizID: 2
     questionImage: {fileID: 21300000, guid: b016b284b8bc8de4dafd5f4c6ee4e5b2, type: 3}
     choiceAImage: {fileID: 21300000, guid: d26f7cf0c9e3e3643a64ecb6b5b1c3bd, type: 3}
     choiceBImage: {fileID: 21300000, guid: a827edba47e9d784594bc23a06e46dfd, type: 3}
     resultImageA: {fileID: 21300000, guid: b016b284b8bc8de4dafd5f4c6ee4e5b2, type: 3}
     resultImageB: {fileID: 21300000, guid: b9558e0c34132ff41b8da86cee19babf, type: 3}
-  - question: The floor is wet. What cause could make the floor wet?
-    choiceA: Someone spills water.
-    choiceB: Someone sweeps the floor.
-    correctAnswer: Someone spills water.
+  - quizID: 3
     questionImage: {fileID: 21300000, guid: 07dd9e30c07907949921edd9d29c09ce, type: 3}
     choiceAImage: {fileID: 21300000, guid: cb6bf488b894e4f46b5cd3675f7c0dd8, type: 3}
     choiceBImage: {fileID: 21300000, guid: 620c475f7d3ba3c459c32696033624ea, type: 3}
@@ -2020,7 +2011,9 @@ MonoBehaviour:
   choiceBImage: {fileID: 1942048493}
   choiceBText: {fileID: 1756466398}
   progressText: {fileID: 568773140}
-  progressBar: {fileID: 26797796}
+  progressBar: {fileID: 366150069}
+  choiceCardA: {fileID: 533746055}
+  choiceCardB: {fileID: 285838423}
   nextQuestionDelay: 1
   resultSceneName: ResultScene
 --- !u!1 &680642754
@@ -2106,7 +2099,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1092691329}
         m_TargetAssemblyTypeName: SettingsPanelController, Assembly-CSharp
         m_MethodName: OpenSettings
         m_Mode: 1
@@ -2239,7 +2232,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1092691329}
         m_TargetAssemblyTypeName: SettingsPanelController, Assembly-CSharp
         m_MethodName: GoToMainMenu
         m_Mode: 1
@@ -2946,6 +2939,7 @@ GameObject:
   - component: {fileID: 1092691328}
   - component: {fileID: 1092691327}
   - component: {fileID: 1092691326}
+  - component: {fileID: 1092691329}
   m_Layer: 5
   m_Name: Setting Panel
   m_TagString: Untagged
@@ -3027,6 +3021,46 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1092691324}
   m_CullTransparentMesh: 1
+--- !u!114 &1092691329
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1092691324}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a0304e163c9a26498a949c869e93fc8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  settingsPanel: {fileID: 1092691324}
+  mainMenuSceneName: MainMenu
+  deductHeartOnExit: 1
+  animationDuration: 0.25
+  scaleCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &1100714275
 GameObject:
   m_ObjectHideFlags: 0
@@ -4553,7 +4587,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1092691329}
         m_TargetAssemblyTypeName: SettingsPanelController, Assembly-CSharp
         m_MethodName: CloseSettings
         m_Mode: 1

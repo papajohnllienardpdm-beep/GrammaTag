@@ -24,6 +24,10 @@ IEndDragHandler
         rectTransform = GetComponent<RectTransform>();
         canvasGroup = GetComponent<CanvasGroup>();
         canvas = GetComponentInParent<Canvas>();
+
+        originalParent = transform.parent;
+        originalSiblingIndex = transform.GetSiblingIndex();
+        startPosition = rectTransform.anchoredPosition;
     }
 
     public void SetCanDrag(bool value)
@@ -35,11 +39,6 @@ IEndDragHandler
     {
         if (!canDrag)
             return;
-
-        startPosition = rectTransform.anchoredPosition;
-
-        originalParent = transform.parent;
-        originalSiblingIndex = transform.GetSiblingIndex();
 
         transform.SetParent(canvas.transform);
         transform.SetAsLastSibling();
@@ -72,5 +71,18 @@ IEndDragHandler
         transform.SetSiblingIndex(originalSiblingIndex);
 
         rectTransform.anchoredPosition = startPosition;
+    }
+
+    public void ResetCard()
+    {
+        transform.SetParent(originalParent);
+        transform.SetSiblingIndex(originalSiblingIndex);
+
+        rectTransform.anchoredPosition = startPosition;
+
+        canvasGroup.alpha = 1f;
+        canvasGroup.blocksRaycasts = true;
+
+        canDrag = true;
     }
 }
