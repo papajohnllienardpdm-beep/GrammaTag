@@ -422,22 +422,6 @@ public class Module7TutorialManager : MonoBehaviour
 
         yield return new WaitForSeconds(0.8f);
 
-        if (tutorialGameplayGroup != null)
-            tutorialGameplayGroup.SetActive(false);
-
-        if (readyText != null)
-        {
-            readyText.gameObject.SetActive(true);
-            readyText.text = "Get Ready...";
-        }
-
-        yield return new WaitForSeconds(readyDelay);
-
-        if (readyText != null)
-            readyText.text = "Starting Game!";
-
-        yield return new WaitForSeconds(0.8f);
-
         SceneManager.LoadScene(mainGameSceneName);
     }
 
