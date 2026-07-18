@@ -1548,12 +1548,12 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 1069cc92c07cc17428536fda0625a8df, type: 3}
   feedbackMessages:
   - Dont give up!
-  - Good Job!
-  - Great Job!
-  - Excellent Job!
+  - Good Passer!
+  - Great Passer!
+  - Excellent Passer!
   nextModulePanel: {fileID: 490651666}
   nextModuleText: {fileID: 1977600804}
-  popupModuleIDs: 0100000002000000030000000400000005000000060000000700000008000000090000000a0000000b000000
+  popupModuleIDs: 0100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e0000000f000000100000001100000012000000
   popupMessages:
   - Great job! The next lesson, Final Consonant Blends, is now unlocked!
   - "You\u2019ve unlocked the next lesson: Beginning -ch digraph!"
@@ -1566,7 +1566,13 @@ MonoBehaviour:
   - Great job! The next lesson, Third Person, is now unlocked!
   - Great job! The next lesson, Inferences, is now unlocked!
   - Great job! The next lesson, Conclusion, is now unlocked!
-  - Great job! The next lesson, Conclusion, is now unlocked!
+  - Great job! The next lesson, Past Tense, is now unlocked!
+  - Great job! The next lesson, Present Tense, is now unlocked!
+  - Great job! The next lesson, Future Tense, is now unlocked!
+  - Great job! The next lesson, Be-verb, is now unlocked!
+  - Great job! The next lesson, Cause, is now unlocked!
+  - Great job! The next lesson, Effect, is now unlocked!
+  - Great job! The next lesson, Fact, is now unlocked!
   popupDuration: 0.15
 --- !u!4 &1690955587
 Transform:
