@@ -21,7 +21,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Game start up/MainMenu.unity
     guid: c29bb8335f6efa244bc4329496ba0f46
   - enabled: 1
-    path: Assets/Scenes/Module 1/Module1_GameScene.unity
+    path: Assets/Scenes/Module 1/wala to 3.unity
     guid: 35c3714e380b2fe49be4bab8483e8bf7
   - enabled: 1
     path: Assets/Scenes/Module 1/ResultScene.unity

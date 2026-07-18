@@ -1,0 +1,76 @@
+using UnityEngine;
+using UnityEngine.EventSystems;
+
+public class Module1DraggableChoice : MonoBehaviour,
+IBeginDragHandler,
+IDragHandler,
+IEndDragHandler
+{
+    private RectTransform rectTransform;
+    private CanvasGroup canvasGroup;
+    private Canvas canvas;
+
+    private Vector2 startPosition;
+
+    public string choiceKey; // A or B
+
+    private Transform originalParent;
+    private int originalSiblingIndex;
+
+    private bool canDrag = true;
+
+    private void Awake()
+    {
+        rectTransform = GetComponent<RectTransform>();
+        canvasGroup = GetComponent<CanvasGroup>();
+        canvas = GetComponentInParent<Canvas>();
+    }
+
+    public void SetCanDrag(bool value)
+    {
+        canDrag = value;
+    }
+
+    public void OnBeginDrag(PointerEventData eventData)
+    {
+        if (!canDrag)
+            return;
+
+        startPosition = rectTransform.anchoredPosition;
+
+        originalParent = transform.parent;
+        originalSiblingIndex = transform.GetSiblingIndex();
+
+        transform.SetParent(canvas.transform);
+        transform.SetAsLastSibling();
+
+        canvasGroup.blocksRaycasts = false;
+        canvasGroup.alpha = 0.7f;
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        if (!canDrag)
+            return;
+
+        rectTransform.anchoredPosition +=
+            eventData.delta / canvas.scaleFactor;
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        if (!canDrag)
+            return;
+
+        canvasGroup.blocksRaycasts = true;
+        canvasGroup.alpha = 1f;
+    }
+
+    public void ReturnToStart()
+    {
+        transform.SetParent(originalParent);
+        transform.SetSiblingIndex(originalSiblingIndex);
+
+        rectTransform.anchoredPosition = startPosition;
+    }
+}
