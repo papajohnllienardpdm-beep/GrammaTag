@@ -73,6 +73,16 @@ public class Module1GameManager : MonoBehaviour
 
     //=====================================================
 
+    [Header("Countdown")]
+
+    public GameObject gameUI;
+
+    public GameObject countdownPanel;
+
+    public TMP_Text countdownText;
+
+    public float countdownSpeed = 1f;
+
     private void Start()
     {
         LoadQuestionData();
@@ -85,7 +95,11 @@ public class Module1GameManager : MonoBehaviour
 
         currentQuestionIndex = 0;
 
-        LoadQuestion();
+        gameUI.SetActive(false);
+
+        countdownPanel.SetActive(true);
+
+        StartCoroutine(StartCountdown());
     }
 
     //=====================================================
@@ -372,5 +386,26 @@ public class Module1GameManager : MonoBehaviour
 
             correctAnswer = "A"
         });
+    }
+
+    IEnumerator StartCountdown()
+    {
+        countdownText.text = "3";
+        yield return new WaitForSeconds(countdownSpeed);
+
+        countdownText.text = "2";
+        yield return new WaitForSeconds(countdownSpeed);
+
+        countdownText.text = "1";
+        yield return new WaitForSeconds(countdownSpeed);
+
+        countdownText.text = "GO!";
+        yield return new WaitForSeconds(0.6f);
+
+        countdownPanel.SetActive(false);
+
+        gameUI.SetActive(true);
+
+        LoadQuestion();
     }
 }

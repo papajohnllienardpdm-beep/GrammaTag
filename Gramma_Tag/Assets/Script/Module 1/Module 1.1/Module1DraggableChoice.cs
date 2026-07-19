@@ -45,7 +45,15 @@ IEndDragHandler
 
         canvasGroup.blocksRaycasts = false;
         canvasGroup.alpha = 0.7f;
+
+        Module1TutorialManager tutorial =
+            FindObjectOfType<Module1TutorialManager>();
+
+        if (tutorial != null)
+            tutorial.OnCardPicked();
     }
+
+
 
     public void OnDrag(PointerEventData eventData)
     {
@@ -63,6 +71,12 @@ IEndDragHandler
 
         canvasGroup.blocksRaycasts = true;
         canvasGroup.alpha = 1f;
+
+        Module1TutorialManager tutorial =
+    FindObjectOfType<Module1TutorialManager>();
+
+        if (tutorial != null)
+            tutorial.ResetInstruction();
     }
 
     public void ReturnToStart()
