@@ -14,5 +14,11 @@ public class Module1TutorialDropArea : MonoBehaviour, IDropHandler
         {
             tutorialManager.OnChoiceDropped(draggedCard);
         }
+
+        if (draggedCard != null)
+        {
+            draggedCard.MarkDropped();
+            tutorialManager.OnChoiceDropped(draggedCard);
+        }
     }
 }

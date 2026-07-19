@@ -19,6 +19,8 @@ IEndDragHandler
 
     private bool canDrag = true;
 
+    private bool droppedOnTarget = false;
+
     private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
@@ -51,6 +53,8 @@ IEndDragHandler
 
         if (tutorial != null)
             tutorial.OnCardPicked();
+
+        droppedOnTarget = false;
     }
 
 
@@ -73,10 +77,15 @@ IEndDragHandler
         canvasGroup.alpha = 1f;
 
         Module1TutorialManager tutorial =
-    FindObjectOfType<Module1TutorialManager>();
+            FindObjectOfType<Module1TutorialManager>();
 
         if (tutorial != null)
             tutorial.ResetInstruction();
+
+        if (!droppedOnTarget)
+        {
+            ReturnToStart();
+        }
     }
 
     public void ReturnToStart()
@@ -98,5 +107,10 @@ IEndDragHandler
         canvasGroup.blocksRaycasts = true;
 
         canDrag = true;
+    }
+
+    public void MarkDropped()
+    {
+        droppedOnTarget = true;
     }
 }

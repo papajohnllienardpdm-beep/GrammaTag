@@ -14,5 +14,11 @@ public class Module1ScenarioDropArea : MonoBehaviour, IDropHandler
         {
             gameManager.OnChoiceDropped(draggedCard);
         }
+
+        if (draggedCard != null)
+        {
+            draggedCard.MarkDropped();
+            gameManager.OnChoiceDropped(draggedCard);
+        }
     }
 }
