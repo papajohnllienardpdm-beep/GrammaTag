@@ -1,8 +1,9 @@
-using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
+using System.Collections;
 using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Module6TutorialManager : MonoBehaviour
 {
@@ -51,6 +52,10 @@ public class Module6TutorialManager : MonoBehaviour
 
     void Start()
     {
+        // 🔥 Force Portrait pagpasok ng Tutorial
+        Screen.orientation = ScreenOrientation.Portrait;
+        StartCoroutine(ApplyPortrait());
+
         buttonA.onClick.AddListener(() => CheckAnswer(0));
         buttonB.onClick.AddListener(() => CheckAnswer(1));
         buttonC.onClick.AddListener(() => CheckAnswer(2));
@@ -63,6 +68,12 @@ public class Module6TutorialManager : MonoBehaviour
         progressBar.value = 0;
 
         LoadQuestion();
+    }
+
+    IEnumerator ApplyPortrait()
+    {
+        yield return null;
+        Screen.orientation = ScreenOrientation.Portrait;
     }
 
     void CreateTutorialQuestions()

@@ -73,6 +73,9 @@ public class BlendGameManager : MonoBehaviour
 
     IEnumerator Start()
     {
+        Screen.orientation = ScreenOrientation.Portrait;
+        yield return null;
+
         // wait DB
         while (DatabaseManager.Instance == null || !DatabaseManager.Instance.IsDatabaseReady())
             yield return null;

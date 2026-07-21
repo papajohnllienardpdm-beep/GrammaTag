@@ -75,6 +75,10 @@ public class GameManager_Module3 : MonoBehaviour
 
     IEnumerator WaitForDB()
     {
+        // 🔥 Force Portrait pagpasok ng Scene
+        Screen.orientation = ScreenOrientation.Portrait;
+        yield return null;
+
         // wait DB
         while (DatabaseManager.Instance == null || !DatabaseManager.Instance.IsDatabaseReady())
             yield return null;

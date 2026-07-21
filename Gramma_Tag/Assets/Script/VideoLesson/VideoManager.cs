@@ -209,10 +209,6 @@ public class VideoManager : MonoBehaviour
 
     IEnumerator LoadSceneAfterOrientation()
     {
-        orientationManager.SetPortrait();
-
-        yield return new WaitForSecondsRealtime(0.2f);
-
         if (currentIndex >= 0 && currentIndex < nextScenes.Length)
         {
             string sceneName = nextScenes[currentIndex];
@@ -220,6 +216,8 @@ public class VideoManager : MonoBehaviour
             if (!string.IsNullOrEmpty(sceneName))
                 SceneManager.LoadScene(sceneName);
         }
+
+        yield return null;
     }
 
     public void BackToMenu()

@@ -1,9 +1,10 @@
+using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
-using UnityEngine.SceneManagement;
 using System.Text.RegularExpressions;
+using TMPro;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Module4TutorialManager : MonoBehaviour
 {
@@ -43,6 +44,10 @@ public class Module4TutorialManager : MonoBehaviour
 
     void Start()
     {
+        // 🔥 Force Portrait pagpasok ng Tutorial
+        Screen.orientation = ScreenOrientation.Portrait;
+        StartCoroutine(ApplyPortrait());
+
         CreateQuestions();
         ShuffleQuestions();
 
@@ -54,6 +59,12 @@ public class Module4TutorialManager : MonoBehaviour
 
         LoadQuestion();
         UpdateProgress();
+    }
+
+    IEnumerator ApplyPortrait()
+    {
+        yield return null;
+        Screen.orientation = ScreenOrientation.Portrait;
     }
 
     void CreateQuestions()

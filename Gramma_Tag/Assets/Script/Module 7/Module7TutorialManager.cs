@@ -72,6 +72,8 @@ public class Module7TutorialManager : MonoBehaviour
     void Start()
     {
         Screen.orientation = ScreenOrientation.Portrait;
+        StartCoroutine(ApplyPortrait());
+
         Time.timeScale = 1f;
 
         normalFactScale = factButton.transform.localScale;
@@ -100,6 +102,12 @@ public class Module7TutorialManager : MonoBehaviour
 
         LoadQuestion();
         UpdateProgress();
+    }
+
+    IEnumerator ApplyPortrait()
+    {
+        yield return null;
+        Screen.orientation = ScreenOrientation.Portrait;
     }
 
     void CreateQuestions()

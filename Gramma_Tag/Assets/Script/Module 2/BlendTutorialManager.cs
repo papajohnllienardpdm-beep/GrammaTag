@@ -46,6 +46,8 @@ public class BlendTutorialManager : MonoBehaviour
 
     void Start()
     {
+        Screen.orientation = ScreenOrientation.Portrait;
+
         originalPos = draggableWord.GetComponent<RectTransform>().anchoredPosition;
 
         SetupQuestions();

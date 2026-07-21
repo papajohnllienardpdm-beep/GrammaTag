@@ -69,6 +69,7 @@ public class Module7GameManager : MonoBehaviour
     void Start()
     {
         Screen.orientation = ScreenOrientation.Portrait;
+        StartCoroutine(ApplyPortrait());
         Time.timeScale = 1f;
 
         remainingTime = totalTime;
@@ -89,6 +90,12 @@ public class Module7GameManager : MonoBehaviour
         }
 
         StartCoroutine(WaitForDB());
+    }
+
+    IEnumerator ApplyPortrait()
+    {
+        yield return null;
+        Screen.orientation = ScreenOrientation.Portrait;
     }
 
     IEnumerator WaitForDB()
