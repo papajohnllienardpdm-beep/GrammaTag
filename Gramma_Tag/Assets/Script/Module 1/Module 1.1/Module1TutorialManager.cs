@@ -36,6 +36,11 @@ public class Module1TutorialManager : MonoBehaviour
     [Header("Scene")]
     public string gameSceneName = "Module1_GameScene";
 
+    [Header("SFX")]
+    public AudioClip correctSFX;
+    public AudioClip wrongSFX;
+
+
     private List<Module1QuestionData> questions =
     new List<Module1QuestionData>();
 
@@ -203,6 +208,9 @@ public class Module1TutorialManager : MonoBehaviour
 
         if (isCorrect)
         {
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(correctSFX);
+
             correctStreak++;
 
             progressBar.value = correctStreak;
@@ -212,6 +220,9 @@ public class Module1TutorialManager : MonoBehaviour
         }
         else
         {
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(wrongSFX);
+
             StartCoroutine(RepeatCurrentQuestion());
         }
 

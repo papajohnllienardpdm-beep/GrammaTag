@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -83,15 +84,72 @@ public class Module1GameManager : MonoBehaviour
 
     public float countdownSpeed = 1f;
 
+    //-------------------------------------
+    [Header("Orientation")]
+    public OrientationManager orientationManager;
+
+    [Header("Timer")]
+    public TMP_Text timerText;
+
+    public float gameDuration = 300f;
+
+    private float timer;
+
+    private bool isTimerRunning;
+
+    private bool gameEnded;
+
+    private Color defaultTimerColor;
+
+    private int currentModuleID;
+
+    public string gameSceneName = "Module1_GameScene";
+
+    [Header("SFX")]
+    public AudioClip correctSFX;
+    public AudioClip wrongSFX;
+
+
     private void Start()
     {
-        LoadQuestionData();
+        StartCoroutine(WaitForSystemsThenStart());
+    }
+
+    IEnumerator WaitForSystemsThenStart()
+    {
+        if (orientationManager != null)
+            orientationManager.SetLandscape();
+
+        while (DatabaseManager.Instance == null ||
+               !DatabaseManager.Instance.IsDatabaseReady())
+            yield return null;
+
+        while (HeartSystem.Instance == null)
+            yield return null;
+
+        PlayerPrefs.SetInt("HEART_USED_THIS_SESSION", 0);
+        PlayerPrefs.Save();
+
+        HeartSystem.Instance.ResetSession();
+
+        LoadQuestionsFromDB();
 
         if (questions.Count == 0)
         {
-            Debug.LogError("No Questions Loaded.");
-            return;
+            Debug.LogError("No questions found.");
+
+            yield break;
         }
+
+        if (progressBar != null)
+        {
+            progressBar.minValue = 0;
+            progressBar.maxValue = questions.Count;
+            progressBar.value = 0;
+        }
+
+        if (timerText != null)
+            defaultTimerColor = timerText.color;
 
         currentQuestionIndex = 0;
 
@@ -106,21 +164,23 @@ public class Module1GameManager : MonoBehaviour
 
     void LoadQuestion()
     {
+        if (currentQuestionIndex >= questions.Count)
+        {
+            EndGame();
+            return;
+        }
+
         currentQuestion = questions[currentQuestionIndex];
 
-        //-----------------------------------------
-
         questionText.text = currentQuestion.question;
-
-        //-----------------------------------------
 
         choiceAText.text = currentQuestion.choiceA;
         choiceBText.text = currentQuestion.choiceB;
 
-        //-----------------------------------------
-
         Module1ImageData imageData =
-    GetImageData(currentQuestion.quizID);
+            GetImageData(
+                currentQuestion.moduleID,
+                currentQuestion.quizID);
 
         if (imageData != null)
         {
@@ -134,8 +194,6 @@ public class Module1GameManager : MonoBehaviour
                 imageData.choiceBImage;
         }
 
-        //-----------------------------------------
-
         UpdateProgress();
 
         choiceCardA.ResetCard();
@@ -146,17 +204,22 @@ public class Module1GameManager : MonoBehaviour
 
     void UpdateProgress()
     {
-        progressText.text =
-            "Progress " +
-            currentQuestionIndex +
-            "/" +
-            questions.Count;
+        if (progressText != null)
+        {
+            progressText.text =
+                "Progress " +
+                currentQuestionIndex +
+                "/" +
+                questions.Count;
+        }
 
-        progressBar.maxValue = questions.Count;
-
-        progressBar.value = currentQuestionIndex;
+        if (progressBar != null)
+        {
+            progressBar.minValue = 0;
+            progressBar.maxValue = questions.Count;
+            progressBar.value = currentQuestionIndex;
+        }
     }
-
     //=====================================================
 
     public void OnChoiceDropped(Module1DraggableChoice draggedChoice)
@@ -169,12 +232,16 @@ public class Module1GameManager : MonoBehaviour
         choiceCardA.SetCanDrag(false);
         choiceCardB.SetCanDrag(false);
 
-        bool isCorrect =
-    draggedChoice.choiceKey.Trim().ToUpper() ==
-    currentQuestion.correctAnswer.Trim().ToUpper();
+        string selectedAnswer =
+    draggedChoice.choiceKey == "A"
+    ? currentQuestion.choiceA
+    : currentQuestion.choiceB;
 
-        Module1ImageData imageData =
-        GetImageData(currentQuestion.quizID);
+        bool isCorrect =
+            selectedAnswer.Trim().ToLower() ==
+            currentQuestion.correctAnswer.Trim().ToLower();
+
+        Module1ImageData imageData = GetImageData( currentQuestion.moduleID, currentQuestion.quizID);
 
         if (imageData != null)
         {
@@ -189,11 +256,18 @@ public class Module1GameManager : MonoBehaviour
         if (isCorrect)
         {
             score++;
+
             Debug.Log("CORRECT");
+
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(correctSFX);
         }
         else
         {
             Debug.Log("WRONG");
+
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(wrongSFX);
         }
 
         draggedChoice.ReturnToStart();
@@ -209,7 +283,7 @@ public class Module1GameManager : MonoBehaviour
 
         if (currentQuestionIndex >= questions.Count)
         {
-            FinishGame();
+            EndGame();
 
             yield break;
         }
@@ -219,173 +293,131 @@ public class Module1GameManager : MonoBehaviour
         isTransitioning = false;
     }
 
-    void FinishGame()
+    void EndGame()
     {
-        PlayerPrefs.SetInt("FinalScore", score);
+        if (gameEnded)
+            return;
 
-        PlayerPrefs.SetInt("TotalQ", questions.Count);
+        gameEnded = true;
 
-        PlayerPrefs.SetInt("CoinsEarned", 0);
+        isTimerRunning = false;
 
-        PlayerPrefs.SetInt("Passed", score >= 6 ? 1 : 0);
+        choiceCardA.SetCanDrag(false);
+        choiceCardB.SetCanDrag(false);
 
-        SceneManager.LoadScene(resultSceneName);
+        if (progressText != null)
+        {
+            progressText.text =
+                "Progress " +
+                questions.Count +
+                "/" +
+                questions.Count;
+        }
+
+        if (progressBar != null)
+        {
+            progressBar.value =
+                questions.Count;
+        }
+
+        if (HeartSystem.Instance != null)
+        {
+            HeartSystem.Instance.UseHeartSafe(1);
+        }
+
+        int stars = 0;
+        int passed = 0;
+
+        if (score >= 9)
+        {
+            stars = 3;
+            passed = 1;
+        }
+        else if (score >= 7)
+        {
+            stars = 2;
+            passed = 1;
+        }
+        else if (score >= 6)
+        {
+            stars = 1;
+            passed = 1;
+        }
+
+        int moduleID =
+            PlayerPrefs.GetInt(
+                "SelectedModuleID",
+                1);
+
+        StartCoroutine(
+            SaveAndGoToResult(
+                moduleID,
+                questions.Count,
+                stars,
+                passed));
     }
 
-    Module1ImageData GetImageData(int quizID)
+    Module1ImageData GetImageData(int moduleID, int quizID)
     {
-        foreach (Module1ImageData img in images)
+        foreach (var img in images)
         {
-            if (img.quizID == quizID)
+            if (img.moduleID == moduleID &&
+               img.quizID == quizID)
+            {
                 return img;
+            }
         }
 
         return null;
     }
 
-    void LoadQuestionData()
+    void LoadQuestionsFromDB()
     {
         questions.Clear();
 
-        questions.Add(new Module1QuestionData()
+        currentModuleID =
+            PlayerPrefs.GetInt("SelectedModuleID", 1);
+
+        var dbQuestions =
+            DatabaseManager.Instance
+            .GetQuestionsByModule(currentModuleID)
+            .OrderBy(x => Random.value)
+            .Take(10)
+            .ToList();
+
+        foreach (var dbQ in dbQuestions)
         {
-            quizID = 1,
-            moduleID = 1,
+            Module1QuestionData q =
+                new Module1QuestionData();
 
-            question = "A house is on fire. What cause could make the house catch fire?",
+            q.quizID = dbQ.QuizID;
 
-            choiceA = "A child plays with matches.",
+            q.moduleID = dbQ.ModuleID;
 
-            choiceB = "A family watches television.",
+            q.question = dbQ.QuestionText;
 
-            correctAnswer = "A"
-        });
+            q.choiceA = dbQ.ChoiceA;
 
-        questions.Add(new Module1QuestionData()
+            q.choiceB = dbQ.ChoiceB;
+
+            q.correctAnswer =
+                dbQ.CorrectAnswer;
+
+            questions.Add(q);
+        }
+
+        if (questions.Count == 0)
         {
-            quizID = 2,
-            moduleID = 1,
-
-            question = "A room is dark. What cause could make the room dark?",
-
-            choiceA = "Someone turns off the light.",
-
-            choiceB = "Someone turns on the light.",
-
-            correctAnswer = "A"
-        });
-
-        questions.Add(new Module1QuestionData()
+            Debug.LogError(
+                "No AssessmentItems found for Module "
+                + currentModuleID);
+        }
+        else
         {
-            quizID = 3,
-            moduleID = 1,
-
-            question = "The floor is wet. What cause could make the floor wet?",
-
-            choiceA = "Someone spills water.",
-
-            choiceB = "Someone sweeps the floor.",
-
-            correctAnswer = "A"
-        });
-
-        questions.Add(new Module1QuestionData()
-        {
-            quizID = 4,
-            moduleID = 1,
-
-            question = "The plants are dry. What cause could make the plants dry?",
-
-            choiceA = "They are not watered for many days.",
-
-            choiceB = "They are watered every day.",
-
-            correctAnswer = "A"
-        });
-
-        questions.Add(new Module1QuestionData()
-        {
-            quizID = 5,
-            moduleID = 1,
-
-            question = "The trash can is full. What cause could make the trash can full?",
-
-            choiceA = "People throw their trash into it.",
-
-            choiceB = "People keep their trash in their bags.",
-
-            correctAnswer = "A"
-        });
-
-        questions.Add(new Module1QuestionData()
-        {
-            quizID = 6,
-            moduleID = 1,
-
-            question = "The books are on the floor. What cause could make the books fall to the floor?",
-
-            choiceA = "Someone bumps the shelf.",
-
-            choiceB = "Someone reads a book.",
-
-            correctAnswer = "A"
-        });
-
-        questions.Add(new Module1QuestionData()
-        {
-            quizID = 7,
-            moduleID = 1,
-
-            question = "A cake is burned. What cause could make the cake burn?",
-
-            choiceA = "It is left in the oven too long.",
-
-            choiceB = "Someone decorates the cake.",
-
-            correctAnswer = "A"
-        });
-
-        questions.Add(new Module1QuestionData()
-        {
-            quizID = 8,
-            moduleID = 1,
-
-            question = "The fire is getting bigger. What cause could make the fire grow bigger?",
-
-            choiceA = "More wood is added.",
-
-            choiceB = "Water is poured on the fire.",
-
-            correctAnswer = "A"
-        });
-
-        questions.Add(new Module1QuestionData()
-        {
-            quizID = 9,
-            moduleID = 1,
-
-            question = "The clothes are wet. What cause could make the clothes wet?",
-
-            choiceA = "It starts to rain.",
-
-            choiceB = "Someone folds the clothes.",
-
-            correctAnswer = "A"
-        });
-
-        questions.Add(new Module1QuestionData()
-        {
-            quizID = 10,
-            moduleID = 1,
-
-            question = "The TV is too loud. What cause could make the TV too loud?",
-
-            choiceA = "Someone turns up the volume.",
-
-            choiceB = "Someone turns off the television.",
-
-            correctAnswer = "A"
-        });
+            Debug.Log(
+                "Questions Loaded : "
+                + questions.Count);
+        }
     }
 
     IEnumerator StartCountdown()
@@ -407,5 +439,115 @@ public class Module1GameManager : MonoBehaviour
         gameUI.SetActive(true);
 
         LoadQuestion();
+        StartTimer();
+    }
+
+    public void StartTimer()
+    {
+        timer = gameDuration;
+        isTimerRunning = true;
+    }
+
+    void UpdateTimerUI()
+    {
+        if (timerText == null)
+            return;
+
+        int minutes = Mathf.FloorToInt(timer / 60f);
+        int seconds = Mathf.FloorToInt(timer % 60f);
+
+        timerText.text =
+            $"{minutes:00}:{seconds:00}";
+
+        if (timer <= 5f)
+            timerText.color = Color.red;
+        else
+            timerText.color = defaultTimerColor;
+    }
+
+    void TimeUp()
+    {
+        if (!isTimerRunning)
+            return;
+
+        isTimerRunning = false;
+
+        EndGame();
+    }
+
+    void Update()
+    {
+        if (!isTimerRunning)
+            return;
+
+        timer -= Time.deltaTime;
+
+        if (timer <= 0)
+        {
+            timer = 0;
+            TimeUp();
+        }
+
+        UpdateTimerUI();
+    }
+
+    IEnumerator SaveAndGoToResult(
+    int moduleID,
+    int total,
+    int stars,
+    int passed)
+    {
+        int userID =
+            DatabaseManager.Instance.GetUserID();
+
+        int coinsEarned =
+            DatabaseManager.Instance.GiveCoins(
+                moduleID,
+                score,
+                passed);
+
+        DatabaseManager.Instance
+            .SaveProgressBetter(
+                userID,
+                moduleID,
+                score,
+                passed,
+                stars);
+
+        PlayerPrefs.SetInt(
+            "FinalScore",
+            score);
+
+        PlayerPrefs.SetInt(
+            "TotalQ",
+            total);
+
+        PlayerPrefs.SetInt(
+            "Stars",
+            stars);
+
+        PlayerPrefs.SetInt(
+            "Passed",
+            passed);
+
+        PlayerPrefs.SetInt(
+            "CoinsEarned",
+            coinsEarned);
+
+        PlayerPrefs.SetString(
+            "LastScene",
+            gameSceneName);
+
+        PlayerPrefs.Save();
+
+        if (orientationManager != null)
+        {
+            orientationManager.SetPortrait();
+        }
+
+        yield return new WaitForSeconds(0.5f);
+
+        SceneManager.LoadScene(
+            resultSceneName);
     }
 }
