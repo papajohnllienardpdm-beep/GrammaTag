@@ -33,6 +33,16 @@ public class ResultManager : MonoBehaviour
     private Coroutine popupCoroutine;
     void Start()
     {
+        StartCoroutine(InitializeResult());
+    }
+
+
+    IEnumerator InitializeResult()
+    {
+        Screen.orientation = ScreenOrientation.Portrait;
+
+        yield return null;
+
         int score = PlayerPrefs.GetInt("FinalScore", 0);
         int total = PlayerPrefs.GetInt("TotalQ", 10);
         int coins = PlayerPrefs.GetInt("CoinsEarned", 0);
@@ -41,39 +51,34 @@ public class ResultManager : MonoBehaviour
 
         scoreText.text = "Score: " + score + "/" + total;
 
-        // 🔥 COMPUTE STARS
         int stars = GetStars(score);
 
-        // 🔥 SET IMAGE
         if (starSprites != null && starSprites.Length > stars)
         {
             starImage.sprite = starSprites[stars];
         }
 
-        // 🔥 SET FEEDBACK TEXT
         if (feedbackMessages != null && feedbackMessages.Length > stars)
         {
             feedbackText.text = feedbackMessages[stars];
         }
 
-        // 🔥 HIDE POPUP DEFAULT
         if (nextModulePanel != null)
         {
             nextModulePanel.SetActive(false);
         }
 
-        // 🔥 GET CURRENT MODULE
-        int currentModuleID = PlayerPrefs.GetInt("SelectedModuleID", 1);
+        int currentModuleID =
+            PlayerPrefs.GetInt("SelectedModuleID", 1);
 
-        // 🔥 CHECK IF PASSED
-        int passed = PlayerPrefs.GetInt("Passed", 0);
+        int passed =
+            PlayerPrefs.GetInt("Passed", 0);
 
-        // 🔥 CHECK FIRST TIME PASS ONLY
         if (passed == 1)
         {
-            string popupKey = "POPUP_SHOWN_MODULE_" + currentModuleID;
+            string popupKey =
+                "POPUP_SHOWN_MODULE_" + currentModuleID;
 
-            // ❌ popup never shown before
             if (!PlayerPrefs.HasKey(popupKey))
             {
                 for (int i = 0; i < popupModuleIDs.Length; i++)
@@ -82,10 +87,10 @@ public class ResultManager : MonoBehaviour
                     {
                         shouldShowPopup = true;
 
-                        // 🔥 SET CUSTOM MESSAGE
                         if (popupMessages.Length > i)
                         {
-                            nextModuleText.text = popupMessages[i];
+                            nextModuleText.text =
+                                popupMessages[i];
                         }
 
                         break;
