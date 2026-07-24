@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System.Text.RegularExpressions;
 
 public class SettingsUIManager : MonoBehaviour
 {
@@ -21,7 +22,136 @@ public class SettingsUIManager : MonoBehaviour
     public Sprite boySprite;
     public Sprite girlSprite;
 
+    [Header("Validation")]
+    public GameObject validationPanel;
+    public TMP_Text validationText;
+
+
     private bool isEditing = false;
+
+
+    bool ValidateInputs()
+    {
+        // FIRST NAME EMPTY
+        if (string.IsNullOrWhiteSpace(firstNameInput.text))
+        {
+            ShowValidation("Please enter your first name.");
+            return false;
+        }
+
+        // FIRST NAME LETTERS ONLY
+        if (!Regex.IsMatch(firstNameInput.text.Trim(), @"^[a-zA-Z\s]+$"))
+        {
+            ShowValidation("First name should contain letters only.");
+            return false;
+        }
+
+        // LAST NAME EMPTY
+        if (string.IsNullOrWhiteSpace(lastNameInput.text))
+        {
+            ShowValidation("Please enter your last name.");
+            return false;
+        }
+
+        // LAST NAME LETTERS ONLY
+        if (!Regex.IsMatch(lastNameInput.text.Trim(), @"^[a-zA-Z\s]+$"))
+        {
+            ShowValidation("Last name should contain letters only.");
+            return false;
+        }
+
+        // AGE EMPTY
+        if (string.IsNullOrWhiteSpace(ageInput.text))
+        {
+            ShowValidation("Please enter your age.");
+            return false;
+        }
+
+        // AGE NUMBERS ONLY
+        if (!Regex.IsMatch(ageInput.text.Trim(), @"^\d+$"))
+        {
+            ShowValidation("Age should contain numbers only.");
+            return false;
+        }
+
+        return true;
+    }
+
+    void ShowValidation(string message)
+    {
+        if (validationPanel != null)
+        {
+            validationPanel.SetActive(true);
+
+            StopCoroutine("PopupAnimation");
+            StartCoroutine("PopupAnimation");
+        }
+
+        if (validationText != null)
+            validationText.text = message;
+    }
+
+    IEnumerator PopupAnimation()
+    {
+        RectTransform panelRect = validationPanel.GetComponent<RectTransform>();
+
+        panelRect.localScale = Vector3.zero;
+
+        float timer = 0f;
+        float duration = 0.15f;
+
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+
+            float scale = Mathf.SmoothStep(0f, 1f, timer / duration);
+
+            panelRect.localScale = new Vector3(scale, scale, scale);
+
+            yield return null;
+        }
+
+        panelRect.localScale = Vector3.one;
+    }
+
+    public void CloseValidation()
+    {
+        if (validationPanel != null)
+        {
+            StopCoroutine("PopupAnimation");
+            StartCoroutine("ClosePopupAnimation");
+        }
+    }
+
+    IEnumerator ClosePopupAnimation()
+    {
+        RectTransform panelRect = validationPanel.GetComponent<RectTransform>();
+
+        float timer = 0f;
+        float duration = 0.12f;
+
+        Vector3 startScale = Vector3.one;
+        Vector3 endScale = Vector3.zero;
+
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+
+            float t = timer / duration;
+
+            panelRect.localScale = Vector3.Lerp(
+                startScale,
+                endScale,
+                Mathf.SmoothStep(0f, 1f, t));
+
+            yield return null;
+        }
+
+        panelRect.localScale = Vector3.zero;
+
+        validationPanel.SetActive(false);
+    }
+
 
     IEnumerator Start()
     {
@@ -77,13 +207,20 @@ public class SettingsUIManager : MonoBehaviour
         }
         else
         {
-            SaveUserData();
-            SetEditMode(false);
+            // Lock fields ONLY if save succeeded
+            if (SaveUserData())
+            {
+                SetEditMode(false);
+            }
         }
     }
 
-    void SaveUserData()
+    bool SaveUserData()
     {
+        // VALIDATE FIRST
+        if (!ValidateInputs())
+            return false;
+
         string first = firstNameInput.text.Trim();
         string last = lastNameInput.text.Trim();
 
@@ -91,26 +228,28 @@ public class SettingsUIManager : MonoBehaviour
 
         if (!int.TryParse(ageInput.text.Trim(), out age))
         {
-            Debug.LogWarning("Invalid age.");
-            return;
+            ShowValidation("Age should contain numbers only.");
+            return false;
         }
 
         string gender = genderInput.text;
 
         DatabaseManager.Instance.InsertUser(first, last, age, gender);
 
-        // 🔥 update character image after save
+        // UPDATE CHARACTER IMAGE
         SetCharacterImage(gender);
 
         Debug.Log("User updated!");
 
-        // ✅ REFRESH MAIN MENU NAME
+        // REFRESH MAIN MENU
         MainMenuUIManager menu = FindObjectOfType<MainMenuUIManager>();
 
         if (menu != null)
         {
             menu.LoadPlayerData();
         }
+
+        return true;
     }
 
     void SetCharacterImage(string gender)
