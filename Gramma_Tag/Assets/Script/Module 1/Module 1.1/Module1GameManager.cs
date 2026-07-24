@@ -174,8 +174,24 @@ public class Module1GameManager : MonoBehaviour
 
         questionText.text = currentQuestion.question;
 
-        choiceAText.text = currentQuestion.choiceA;
-        choiceBText.text = currentQuestion.choiceB;
+        bool swapChoices = Random.value > 0.5f;
+
+        if (!swapChoices)
+        {
+            choiceAText.text = currentQuestion.choiceA;
+            choiceBText.text = currentQuestion.choiceB;
+
+            choiceCardA.choiceKey = "A";
+            choiceCardB.choiceKey = "B";
+        }
+        else
+        {
+            choiceAText.text = currentQuestion.choiceB;
+            choiceBText.text = currentQuestion.choiceA;
+
+            choiceCardA.choiceKey = "B";
+            choiceCardB.choiceKey = "A";
+        }
 
         Module1ImageData imageData =
             GetImageData(
@@ -187,11 +203,22 @@ public class Module1GameManager : MonoBehaviour
             scenarioImage.sprite =
                 imageData.questionImage;
 
-            choiceAImage.sprite =
-                imageData.choiceAImage;
+            if (!swapChoices)
+            {
+                choiceAImage.sprite =
+                    imageData.choiceAImage;
 
-            choiceBImage.sprite =
-                imageData.choiceBImage;
+                choiceBImage.sprite =
+                    imageData.choiceBImage;
+            }
+            else
+            {
+                choiceAImage.sprite =
+                    imageData.choiceBImage;
+
+                choiceBImage.sprite =
+                    imageData.choiceAImage;
+            }
         }
 
         UpdateProgress();
