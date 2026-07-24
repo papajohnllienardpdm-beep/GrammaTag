@@ -314,7 +314,7 @@ public class Module7GameManager : MonoBehaviour
                     revealText.gameObject.SetActive(true);
 
                     revealText.text =
-                        (isCorrect ? "CORRECT!\n\n" : "WRONG!\n\n")
+                        (isCorrect ? "CORRECT!\n\n" : "NICE TRY!\n\n")
                         + feedback;
 
                     revealText.rectTransform.localRotation =

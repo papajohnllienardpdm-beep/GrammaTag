@@ -277,7 +277,7 @@ public class Module7TutorialManager : MonoBehaviour
                     revealText.gameObject.SetActive(true);
 
                     revealText.text =
-                        (isCorrect ? "CORRECT!\n\n" : "WRONG!\n\n")
+                        (isCorrect ? "CORRECT!\n\n" : "NICE TRY!\n\n")
                         + explanation;
 
                     // IMPORTANT:
