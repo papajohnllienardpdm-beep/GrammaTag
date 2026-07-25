@@ -1344,7 +1344,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -2.2012, y: -0.000020027}
+  m_AnchoredPosition: {x: -2.2012, y: -0.000019073486}
   m_SizeDelta: {x: 1139.8313, y: 121.3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &415126090
@@ -2211,10 +2211,10 @@ MonoBehaviour:
   - moduleID: 17
     quizID: 544
     questionImage: {fileID: 21300000, guid: ad4e8836b1b0a4b4d85a55de47441e90, type: 3}
-    choiceAImage: {fileID: 21300000, guid: 9297275e16cfc8d47990dbe5cedef802, type: 3}
-    choiceBImage: {fileID: 21300000, guid: 52f75e7fe8985434b90714579083b3c4, type: 3}
-    resultImageA: {fileID: 21300000, guid: 0899f03cc3979f84a8fbfd4d4648d0f7, type: 3}
-    resultImageB: {fileID: 21300000, guid: 35769f3bc2246174ca388513b78b6dcf, type: 3}
+    choiceAImage: {fileID: 21300000, guid: 52f75e7fe8985434b90714579083b3c4, type: 3}
+    choiceBImage: {fileID: 21300000, guid: 9297275e16cfc8d47990dbe5cedef802, type: 3}
+    resultImageA: {fileID: 21300000, guid: 35769f3bc2246174ca388513b78b6dcf, type: 3}
+    resultImageB: {fileID: 21300000, guid: 0899f03cc3979f84a8fbfd4d4648d0f7, type: 3}
   - moduleID: 17
     quizID: 545
     questionImage: {fileID: 21300000, guid: 0d3414dd769adaa4fbb3f7d46d524ffc, type: 3}
@@ -4548,7 +4548,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 16.700018}
+  m_AnchoredPosition: {x: 0, y: 16.700073}
   m_SizeDelta: {x: 0.7, y: -46.600033}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1665952243
@@ -4945,7 +4945,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -14.5, y: -23.84}
+  m_AnchoredPosition: {x: -14.5, y: -23.839966}
   m_SizeDelta: {x: 250, y: 120}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &1831369278
