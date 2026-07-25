@@ -2008,7 +2008,7 @@ MonoBehaviour:
     choiceKey: ChoiceB
     cloudData:
       sprite: {fileID: 21300000, guid: fc748405e1c86aa43871d579606526b0, type: 3}
-      cloudSize: {x: 430, y: 1150}
+      cloudSize: {x: 430, y: 115}
       fontSize: 60
       textSize: {x: 600, y: 150}
       textPosition: {x: 0, y: -30}
