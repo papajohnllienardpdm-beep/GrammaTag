@@ -31,6 +31,15 @@ public class ResultManager : MonoBehaviour
     public float popupDuration = 0.15f;
 
     private Coroutine popupCoroutine;
+
+    [Header("Ending Scene")]
+    public int endingModuleID = 20;
+
+    public string endingSceneName = "EndingScene";
+
+    [Header("Ending Settings")]
+    public string endingShownKey = "ENDING_SCENE_SHOWN";
+
     void Start()
     {
         StartCoroutine(InitializeResult());
@@ -121,29 +130,30 @@ public class ResultManager : MonoBehaviour
         {
             nextModulePanel.SetActive(true);
 
-            int currentModuleID = PlayerPrefs.GetInt("SelectedModuleID", 1);
+            int currentModuleID =
+                PlayerPrefs.GetInt("SelectedModuleID", 1);
 
-            string popupKey = "POPUP_SHOWN_MODULE_" + currentModuleID;
+            string popupKey =
+                "POPUP_SHOWN_MODULE_" + currentModuleID;
 
-            // 🔥 SAVE NA NAKITA NA YUNG POPUP
             PlayerPrefs.SetInt(popupKey, 1);
             PlayerPrefs.Save();
 
-            // 🔥 STOP OLD ANIMATION
             if (popupCoroutine != null)
             {
                 StopCoroutine(popupCoroutine);
             }
 
-            // 🔥 PLAY OPEN ANIMATION
-            popupCoroutine = StartCoroutine(OpenPopupAnimation());
+            popupCoroutine =
+                StartCoroutine(OpenPopupAnimation());
 
             return;
         }
 
-        // 🔥 NORMAL FLOW
-        SceneManager.LoadScene("MainMenu");
+        GoToNextScene();
     }
+
+
 
     public void CloseNextModulePopup()
     {
@@ -206,6 +216,37 @@ public class ResultManager : MonoBehaviour
         popupRect.localScale = Vector3.zero;
 
         nextModulePanel.SetActive(false);
+
+        GoToNextScene();
+    }
+
+    void GoToNextScene()
+    {
+        if (DatabaseManager.Instance != null &&
+            DatabaseManager.Instance.IsDatabaseReady())
+        {
+            int userID =
+                DatabaseManager.Instance.GetUserID();
+
+            bool hasCompletedEndingModule =
+                DatabaseManager.Instance.HasPassedModule(
+                    userID,
+                    endingModuleID);
+
+            // ✅ Show ending only once
+            bool endingAlreadyShown =
+                PlayerPrefs.GetInt(endingShownKey, 0) == 1;
+
+            if (hasCompletedEndingModule &&
+                !endingAlreadyShown)
+            {
+                PlayerPrefs.SetInt(endingShownKey, 1);
+                PlayerPrefs.Save();
+
+                SceneManager.LoadScene(endingSceneName);
+                return;
+            }
+        }
 
         SceneManager.LoadScene("MainMenu");
     }

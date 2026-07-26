@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 
 public class AudioManager : MonoBehaviour
@@ -50,10 +51,14 @@ public class AudioManager : MonoBehaviour
 
     void Start()
     {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+
         if (!musicSource.isPlaying)
         {
             musicSource.Play();
         }
+
+        CheckEndingScene();
     }
 
     // 🔥 REGISTER SLIDERS (ITO ANG MAGIC)
@@ -163,6 +168,24 @@ public class AudioManager : MonoBehaviour
             clip,
             sfxVol * sfxBoost
         );
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        CheckEndingScene();
+    }
+
+    void CheckEndingScene()
+    {
+        if (SceneManager.GetActiveScene().name == "EndCutScene1")
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
 }

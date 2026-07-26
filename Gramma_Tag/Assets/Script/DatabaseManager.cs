@@ -758,5 +758,25 @@ public class DatabaseManager : MonoBehaviour
         }
     }
 
+    public bool HasPassedModule(int userID, int moduleID)
+    {
+        if (db == null)
+            return false;
+
+        lock (dbLock)
+        {
+            var result = db.Query<Progress>(
+                @"SELECT *
+              FROM Progress
+              WHERE UserID = ?
+              AND ModuleID = ?
+              AND isPassed = 1",
+                userID,
+                moduleID);
+
+            return result.Count > 0;
+        }
+    }
+
 }
 

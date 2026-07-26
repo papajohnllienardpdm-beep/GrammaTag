@@ -71,4 +71,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Module 1/Module1_TutorialScene.unity
     guid: f61388341ac258c4ba8ae42d2354475e
+  - enabled: 1
+    path: Assets/Scenes/Game start up/CutScene/EndCutScene1.unity
+    guid: 9e22f79dbe7c1514a847c6a4ec2df0be
   m_configObjects: {}

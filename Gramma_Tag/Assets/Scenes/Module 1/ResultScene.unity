@@ -122,6 +122,63 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1001 &80652939
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1706329420896314382, guid: 88d36d3b81a53194289004e1a2af7bd9, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 172.3341
+      objectReference: {fileID: 0}
+    - target: {fileID: 1706329420896314382, guid: 88d36d3b81a53194289004e1a2af7bd9, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 213.71423
+      objectReference: {fileID: 0}
+    - target: {fileID: 1706329420896314382, guid: 88d36d3b81a53194289004e1a2af7bd9, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -2.2878103
+      objectReference: {fileID: 0}
+    - target: {fileID: 1706329420896314382, guid: 88d36d3b81a53194289004e1a2af7bd9, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1706329420896314382, guid: 88d36d3b81a53194289004e1a2af7bd9, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1706329420896314382, guid: 88d36d3b81a53194289004e1a2af7bd9, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1706329420896314382, guid: 88d36d3b81a53194289004e1a2af7bd9, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1706329420896314382, guid: 88d36d3b81a53194289004e1a2af7bd9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1706329420896314382, guid: 88d36d3b81a53194289004e1a2af7bd9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1706329420896314382, guid: 88d36d3b81a53194289004e1a2af7bd9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4432387685520140471, guid: 88d36d3b81a53194289004e1a2af7bd9, type: 3}
+      propertyPath: m_Name
+      value: AudioManager
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 88d36d3b81a53194289004e1a2af7bd9, type: 3}
 --- !u!1 &82131713
 GameObject:
   m_ObjectHideFlags: 0
@@ -1574,6 +1631,8 @@ MonoBehaviour:
   - Great job! The next lesson, Effect, is now unlocked!
   - Great job! The next lesson, Fact, is now unlocked!
   popupDuration: 0.15
+  endingModuleID: 20
+  endingSceneName: EndCutScene1
 --- !u!4 &1690955587
 Transform:
   m_ObjectHideFlags: 0
@@ -2504,3 +2563,4 @@ SceneRoots:
   - {fileID: 1769649718}
   - {fileID: 1972810441}
   - {fileID: 1690955587}
+  - {fileID: 80652939}
