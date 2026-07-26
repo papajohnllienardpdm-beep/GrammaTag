@@ -37,6 +37,17 @@ public class SettingsUIManager : MonoBehaviour
 
     private Coroutine creditsCoroutine;
 
+    [Header("Exit Confirmation")]
+    public GameObject exitPanel;
+
+    public Button yesExitButton;
+    public Button noExitButton;
+
+    [Header("Exit Animation")]
+    public float exitPopupDuration = 0.15f;
+
+    private Coroutine exitCoroutine;
+
 
     private bool isEditing = false;
 
@@ -182,6 +193,16 @@ public class SettingsUIManager : MonoBehaviour
 
         if (creditsPanel != null)
             creditsPanel.SetActive(false);
+
+        if (yesExitButton != null)
+            yesExitButton.onClick.AddListener(ConfirmLogout);
+
+        if (noExitButton != null)
+            noExitButton.onClick.AddListener(CloseExitPanel);
+
+        if (exitPanel != null)
+            exitPanel.SetActive(false);
+
     }
 
     void LoadUserData()
@@ -287,13 +308,16 @@ public class SettingsUIManager : MonoBehaviour
 
     void OnLogoutButtonClick()
     {
-        Debug.Log("Logout button clicked");
+        if (exitPanel == null)
+            return;
 
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-    Application.Quit();
-#endif
+        exitPanel.SetActive(true);
+
+        if (exitCoroutine != null)
+            StopCoroutine(exitCoroutine);
+
+        exitCoroutine =
+            StartCoroutine(OpenExitAnimation());
     }
 
     public void OpenCredits()
@@ -373,6 +397,86 @@ public class SettingsUIManager : MonoBehaviour
         panelRect.localScale = Vector3.zero;
 
         creditsPanel.SetActive(false);
+    }
+
+    public void ConfirmLogout()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+    Application.Quit();
+#endif
+    }
+
+    public void CloseExitPanel()
+    {
+        if (exitCoroutine != null)
+            StopCoroutine(exitCoroutine);
+
+        exitCoroutine =
+            StartCoroutine(CloseExitAnimation());
+    }
+
+    IEnumerator OpenExitAnimation()
+    {
+        RectTransform panelRect =
+            exitPanel.GetComponent<RectTransform>();
+
+        panelRect.localScale = Vector3.zero;
+
+        float timer = 0f;
+
+        while (timer < exitPopupDuration)
+        {
+            timer += Time.deltaTime;
+
+            float scale =
+                Mathf.SmoothStep(
+                    0f,
+                    1f,
+                    timer / exitPopupDuration);
+
+            panelRect.localScale =
+                new Vector3(scale, scale, scale);
+
+            yield return null;
+        }
+
+        panelRect.localScale = Vector3.one;
+    }
+
+    IEnumerator CloseExitAnimation()
+    {
+        RectTransform panelRect =
+            exitPanel.GetComponent<RectTransform>();
+
+        float timer = 0f;
+
+        Vector3 startScale = Vector3.one;
+        Vector3 endScale = Vector3.zero;
+
+        while (timer < exitPopupDuration)
+        {
+            timer += Time.deltaTime;
+
+            float t =
+                Mathf.SmoothStep(
+                    0f,
+                    1f,
+                    timer / exitPopupDuration);
+
+            panelRect.localScale =
+                Vector3.Lerp(
+                    startScale,
+                    endScale,
+                    t);
+
+            yield return null;
+        }
+
+        panelRect.localScale = Vector3.zero;
+
+        exitPanel.SetActive(false);
     }
 
 }
