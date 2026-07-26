@@ -5393,8 +5393,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 100}
-  m_SizeDelta: {x: 200, y: 50}
+  m_AnchoredPosition: {x: 16.664, y: 25}
+  m_SizeDelta: {x: 866.67, y: 154.265}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &1778023818
 MonoBehaviour:
@@ -5418,15 +5418,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 09626e80693e50a4ea752e5cf93e114e, type: 2}
-  m_sharedMaterial: {fileID: 8977684842885629325, guid: 09626e80693e50a4ea752e5cf93e114e, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: a48e7a37cea8fb24fb119a080aa82477, type: 2}
+  m_sharedMaterial: {fileID: 7479966292288222148, guid: a48e7a37cea8fb24fb119a080aa82477, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -5443,15 +5443,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 50
-  m_fontSizeBase: 50
+  m_fontSize: 52
+  m_fontSizeBase: 52
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 2
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -5479,7 +5479,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -371.83542, y: 0, z: -342.38306, w: 0}
+  m_margin: {x: 0.24777232, y: 0, z: -2.3519895, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -5979,12 +5979,12 @@ RectTransform:
   - {fileID: 1471106733}
   - {fileID: 1468222376}
   - {fileID: 1432513799}
-  - {fileID: 1778023817}
   - {fileID: 1605333698}
   - {fileID: 931996251}
   - {fileID: 1235761133}
   - {fileID: 583290522}
   - {fileID: 2064722981}
+  - {fileID: 1778023817}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}

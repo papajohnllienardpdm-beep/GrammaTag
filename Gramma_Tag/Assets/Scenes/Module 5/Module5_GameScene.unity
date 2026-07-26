@@ -4889,7 +4889,7 @@ MonoBehaviour:
   - moduleID: 15
     quizID: 450
     wordToHighlight: allow
-  highlightColor: {r: 0.015686275, g: 0.07450981, b: 1, a: 1}
+  highlightColor: {r: 1, g: 0.4392157, b: 0, a: 1}
   wordsHolder: {fileID: 1564118425}
   wordPrefab: {fileID: 3849488004895809223, guid: 2b6be48cb25d8494d97d1326c96c3191, type: 3}
   wordSlots:
