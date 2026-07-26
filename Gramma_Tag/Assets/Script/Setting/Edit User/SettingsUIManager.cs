@@ -26,6 +26,17 @@ public class SettingsUIManager : MonoBehaviour
     public GameObject validationPanel;
     public TMP_Text validationText;
 
+    [Header("Credits")]
+    public Button creditsButton;
+    public Button closeCreditsButton;
+
+    public GameObject creditsPanel;
+
+    [Header("Credits Animation")]
+    public float creditsPopupDuration = 0.15f;
+
+    private Coroutine creditsCoroutine;
+
 
     private bool isEditing = false;
 
@@ -162,6 +173,15 @@ public class SettingsUIManager : MonoBehaviour
 
         editButton.onClick.AddListener(OnEditButtonClick);
         logoutButton.onClick.AddListener(OnLogoutButtonClick);
+
+        if (creditsButton != null)
+            creditsButton.onClick.AddListener(OpenCredits);
+
+        if (closeCreditsButton != null)
+            closeCreditsButton.onClick.AddListener(CloseCredits);
+
+        if (creditsPanel != null)
+            creditsPanel.SetActive(false);
     }
 
     void LoadUserData()
@@ -275,4 +295,84 @@ public class SettingsUIManager : MonoBehaviour
     Application.Quit();
 #endif
     }
+
+    public void OpenCredits()
+    {
+        Debug.Log("Open Credits Clicked");
+
+        if (creditsPanel == null)
+            return;
+
+        creditsPanel.SetActive(true);
+
+        if (creditsCoroutine != null)
+            StopCoroutine(creditsCoroutine);
+
+        creditsCoroutine = StartCoroutine(OpenCreditsAnimation());
+    }
+
+    public void CloseCredits()
+    {
+        if (creditsPanel == null)
+            return;
+
+        if (creditsCoroutine != null)
+            StopCoroutine(creditsCoroutine);
+
+        creditsCoroutine = StartCoroutine(CloseCreditsAnimation());
+    }
+
+    IEnumerator OpenCreditsAnimation()
+    {
+        RectTransform panelRect =
+            creditsPanel.GetComponent<RectTransform>();
+
+        panelRect.localScale = Vector3.zero;
+
+        float timer = 0f;
+
+        while (timer < creditsPopupDuration)
+        {
+            timer += Time.deltaTime;
+
+            float scale =
+                Mathf.SmoothStep(0f, 1f, timer / creditsPopupDuration);
+
+            panelRect.localScale =
+                new Vector3(scale, scale, scale);
+
+            yield return null;
+        }
+
+        panelRect.localScale = Vector3.one;
+    }
+
+    IEnumerator CloseCreditsAnimation()
+    {
+        RectTransform panelRect =
+            creditsPanel.GetComponent<RectTransform>();
+
+        float timer = 0f;
+
+        Vector3 startScale = Vector3.one;
+        Vector3 endScale = Vector3.zero;
+
+        while (timer < creditsPopupDuration)
+        {
+            timer += Time.deltaTime;
+
+            float t =
+                Mathf.SmoothStep(0f, 1f, timer / creditsPopupDuration);
+
+            panelRect.localScale =
+                Vector3.Lerp(startScale, endScale, t);
+
+            yield return null;
+        }
+
+        panelRect.localScale = Vector3.zero;
+
+        creditsPanel.SetActive(false);
+    }
+
 }
