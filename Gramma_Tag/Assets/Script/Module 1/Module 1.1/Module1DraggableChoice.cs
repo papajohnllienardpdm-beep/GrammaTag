@@ -19,7 +19,14 @@ IEndDragHandler
 
     private bool canDrag = true;
 
+    public bool CanDrag
+    {
+        get { return canDrag; }
+    }
+
     private bool droppedOnTarget = false;
+
+
 
     private void Awake()
     {
@@ -42,6 +49,8 @@ IEndDragHandler
         if (!canDrag)
             return;
 
+
+
         transform.SetParent(canvas.transform);
         transform.SetAsLastSibling();
 
@@ -49,10 +58,20 @@ IEndDragHandler
         canvasGroup.alpha = 0.7f;
 
         Module1TutorialManager tutorial =
-            FindObjectOfType<Module1TutorialManager>();
+    FindObjectOfType<Module1TutorialManager>();
 
         if (tutorial != null)
-            tutorial.OnCardPicked();
+        {
+            tutorial.OnCardPicked(this);
+        }
+
+        Module1GameManager game =
+            FindObjectOfType<Module1GameManager>();
+
+        if (game != null)
+        {
+            game.OnCardPicked(this);
+        }
 
         droppedOnTarget = false;
     }
@@ -73,14 +92,26 @@ IEndDragHandler
         if (!canDrag)
             return;
 
+
+
         canvasGroup.blocksRaycasts = true;
         canvasGroup.alpha = 1f;
 
         Module1TutorialManager tutorial =
-            FindObjectOfType<Module1TutorialManager>();
+    FindObjectOfType<Module1TutorialManager>();
 
         if (tutorial != null)
+        {
             tutorial.ResetInstruction();
+        }
+
+        Module1GameManager game =
+            FindObjectOfType<Module1GameManager>();
+
+        if (game != null)
+        {
+            game.ResetCardDragging();
+        }
 
         if (!droppedOnTarget)
         {
@@ -94,6 +125,8 @@ IEndDragHandler
         transform.SetSiblingIndex(originalSiblingIndex);
 
         rectTransform.anchoredPosition = startPosition;
+
+
     }
 
     public void ResetCard()
@@ -107,6 +140,8 @@ IEndDragHandler
         canvasGroup.blocksRaycasts = true;
 
         canDrag = true;
+
+
     }
 
     public void MarkDropped()

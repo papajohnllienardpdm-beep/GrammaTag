@@ -109,6 +109,25 @@ public class Module1GameManager : MonoBehaviour
     public AudioClip correctSFX;
     public AudioClip wrongSFX;
 
+    public void OnCardPicked(Module1DraggableChoice draggedCard)
+    {
+        if (draggedCard == choiceCardA)
+        {
+            choiceCardB.SetCanDrag(false);
+        }
+        else if (draggedCard == choiceCardB)
+        {
+            choiceCardA.SetCanDrag(false);
+        }
+    }
+
+    public void ResetCardDragging()
+    {
+        choiceCardA.SetCanDrag(true);
+        choiceCardB.SetCanDrag(true);
+    }
+
+
 
     private void Start()
     {
@@ -225,6 +244,10 @@ public class Module1GameManager : MonoBehaviour
 
         choiceCardA.ResetCard();
         choiceCardB.ResetCard();
+
+        choiceCardA.SetCanDrag(true);
+        choiceCardB.SetCanDrag(true);
+
     }
 
     //=====================================================
@@ -268,7 +291,7 @@ public class Module1GameManager : MonoBehaviour
             selectedAnswer.Trim().ToLower() ==
             currentQuestion.correctAnswer.Trim().ToLower();
 
-        Module1ImageData imageData = GetImageData( currentQuestion.moduleID, currentQuestion.quizID);
+        Module1ImageData imageData = GetImageData(currentQuestion.moduleID, currentQuestion.quizID);
 
         if (imageData != null)
         {

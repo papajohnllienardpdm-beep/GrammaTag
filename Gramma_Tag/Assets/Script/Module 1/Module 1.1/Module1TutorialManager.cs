@@ -252,16 +252,28 @@ public class Module1TutorialManager : MonoBehaviour
     }
 
 
-    public void OnCardPicked()
+    public void OnCardPicked(Module1DraggableChoice draggedCard)
     {
         instructionText.text =
             "Now drop the card onto the picture.";
+
+        if (draggedCard == choiceCardA)
+        {
+            choiceCardB.SetCanDrag(false);
+        }
+        else if (draggedCard == choiceCardB)
+        {
+            choiceCardA.SetCanDrag(false);
+        }
     }
 
     public void ResetInstruction()
     {
         instructionText.text =
             "Drag one of the picture cards.";
+
+        choiceCardA.SetCanDrag(true);
+        choiceCardB.SetCanDrag(true);
     }
 
     IEnumerator RepeatCurrentQuestion()

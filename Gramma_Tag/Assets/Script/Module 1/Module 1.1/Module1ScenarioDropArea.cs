@@ -10,15 +10,15 @@ public class Module1ScenarioDropArea : MonoBehaviour, IDropHandler
         Module1DraggableChoice draggedCard =
             eventData.pointerDrag.GetComponent<Module1DraggableChoice>();
 
-        if (draggedCard != null)
-        {
-            gameManager.OnChoiceDropped(draggedCard);
-        }
+        if (draggedCard == null)
+            return;
 
-        if (draggedCard != null)
-        {
-            draggedCard.MarkDropped();
-            gameManager.OnChoiceDropped(draggedCard);
-        }
+        // Huwag tumanggap ng disabled card
+        if (!draggedCard.CanDrag)
+            return;
+
+        draggedCard.MarkDropped();
+
+        gameManager.OnChoiceDropped(draggedCard);
     }
 }

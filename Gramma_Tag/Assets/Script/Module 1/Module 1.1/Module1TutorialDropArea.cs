@@ -10,15 +10,15 @@ public class Module1TutorialDropArea : MonoBehaviour, IDropHandler
         Module1DraggableChoice draggedCard =
             eventData.pointerDrag.GetComponent<Module1DraggableChoice>();
 
-        if (draggedCard != null)
-        {
-            tutorialManager.OnChoiceDropped(draggedCard);
-        }
+        if (draggedCard == null)
+            return;
 
-        if (draggedCard != null)
-        {
-            draggedCard.MarkDropped();
-            tutorialManager.OnChoiceDropped(draggedCard);
-        }
+        // Huwag tumanggap ng disabled card
+        if (!draggedCard.CanDrag)
+            return;
+
+        draggedCard.MarkDropped();
+
+        tutorialManager.OnChoiceDropped(draggedCard);
     }
 }
