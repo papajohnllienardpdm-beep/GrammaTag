@@ -1449,8 +1449,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0, y: 180.40039}
-  m_SizeDelta: {x: 0, y: 362.80103}
+  m_AnchoredPosition: {x: 0, y: 171.61194}
+  m_SizeDelta: {x: 0, y: 380.3779}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1237952079
 MonoBehaviour:
@@ -1633,6 +1633,7 @@ MonoBehaviour:
   popupDuration: 0.15
   endingModuleID: 20
   endingSceneName: EndCutScene1
+  endingShownKey: ENDING_SCENE_SHOWN
 --- !u!4 &1690955587
 Transform:
   m_ObjectHideFlags: 0
