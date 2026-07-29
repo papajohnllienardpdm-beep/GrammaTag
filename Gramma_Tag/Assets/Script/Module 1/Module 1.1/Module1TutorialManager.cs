@@ -239,7 +239,7 @@ public class Module1TutorialManager : MonoBehaviour
             yield break;
         }
 
-        LoadRandomQuestion();
+        LoadNextQuestion();
 
         ResetInstruction();
 
@@ -285,24 +285,21 @@ public class Module1TutorialManager : MonoBehaviour
         progressBar.value = 0;
         progressText.text = "Tutorial 0 / 3";
 
-        LoadRandomQuestion();
+        LoadNextQuestion();
 
         ResetInstruction();
 
         isTransitioning = false;
     }
 
-    void LoadRandomQuestion()
+    void LoadNextQuestion()
     {
-        int randomIndex;
+        currentQuestionIndex++;
 
-        do
+        if (currentQuestionIndex >= questions.Count)
         {
-            randomIndex = Random.Range(0, questions.Count);
+            currentQuestionIndex = 0;
         }
-        while (randomIndex == currentQuestionIndex);
-
-        currentQuestionIndex = randomIndex;
 
         LoadQuestion();
     }

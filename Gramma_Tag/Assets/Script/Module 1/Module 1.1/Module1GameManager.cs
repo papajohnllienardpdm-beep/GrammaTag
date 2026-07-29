@@ -109,6 +109,16 @@ public class Module1GameManager : MonoBehaviour
     public AudioClip correctSFX;
     public AudioClip wrongSFX;
 
+    [Header("Feedback")]
+
+    public Image feedbackCardImage;
+
+    public TMP_Text feedbackText;
+
+    public Sprite correctCardSprite;
+
+    public Sprite wrongCardSprite;
+
     public void OnCardPicked(Module1DraggableChoice draggedCard)
     {
         if (draggedCard == choiceCardA)
@@ -248,6 +258,16 @@ public class Module1GameManager : MonoBehaviour
         choiceCardA.SetCanDrag(true);
         choiceCardB.SetCanDrag(true);
 
+        if (feedbackCardImage != null)
+        {
+            feedbackCardImage.gameObject.SetActive(false);
+        }
+
+        if (feedbackText != null)
+        {
+            feedbackText.text = "";
+        }
+
     }
 
     //=====================================================
@@ -311,6 +331,17 @@ public class Module1GameManager : MonoBehaviour
 
             if (AudioManager.Instance != null)
                 AudioManager.Instance.PlaySFX(correctSFX);
+
+            if (feedbackCardImage != null)
+            {
+                feedbackCardImage.gameObject.SetActive(true);
+                feedbackCardImage.sprite = correctCardSprite;
+            }
+
+            if (feedbackText != null)
+            {
+                feedbackText.text = "Correct!";
+            }
         }
         else
         {
@@ -318,6 +349,17 @@ public class Module1GameManager : MonoBehaviour
 
             if (AudioManager.Instance != null)
                 AudioManager.Instance.PlaySFX(wrongSFX);
+
+            if (feedbackCardImage != null)
+            {
+                feedbackCardImage.gameObject.SetActive(true);
+                feedbackCardImage.sprite = wrongCardSprite;
+            }
+
+            if (feedbackText != null)
+            {
+                feedbackText.text = "Nice try!";
+            }
         }
 
         draggedChoice.ReturnToStart();
