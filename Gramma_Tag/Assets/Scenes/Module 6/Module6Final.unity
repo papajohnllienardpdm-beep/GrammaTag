@@ -6306,10 +6306,10 @@ RectTransform:
   - {fileID: 477271474}
   - {fileID: 1866439203}
   - {fileID: 2102679788}
-  - {fileID: 2051128444}
   - {fileID: 724017384}
   - {fileID: 2037313166}
   - {fileID: 1747423581}
+  - {fileID: 2051128444}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}

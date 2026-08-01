@@ -500,11 +500,11 @@ RectTransform:
   - {fileID: 1599541339}
   - {fileID: 178488913}
   - {fileID: 1882862419}
-  - {fileID: 1603156057}
   - {fileID: 994885487}
   - {fileID: 1132976165}
   - {fileID: 643757946}
   - {fileID: 581126465}
+  - {fileID: 1603156057}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
