@@ -215,7 +215,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -11.579, y: -292.05405}
+  m_AnchoredPosition: {x: -11.579, y: -266.4}
   m_SizeDelta: {x: 404.6, y: 117.785}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &82131715
@@ -2359,8 +2359,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.973, y: 25.694}
-  m_SizeDelta: {x: 879.009, y: 352.908}
+  m_AnchoredPosition: {x: -17.8659, y: 25.694}
+  m_SizeDelta: {x: 755.1281, y: 352.908}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1977600804
 MonoBehaviour:
@@ -2382,7 +2382,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: You can now proceed to next lesson
+  m_text: Great job! The next lesson, Possessive Pronouns, is now unlocked!
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a48e7a37cea8fb24fb119a080aa82477, type: 2}
   m_sharedMaterial: {fileID: 7479966292288222148, guid: a48e7a37cea8fb24fb119a080aa82477, type: 2}
