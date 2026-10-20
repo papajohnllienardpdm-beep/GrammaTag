@@ -32,7 +32,7 @@ public class LoginManager : MonoBehaviour
 
     public void SelectGirl()
     {
-        playerSex = "Girl";
+        playerSex = "Female";
 
         // 🔥 GIRL SELECTED
         if (girlButtonImage != null)
@@ -45,7 +45,7 @@ public class LoginManager : MonoBehaviour
 
     public void SelectBoy()
     {
-        playerSex = "Boy";
+        playerSex = "Male";
 
         // 🔥 BOY SELECTED
         if (boyButtonImage != null)

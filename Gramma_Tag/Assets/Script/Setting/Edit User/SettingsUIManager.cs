@@ -293,17 +293,36 @@ public class SettingsUIManager : MonoBehaviour
         return true;
     }
 
+
     void SetCharacterImage(string gender)
     {
-        if (gender.ToLower() == "boy")
+        if (charImage == null)
+            return;
+
+        if (string.Equals(
+            gender?.Trim(),
+            "Male",
+            System.StringComparison.OrdinalIgnoreCase)
+            || string.Equals(
+            gender?.Trim(),
+            "Boy",
+            System.StringComparison.OrdinalIgnoreCase))
         {
             charImage.sprite = boySprite;
         }
-        else
+        else if (string.Equals(
+            gender?.Trim(),
+            "Female",
+            System.StringComparison.OrdinalIgnoreCase)
+            || string.Equals(
+            gender?.Trim(),
+            "Girl",
+            System.StringComparison.OrdinalIgnoreCase))
         {
             charImage.sprite = girlSprite;
         }
     }
+
 
 
     void OnLogoutButtonClick()
