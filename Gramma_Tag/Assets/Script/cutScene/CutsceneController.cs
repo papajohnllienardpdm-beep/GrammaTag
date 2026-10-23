@@ -31,7 +31,7 @@ public class CutsceneController : MonoBehaviour
         Debug.Log("🎮 PLAYER GENDER: " + gender);
 
         // 👉 SELECT VIDEO
-        if (gender == "Boy")
+        if (gender == "Male")
         {
             videoPlayer.clip = boyVideo;
             Debug.Log("▶️ Playing Boy Cutscene");
