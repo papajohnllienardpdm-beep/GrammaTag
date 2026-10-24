@@ -74,7 +74,7 @@ public class CertificateButtonController : MonoBehaviour
             viewerNameText.text = fullName;
 
             // GENDER IMAGE
-            if (user.Gender == "Boy")
+            if (user.Gender == "Male")
             {
                 genderImage.sprite = boySprite;
                 viewerGenderImage.sprite = boySprite;
